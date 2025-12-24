@@ -26,6 +26,8 @@
   },
   "scripts": {
     "copy:models": "bash ./scripts/copy_models.sh",
-    "test": "vitest run"
+    "test": "vitest run",
+    "publish:dryrun": "npm publish --dry-run",
+    "publish:release": "npm publish"
   }
 }
