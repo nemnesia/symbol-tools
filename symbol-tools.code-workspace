@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "packages/symbol-catbuffer"
+		},
+		{
+			"path": "packages/symbol-openapi-fetch-client"
 		}
 	],
 	"settings": {}
