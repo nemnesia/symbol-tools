@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import BaseValue from '../src/BaseValue.js';
 
 describe('BaseValue', () => {
@@ -55,7 +56,7 @@ describe('BaseValue', () => {
     });
 
     it('BigInt値を変換', () => {
-      const value = new BaseValue(8, 0xABCDEF1234567890n);
+      const value = new BaseValue(8, 0xabcdef1234567890n);
       expect(value.toString()).toBe('0xABCDEF1234567890');
     });
 

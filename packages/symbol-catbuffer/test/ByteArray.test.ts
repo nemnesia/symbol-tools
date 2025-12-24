@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
 import ByteArray from '../src/ByteArray.js';
 
 // モック用のユーティリティ関数

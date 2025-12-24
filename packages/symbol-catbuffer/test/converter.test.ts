@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { hexToUint8, uint8ToHex, isHexString } from '../src/converter.js';
+import { describe, expect, it } from 'vitest';
+
+import { hexToUint8, isHexString, uint8ToHex } from '../src/converter.js';
 
 describe('converter', () => {
   describe('hexToUint8', () => {
@@ -9,12 +10,12 @@ describe('converter', () => {
 
     it('hex文字列を正しく変換', () => {
       const result = hexToUint8('0A1B2C');
-      expect(result).toEqual(new Uint8Array([0x0A, 0x1B, 0x2C]));
+      expect(result).toEqual(new Uint8Array([0x0a, 0x1b, 0x2c]));
     });
 
     it('小文字hexも変換可能', () => {
       const result = hexToUint8('aabbcc');
-      expect(result).toEqual(new Uint8Array([0xAA, 0xBB, 0xCC]));
+      expect(result).toEqual(new Uint8Array([0xaa, 0xbb, 0xcc]));
     });
 
     it('奇数長でエラー', () => {
@@ -32,12 +33,12 @@ describe('converter', () => {
     });
 
     it('Uint8Arrayを大文字hex文字列に変換', () => {
-      const result = uint8ToHex(new Uint8Array([0x0A, 0x1B, 0x2C]));
+      const result = uint8ToHex(new Uint8Array([0x0a, 0x1b, 0x2c]));
       expect(result).toBe('0A1B2C');
     });
 
     it('0x00と0xFFも正しく変換', () => {
-      const result = uint8ToHex(new Uint8Array([0x00, 0xFF]));
+      const result = uint8ToHex(new Uint8Array([0x00, 0xff]));
       expect(result).toBe('00FF');
     });
   });
