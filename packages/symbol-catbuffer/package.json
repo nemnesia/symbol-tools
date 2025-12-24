@@ -1,0 +1,30 @@
+{
+  "name": "@nemnesia/symbol-catbuffer",
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": "The Symbol Syndicate",
+  "contributors": [
+    {
+      "name": "ccHarvestasya",
+      "x.com": "@ccHarvestasya"
+    }
+  ],
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./ts/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "types": "./ts/src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./symbol": {
+      "import": "./src/symbol/index.js",
+      "types": "./ts/src/symbol/index.d.ts",
+      "default": "./src/symbol/index.js"
+    }
+  },
+  "scripts": {
+    "copy:models": "bash ./scripts/copy_models.sh"
+  }
+}

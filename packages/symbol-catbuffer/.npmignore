@@ -1,0 +1,4 @@
+scripts/
+_symbol/
+*.log
+.DS_Store
