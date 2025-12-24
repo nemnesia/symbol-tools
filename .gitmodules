@@ -1,3 +1,3 @@
-[submodule "packages/symbol-catbuffer/_symbol"]
-	path = packages/symbol-catbuffer/_symbol
+[submodule "_symbol"]
+	path = _symbol
 	url = https://github.com/symbol/symbol.git
