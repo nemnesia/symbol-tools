@@ -1,0 +1,40 @@
+{
+  "name": "@nemnesia/symbol-openapi-fetch-client",
+  "description": "OpenAPI client for symbol-openapi-fetch-client",
+  "author": "The Symbol Syndicate",
+  "contributors": [
+    {
+      "name": "ccHarvestasya",
+      "x.com": "@ccHarvestasya"
+    }
+  ],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nemnesia/symbol-openapi-fetch-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nemnesia/symbol-openapi-fetch-client/issues"
+  },
+  "homepage": "https://github.com/nemnesia/symbol-openapi-fetch-client#readme",
+  "packageManager": "yarn@4.11.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "gen": "rimraf src && openapi-generator-cli generate -i openapi-symbol.yml -g typescript-fetch -o src -t custom-templates",
+    "get": "curl -so openapi-symbol.yml https://docs.symboltest.net/ja/devbook/reference/rest/openapi-symbol.yml",
+    "test": "vitest run",
+    "lint": "eslint --fix \"{src,test,e2e}/**/*.ts\"",
+    "format": "prettier --write \"{src,test,e2e}/**/*.ts\"",
+    "publish:dryrun": "npm publish --dry-run",
+    "publish:release": "npm run build && npm publish",
+    "prepublish:check": "npm run lint && npm run format && npm run build && npm test",
+    "custom-templates": "openapi-generator-cli author template -g typescript-fetch -o custom-templates"
+  },
+  "volta": {
+    "node": "20.19.6"
+  }
+}

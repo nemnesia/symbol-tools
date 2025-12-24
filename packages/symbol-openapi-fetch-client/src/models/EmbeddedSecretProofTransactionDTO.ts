@@ -1,0 +1,153 @@
+/* tslint:disable */
+/* eslint-disable */
+/**
+ * Copyright © 2025 The Symbol Syndicate
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { mapValues } from '../runtime.js';
+import type { NetworkTypeEnum } from './NetworkTypeEnum.js';
+import {
+    NetworkTypeEnumFromJSON,
+    NetworkTypeEnumFromJSONTyped,
+    NetworkTypeEnumToJSON,
+    NetworkTypeEnumToJSONTyped,
+} from './NetworkTypeEnum.js';
+import type { LockHashAlgorithmEnum } from './LockHashAlgorithmEnum.js';
+import {
+    LockHashAlgorithmEnumFromJSON,
+    LockHashAlgorithmEnumFromJSONTyped,
+    LockHashAlgorithmEnumToJSON,
+    LockHashAlgorithmEnumToJSONTyped,
+} from './LockHashAlgorithmEnum.js';
+
+/**
+ * 
+ * @export
+ * @interface EmbeddedSecretProofTransactionDTO
+ */
+export interface EmbeddedSecretProofTransactionDTO {
+    /**
+     * Public key.
+     * @type {string}
+     * @memberof EmbeddedSecretProofTransactionDTO
+     */
+    signerPublicKey: string;
+    /**
+     * Entity version.
+     * @type {number}
+     * @memberof EmbeddedSecretProofTransactionDTO
+     */
+    version: number;
+    /**
+     * 
+     * @type {NetworkTypeEnum}
+     * @memberof EmbeddedSecretProofTransactionDTO
+     */
+    network: NetworkTypeEnum;
+    /**
+     * 
+     * @type {number}
+     * @memberof EmbeddedSecretProofTransactionDTO
+     */
+    type: number;
+    /**
+     * Address expressed in Base32 format. If the bit 0 of byte 0 is not set (like in 0x90), then it is a
+     * regular address. Example: TAOXUJOTTW3W5XTBQMQEX3SQNA6MCUVGXLXR3TA.
+     * Otherwise (e.g. 0x91) it represents a namespace id which starts at byte 1. Example: THBIMC3THGH5RUYAAAAAAAAAAAAAAAAAAAAAAAA
+     * 
+     * @type {string}
+     * @memberof EmbeddedSecretProofTransactionDTO
+     */
+    recipientAddress: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof EmbeddedSecretProofTransactionDTO
+     */
+    secret: string;
+    /**
+     * 
+     * @type {LockHashAlgorithmEnum}
+     * @memberof EmbeddedSecretProofTransactionDTO
+     */
+    hashAlgorithm: LockHashAlgorithmEnum;
+    /**
+     * Original random set of bytes.
+     * @type {string}
+     * @memberof EmbeddedSecretProofTransactionDTO
+     */
+    proof: string;
+}
+
+
+
+/**
+ * Check if a given object implements the EmbeddedSecretProofTransactionDTO interface.
+ */
+export function instanceOfEmbeddedSecretProofTransactionDTO(value: object): value is EmbeddedSecretProofTransactionDTO {
+    if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
+    if (!('version' in value) || value['version'] === undefined) return false;
+    if (!('network' in value) || value['network'] === undefined) return false;
+    if (!('type' in value) || value['type'] === undefined) return false;
+    if (!('recipientAddress' in value) || value['recipientAddress'] === undefined) return false;
+    if (!('secret' in value) || value['secret'] === undefined) return false;
+    if (!('hashAlgorithm' in value) || value['hashAlgorithm'] === undefined) return false;
+    if (!('proof' in value) || value['proof'] === undefined) return false;
+    return true;
+}
+
+export function EmbeddedSecretProofTransactionDTOFromJSON(json: any): EmbeddedSecretProofTransactionDTO {
+    return EmbeddedSecretProofTransactionDTOFromJSONTyped(json, false);
+}
+
+export function EmbeddedSecretProofTransactionDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): EmbeddedSecretProofTransactionDTO {
+    if (json == null) {
+        return json;
+    }
+    return {
+        
+        'signerPublicKey': json['signerPublicKey'],
+        'version': json['version'],
+        'network': NetworkTypeEnumFromJSON(json['network']),
+        'type': json['type'],
+        'recipientAddress': json['recipientAddress'],
+        'secret': json['secret'],
+        'hashAlgorithm': LockHashAlgorithmEnumFromJSON(json['hashAlgorithm']),
+        'proof': json['proof'],
+    };
+}
+
+export function EmbeddedSecretProofTransactionDTOToJSON(json: any): EmbeddedSecretProofTransactionDTO {
+    return EmbeddedSecretProofTransactionDTOToJSONTyped(json, false);
+}
+
+export function EmbeddedSecretProofTransactionDTOToJSONTyped(value?: EmbeddedSecretProofTransactionDTO | null, ignoreDiscriminator: boolean = false): any {
+    if (value == null) {
+        return value;
+    }
+
+    return {
+        
+        'signerPublicKey': value['signerPublicKey'],
+        'version': value['version'],
+        'network': NetworkTypeEnumToJSON(value['network']),
+        'type': value['type'],
+        'recipientAddress': value['recipientAddress'],
+        'secret': value['secret'],
+        'hashAlgorithm': LockHashAlgorithmEnumToJSON(value['hashAlgorithm']),
+        'proof': value['proof'],
+    };
+}
+

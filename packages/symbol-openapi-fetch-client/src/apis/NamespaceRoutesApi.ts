@@ -1,0 +1,365 @@
+/* tslint:disable */
+/* eslint-disable */
+/**
+ * Copyright © 2025 The Symbol Syndicate
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+import * as runtime from '../runtime.js';
+import type {
+  AccountsNamesDTO,
+  Addresses,
+  AliasTypeEnum,
+  MerkleStateInfoDTO,
+  ModelError,
+  MosaicIds,
+  MosaicsNamesDTO,
+  NamespaceIds,
+  NamespaceInfoDTO,
+  NamespaceNameDTO,
+  NamespacePage,
+  NamespaceRegistrationTypeEnum,
+  Order,
+} from '../models/index.js';
+import {
+    AccountsNamesDTOFromJSON,
+    AccountsNamesDTOToJSON,
+    AddressesFromJSON,
+    AddressesToJSON,
+    AliasTypeEnumFromJSON,
+    AliasTypeEnumToJSON,
+    MerkleStateInfoDTOFromJSON,
+    MerkleStateInfoDTOToJSON,
+    ModelErrorFromJSON,
+    ModelErrorToJSON,
+    MosaicIdsFromJSON,
+    MosaicIdsToJSON,
+    MosaicsNamesDTOFromJSON,
+    MosaicsNamesDTOToJSON,
+    NamespaceIdsFromJSON,
+    NamespaceIdsToJSON,
+    NamespaceInfoDTOFromJSON,
+    NamespaceInfoDTOToJSON,
+    NamespaceNameDTOFromJSON,
+    NamespaceNameDTOToJSON,
+    NamespacePageFromJSON,
+    NamespacePageToJSON,
+    NamespaceRegistrationTypeEnumFromJSON,
+    NamespaceRegistrationTypeEnumToJSON,
+    OrderFromJSON,
+    OrderToJSON,
+} from '../models/index.js';
+
+export interface GetAccountsNamesRequest {
+    addresses: Addresses;
+}
+
+export interface GetMosaicsNamesRequest {
+    mosaicIds: MosaicIds;
+}
+
+export interface GetNamespaceRequest {
+    namespaceId: string;
+}
+
+export interface GetNamespaceMerkleRequest {
+    namespaceId: string;
+}
+
+export interface GetNamespacesNamesRequest {
+    namespaceIds: NamespaceIds;
+}
+
+export interface SearchNamespacesRequest {
+    ownerAddress?: string;
+    registrationType?: NamespaceRegistrationTypeEnum;
+    level0?: string;
+    aliasType?: AliasTypeEnum;
+    pageSize?: number;
+    pageNumber?: number;
+    offset?: string;
+    order?: Order;
+}
+
+/**
+ * 
+ */
+export class NamespaceRoutesApi extends runtime.BaseAPI {
+
+    /**
+     * Returns friendly names for accounts.
+     * Get readable names for a set of accountIds
+     */
+    async getAccountsNamesRaw(requestParameters: GetAccountsNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountsNamesDTO>> {
+        if (requestParameters['addresses'] == null) {
+            throw new runtime.RequiredError(
+                'addresses',
+                'Required parameter "addresses" was null or undefined when calling getAccountsNames().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/namespaces/account/names`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: AddressesToJSON(requestParameters['addresses']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => AccountsNamesDTOFromJSON(jsonValue));
+    }
+
+    /**
+     * Returns friendly names for accounts.
+     * Get readable names for a set of accountIds
+     */
+    async getAccountsNames(requestParameters: GetAccountsNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AccountsNamesDTO> {
+        const response = await this.getAccountsNamesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Returns friendly names for mosaics.
+     * Get readable names for a set of mosaics
+     */
+    async getMosaicsNamesRaw(requestParameters: GetMosaicsNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MosaicsNamesDTO>> {
+        if (requestParameters['mosaicIds'] == null) {
+            throw new runtime.RequiredError(
+                'mosaicIds',
+                'Required parameter "mosaicIds" was null or undefined when calling getMosaicsNames().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/namespaces/mosaic/names`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: MosaicIdsToJSON(requestParameters['mosaicIds']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => MosaicsNamesDTOFromJSON(jsonValue));
+    }
+
+    /**
+     * Returns friendly names for mosaics.
+     * Get readable names for a set of mosaics
+     */
+    async getMosaicsNames(requestParameters: GetMosaicsNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MosaicsNamesDTO> {
+        const response = await this.getMosaicsNamesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Gets the namespace for a given namespace identifier.
+     * Get namespace information
+     */
+    async getNamespaceRaw(requestParameters: GetNamespaceRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NamespaceInfoDTO>> {
+        if (requestParameters['namespaceId'] == null) {
+            throw new runtime.RequiredError(
+                'namespaceId',
+                'Required parameter "namespaceId" was null or undefined when calling getNamespace().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/namespaces/{namespaceId}`;
+        urlPath = urlPath.replace(`{${"namespaceId"}}`, encodeURIComponent(String(requestParameters['namespaceId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => NamespaceInfoDTOFromJSON(jsonValue));
+    }
+
+    /**
+     * Gets the namespace for a given namespace identifier.
+     * Get namespace information
+     */
+    async getNamespace(requestParameters: GetNamespaceRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NamespaceInfoDTO> {
+        const response = await this.getNamespaceRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Gets the namespace merkle for a given namespace identifier.
+     * Get namespace merkle information
+     */
+    async getNamespaceMerkleRaw(requestParameters: GetNamespaceMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MerkleStateInfoDTO>> {
+        if (requestParameters['namespaceId'] == null) {
+            throw new runtime.RequiredError(
+                'namespaceId',
+                'Required parameter "namespaceId" was null or undefined when calling getNamespaceMerkle().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/namespaces/{namespaceId}/merkle`;
+        urlPath = urlPath.replace(`{${"namespaceId"}}`, encodeURIComponent(String(requestParameters['namespaceId'])));
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => MerkleStateInfoDTOFromJSON(jsonValue));
+    }
+
+    /**
+     * Gets the namespace merkle for a given namespace identifier.
+     * Get namespace merkle information
+     */
+    async getNamespaceMerkle(requestParameters: GetNamespaceMerkleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MerkleStateInfoDTO> {
+        const response = await this.getNamespaceMerkleRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Returns friendly names for namespaces.
+     * Get readable names for a set of namespaces
+     */
+    async getNamespacesNamesRaw(requestParameters: GetNamespacesNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NamespaceNameDTO>>> {
+        if (requestParameters['namespaceIds'] == null) {
+            throw new runtime.RequiredError(
+                'namespaceIds',
+                'Required parameter "namespaceIds" was null or undefined when calling getNamespacesNames().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/namespaces/names`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: NamespaceIdsToJSON(requestParameters['namespaceIds']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NamespaceNameDTOFromJSON));
+    }
+
+    /**
+     * Returns friendly names for namespaces.
+     * Get readable names for a set of namespaces
+     */
+    async getNamespacesNames(requestParameters: GetNamespacesNamesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<NamespaceNameDTO>> {
+        const response = await this.getNamespacesNamesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Gets an array of namespaces.
+     * Search namespaces
+     */
+    async searchNamespacesRaw(requestParameters: SearchNamespacesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NamespacePage>> {
+        const queryParameters: any = {};
+
+        if (requestParameters['ownerAddress'] != null) {
+            queryParameters['ownerAddress'] = requestParameters['ownerAddress'];
+        }
+
+        if (requestParameters['registrationType'] != null) {
+            queryParameters['registrationType'] = requestParameters['registrationType'];
+        }
+
+        if (requestParameters['level0'] != null) {
+            queryParameters['level0'] = requestParameters['level0'];
+        }
+
+        if (requestParameters['aliasType'] != null) {
+            queryParameters['aliasType'] = requestParameters['aliasType'];
+        }
+
+        if (requestParameters['pageSize'] != null) {
+            queryParameters['pageSize'] = requestParameters['pageSize'];
+        }
+
+        if (requestParameters['pageNumber'] != null) {
+            queryParameters['pageNumber'] = requestParameters['pageNumber'];
+        }
+
+        if (requestParameters['offset'] != null) {
+            queryParameters['offset'] = requestParameters['offset'];
+        }
+
+        if (requestParameters['order'] != null) {
+            queryParameters['order'] = requestParameters['order'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/namespaces`;
+
+        const response = await this.request({
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => NamespacePageFromJSON(jsonValue));
+    }
+
+    /**
+     * Gets an array of namespaces.
+     * Search namespaces
+     */
+    async searchNamespaces(requestParameters: SearchNamespacesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NamespacePage> {
+        const response = await this.searchNamespacesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+}

@@ -1,0 +1,157 @@
+/* tslint:disable */
+/* eslint-disable */
+/**
+ * Copyright © 2025 The Symbol Syndicate
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { mapValues } from '../runtime.js';
+import type { NetworkTypeEnum } from './NetworkTypeEnum.js';
+import {
+    NetworkTypeEnumFromJSON,
+    NetworkTypeEnumFromJSONTyped,
+    NetworkTypeEnumToJSON,
+    NetworkTypeEnumToJSONTyped,
+} from './NetworkTypeEnum.js';
+
+/**
+ * 
+ * @export
+ * @interface EmbeddedMosaicAddressRestrictionTransactionDTO
+ */
+export interface EmbeddedMosaicAddressRestrictionTransactionDTO {
+    /**
+     * Public key.
+     * @type {string}
+     * @memberof EmbeddedMosaicAddressRestrictionTransactionDTO
+     */
+    signerPublicKey: string;
+    /**
+     * Entity version.
+     * @type {number}
+     * @memberof EmbeddedMosaicAddressRestrictionTransactionDTO
+     */
+    version: number;
+    /**
+     * 
+     * @type {NetworkTypeEnum}
+     * @memberof EmbeddedMosaicAddressRestrictionTransactionDTO
+     */
+    network: NetworkTypeEnum;
+    /**
+     * 
+     * @type {number}
+     * @memberof EmbeddedMosaicAddressRestrictionTransactionDTO
+     */
+    type: number;
+    /**
+     * Mosaic identifier. If the most significant bit of byte 0 is set, a namespaceId (alias)
+     * is used instead of the real mosaic identifier.
+     * 
+     * @type {string}
+     * @memberof EmbeddedMosaicAddressRestrictionTransactionDTO
+     */
+    mosaicId: string;
+    /**
+     * Restriction key.
+     * @type {string}
+     * @memberof EmbeddedMosaicAddressRestrictionTransactionDTO
+     */
+    restrictionKey: string;
+    /**
+     * Restriction value.
+     * @type {string}
+     * @memberof EmbeddedMosaicAddressRestrictionTransactionDTO
+     */
+    previousRestrictionValue: string;
+    /**
+     * Restriction value.
+     * @type {string}
+     * @memberof EmbeddedMosaicAddressRestrictionTransactionDTO
+     */
+    newRestrictionValue: string;
+    /**
+     * Address expressed in Base32 format. If the bit 0 of byte 0 is not set (like in 0x90), then it is a
+     * regular address. Example: TAOXUJOTTW3W5XTBQMQEX3SQNA6MCUVGXLXR3TA.
+     * Otherwise (e.g. 0x91) it represents a namespace id which starts at byte 1. Example: THBIMC3THGH5RUYAAAAAAAAAAAAAAAAAAAAAAAA
+     * 
+     * @type {string}
+     * @memberof EmbeddedMosaicAddressRestrictionTransactionDTO
+     */
+    targetAddress: string;
+}
+
+
+
+/**
+ * Check if a given object implements the EmbeddedMosaicAddressRestrictionTransactionDTO interface.
+ */
+export function instanceOfEmbeddedMosaicAddressRestrictionTransactionDTO(value: object): value is EmbeddedMosaicAddressRestrictionTransactionDTO {
+    if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
+    if (!('version' in value) || value['version'] === undefined) return false;
+    if (!('network' in value) || value['network'] === undefined) return false;
+    if (!('type' in value) || value['type'] === undefined) return false;
+    if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
+    if (!('restrictionKey' in value) || value['restrictionKey'] === undefined) return false;
+    if (!('previousRestrictionValue' in value) || value['previousRestrictionValue'] === undefined) return false;
+    if (!('newRestrictionValue' in value) || value['newRestrictionValue'] === undefined) return false;
+    if (!('targetAddress' in value) || value['targetAddress'] === undefined) return false;
+    return true;
+}
+
+export function EmbeddedMosaicAddressRestrictionTransactionDTOFromJSON(json: any): EmbeddedMosaicAddressRestrictionTransactionDTO {
+    return EmbeddedMosaicAddressRestrictionTransactionDTOFromJSONTyped(json, false);
+}
+
+export function EmbeddedMosaicAddressRestrictionTransactionDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): EmbeddedMosaicAddressRestrictionTransactionDTO {
+    if (json == null) {
+        return json;
+    }
+    return {
+        
+        'signerPublicKey': json['signerPublicKey'],
+        'version': json['version'],
+        'network': NetworkTypeEnumFromJSON(json['network']),
+        'type': json['type'],
+        'mosaicId': json['mosaicId'],
+        'restrictionKey': json['restrictionKey'],
+        'previousRestrictionValue': json['previousRestrictionValue'],
+        'newRestrictionValue': json['newRestrictionValue'],
+        'targetAddress': json['targetAddress'],
+    };
+}
+
+export function EmbeddedMosaicAddressRestrictionTransactionDTOToJSON(json: any): EmbeddedMosaicAddressRestrictionTransactionDTO {
+    return EmbeddedMosaicAddressRestrictionTransactionDTOToJSONTyped(json, false);
+}
+
+export function EmbeddedMosaicAddressRestrictionTransactionDTOToJSONTyped(value?: EmbeddedMosaicAddressRestrictionTransactionDTO | null, ignoreDiscriminator: boolean = false): any {
+    if (value == null) {
+        return value;
+    }
+
+    return {
+        
+        'signerPublicKey': value['signerPublicKey'],
+        'version': value['version'],
+        'network': NetworkTypeEnumToJSON(value['network']),
+        'type': value['type'],
+        'mosaicId': value['mosaicId'],
+        'restrictionKey': value['restrictionKey'],
+        'previousRestrictionValue': value['previousRestrictionValue'],
+        'newRestrictionValue': value['newRestrictionValue'],
+        'targetAddress': value['targetAddress'],
+    };
+}
+
