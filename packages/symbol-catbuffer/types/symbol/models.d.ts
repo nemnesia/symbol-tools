@@ -3,84 +3,84 @@ export class Amount extends BaseValue {
     static deserialize(payload: any): Amount;
     static deserializeAligned(payload: any): Amount;
     constructor(amount?: bigint);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class BlockDuration extends BaseValue {
     static SIZE: number;
     static deserialize(payload: any): BlockDuration;
     static deserializeAligned(payload: any): BlockDuration;
     constructor(blockDuration?: bigint);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class BlockFeeMultiplier extends BaseValue {
     static SIZE: number;
     static deserialize(payload: any): BlockFeeMultiplier;
     static deserializeAligned(payload: any): BlockFeeMultiplier;
     constructor(blockFeeMultiplier?: number);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class Difficulty extends BaseValue {
     static SIZE: number;
     static deserialize(payload: any): Difficulty;
     static deserializeAligned(payload: any): Difficulty;
     constructor(difficulty?: bigint);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class FinalizationEpoch extends BaseValue {
     static SIZE: number;
     static deserialize(payload: any): FinalizationEpoch;
     static deserializeAligned(payload: any): FinalizationEpoch;
     constructor(finalizationEpoch?: number);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class FinalizationPoint extends BaseValue {
     static SIZE: number;
     static deserialize(payload: any): FinalizationPoint;
     static deserializeAligned(payload: any): FinalizationPoint;
     constructor(finalizationPoint?: number);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class Height extends BaseValue {
     static SIZE: number;
     static deserialize(payload: any): Height;
     static deserializeAligned(payload: any): Height;
     constructor(height?: bigint);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class Importance extends BaseValue {
     static SIZE: number;
     static deserialize(payload: any): Importance;
     static deserializeAligned(payload: any): Importance;
     constructor(importance?: bigint);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class ImportanceHeight extends BaseValue {
     static SIZE: number;
     static deserialize(payload: any): ImportanceHeight;
     static deserializeAligned(payload: any): ImportanceHeight;
     constructor(importanceHeight?: bigint);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class UnresolvedMosaicId extends BaseValue {
     static SIZE: number;
     static deserialize(payload: any): UnresolvedMosaicId;
     static deserializeAligned(payload: any): UnresolvedMosaicId;
     constructor(unresolvedMosaicId?: bigint);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class MosaicId extends BaseValue {
     static SIZE: number;
     static deserialize(payload: any): MosaicId;
     static deserializeAligned(payload: any): MosaicId;
     constructor(mosaicId?: bigint);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class Timestamp extends BaseValue {
     static SIZE: number;
     static deserialize(payload: any): Timestamp;
     static deserializeAligned(payload: any): Timestamp;
     constructor(timestamp?: bigint);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class UnresolvedAddress extends ByteArray {
     static SIZE: number;
@@ -146,7 +146,7 @@ export class Mosaic {
     set amount(value: Amount);
     get amount(): Amount;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -167,7 +167,7 @@ export class UnresolvedMosaic {
     set amount(value: Amount);
     get amount(): Amount;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -184,7 +184,7 @@ export class LinkAction {
     constructor(value: any);
     value: any;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }
@@ -198,7 +198,7 @@ export class NetworkType {
     constructor(value: any);
     value: any;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }
@@ -235,7 +235,7 @@ export class TransactionType {
     constructor(value: any);
     value: any;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }
@@ -274,7 +274,7 @@ export class Transaction {
     set deadline(value: Timestamp);
     get deadline(): Timestamp;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     _serialize(buffer: any): void;
     toString(): string;
     /**
@@ -305,7 +305,7 @@ export class EmbeddedTransaction {
     set type(value: TransactionType);
     get type(): TransactionType;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     _serialize(buffer: any): void;
     toString(): string;
     /**
@@ -345,7 +345,7 @@ export class BlockType {
     constructor(value: any);
     value: any;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }
@@ -367,7 +367,7 @@ export class VrfProof {
     set scalar(value: ProofScalar);
     get scalar(): ProofScalar;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -441,7 +441,7 @@ export class Block {
     set feeMultiplier(value: BlockFeeMultiplier);
     get feeMultiplier(): BlockFeeMultiplier;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     _serialize(buffer: any): void;
     toString(): string;
     /**
@@ -567,7 +567,7 @@ export class FinalizationRound {
     set point(value: FinalizationPoint);
     get point(): FinalizationPoint;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -592,7 +592,7 @@ export class FinalizedBlockHeader {
     set hash(value: Hash256);
     get hash(): Hash256;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -623,7 +623,7 @@ export class ReceiptType {
     constructor(value: any);
     value: any;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }
@@ -641,7 +641,7 @@ export class Receipt {
     set type(value: ReceiptType);
     get type(): ReceiptType;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     _serialize(buffer: any): void;
     toString(): string;
     /**
@@ -810,7 +810,7 @@ export class NamespaceId extends BaseValue {
     static deserialize(payload: any): NamespaceId;
     static deserializeAligned(payload: any): NamespaceId;
     constructor(namespaceId?: bigint);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class NamespaceRegistrationType {
     static ROOT: NamespaceRegistrationType;
@@ -822,7 +822,7 @@ export class NamespaceRegistrationType {
     constructor(value: any);
     value: any;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }
@@ -836,7 +836,7 @@ export class AliasAction {
     constructor(value: any);
     value: any;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }
@@ -895,7 +895,7 @@ export class ReceiptSource {
     set secondaryId(value: number);
     get secondaryId(): number;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -916,7 +916,7 @@ export class AddressResolutionEntry {
     set resolvedValue(value: Address);
     get resolvedValue(): Address;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -937,7 +937,7 @@ export class AddressResolutionStatement {
     set resolutionEntries(value: any[]);
     get resolutionEntries(): any[];
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -958,7 +958,7 @@ export class MosaicResolutionEntry {
     set resolvedValue(value: MosaicId);
     get resolvedValue(): MosaicId;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -979,7 +979,7 @@ export class MosaicResolutionStatement {
     set resolutionEntries(value: any[]);
     get resolutionEntries(): any[];
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -1002,7 +1002,7 @@ export class TransactionStatement {
     set receipts(value: any[]);
     get receipts(): any[];
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -1027,7 +1027,7 @@ export class BlockStatement {
     set mosaicResolutionStatements(value: any[]);
     get mosaicResolutionStatements(): any[];
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -1129,7 +1129,7 @@ export class Cosignature {
     set signature(value: Signature);
     get signature(): Signature;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -1157,7 +1157,7 @@ export class DetachedCosignature {
     set parentHash(value: Hash256);
     get parentHash(): Hash256;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     /**
      * @returns {object} JSON-safe representation of this object.
@@ -1472,7 +1472,7 @@ export class LockHashAlgorithm {
     constructor(value: any);
     value: any;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }
@@ -1768,7 +1768,7 @@ export class MosaicNonce extends BaseValue {
     static deserialize(payload: any): MosaicNonce;
     static deserializeAligned(payload: any): MosaicNonce;
     constructor(mosaicNonce?: number);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class MosaicFlags {
     static NONE: MosaicFlags;
@@ -1782,7 +1782,7 @@ export class MosaicFlags {
     value: any;
     has(flag: any): boolean;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }
@@ -1796,7 +1796,7 @@ export class MosaicSupplyChangeAction {
     constructor(value: any);
     value: any;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }
@@ -2169,7 +2169,7 @@ export class AccountRestrictionFlags {
     value: any;
     has(flag: any): boolean;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }
@@ -2382,7 +2382,7 @@ export class MosaicRestrictionKey extends BaseValue {
     static deserialize(payload: any): MosaicRestrictionKey;
     static deserializeAligned(payload: any): MosaicRestrictionKey;
     constructor(mosaicRestrictionKey?: bigint);
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
 }
 export class MosaicRestrictionType {
     static NONE: MosaicRestrictionType;
@@ -2399,7 +2399,7 @@ export class MosaicRestrictionType {
     constructor(value: any);
     value: any;
     get size(): number;
-    serialize(): any;
+    serialize(): Uint8Array<ArrayBufferLike>;
     toString(): string;
     toJson(): any;
 }

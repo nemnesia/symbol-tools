@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "../src/*.js": ["./types/*.d.ts"]
+    }
+  },
+  "include": ["test", "types"],
+  "exclude": ["src"]
+}
