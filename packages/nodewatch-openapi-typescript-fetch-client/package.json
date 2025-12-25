@@ -1,5 +1,5 @@
 {
-  "name": "@nemnesia/nodewatch-openapi-fetch-client",
+  "name": "@nemnesia/nodewatch-openapi-typescript-fetch-client",
   "version": "1.0.1",
   "description": "OpenAPI client for nodewatch-openapi-typescript-fetch-client",
   "keywords": [

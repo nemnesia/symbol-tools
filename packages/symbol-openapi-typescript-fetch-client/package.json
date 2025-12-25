@@ -1,6 +1,6 @@
 {
-  "name": "@nemnesia/symbol-openapi-fetch-client",
-  "description": "OpenAPI client for symbol-openapi-fetch-client",
+  "name": "@nemnesia/symbol-openapi-typescript-fetch-client",
+  "description": "OpenAPI client for symbol-openapi-typescript-fetch-client",
   "version": "1.0.0",
   "author": "The Symbol Syndicate",
   "contributors": [
