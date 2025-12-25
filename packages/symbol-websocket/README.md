@@ -12,13 +12,13 @@ Symbol WebSocket は、Symbol ブロックチェーンのリアルタイムデ�
 ## インストール
 
 ```bash
-npm install nem-symbol-websocket-monitor
+npm install @nemnesia/symbol-websocket
 ```
 
 ## 使用方法
 
 ```typescript
-import { SymbolWebSocketMonitor } from 'nem-symbol-websocket-monitor';
+import { SymbolWebSocketMonitor } from '@nemnesia/symbol-websocket';
 
 const monitor = new SymbolWebSocketMonitor({
   host: 'localhost',
