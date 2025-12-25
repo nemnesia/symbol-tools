@@ -7,10 +7,10 @@
 			"path": "packages/symbol-catbuffer"
 		},
 		{
-			"path": "packages/symbol-openapi-fetch-client"
+			"path": "packages/symbol-openapi-typescript-fetch-client"
 		},
 		{
-			"path": "packages/nodewatch-openapi-fetch-client"
+			"path": "packages/nodewatch-openapi-typescript-fetch-client"
 		}
 	],
 	"settings": {}
