@@ -1,0 +1,65 @@
+{
+  "name": "@nemnesia/symbol-announcer",
+  "version": "0.1.0",
+  "description": "SymbolブロックチェーンへトランザクションをアナウンスするためのTypeScriptライブラリ",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "symbol",
+    "blockchain",
+    "nem",
+    "transaction",
+    "announcer",
+    "websocket",
+    "typescript"
+  ],
+  "author": "harvestasya",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harvestasya/symbol-tools.git",
+    "directory": "packages/symbol-announcer"
+  },
+  "homepage": "https://github.com/harvestasya/symbol-tools/tree/main/packages/symbol-announcer#readme",
+  "bugs": {
+    "url": "https://github.com/harvestasya/symbol-tools/issues"
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "lint": "eslint \"{src,test,e2e}/**/*.ts\" --fix",
+    "format": "prettier --write \"{src,test,e2e}/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:ui": "vitest --ui --coverage",
+    "prepublishOnly": "pnpm run build && pnpm test",
+    "publish:dryrun": "npm publish --dry-run",
+    "publish:release": "npm run build && npm publish"
+  },
+  "dependencies": {
+    "@nemnesia/symbol-websocket": "workspace:*"
+  },
+  "peerDependencies": {
+    "@nemnesia/symbol-websocket": ">=0.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "volta": {
+    "node": "20.19.5"
+  }
+}

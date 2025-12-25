@@ -34,5 +34,8 @@
   },
   "volta": {
     "node": "20.19.6"
+  },
+  "dependencies": {
+    "symbol-sdk": "^3.3.0"
   }
 }

@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      symbol-sdk:
+        specifier: ^3.3.0
+        version: 3.3.0(bitcore-lib@10.10.7)
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.2
@@ -144,11 +148,17 @@ importers:
 
   packages/nodewatch-openapi-typescript-fetch-client: {}
 
+  packages/symbol-announcer:
+    dependencies:
+      '@nemnesia/symbol-websocket':
+        specifier: workspace:*
+        version: link:../symbol-websocket
+
   packages/symbol-catbuffer: {}
 
   packages/symbol-openapi-typescript-fetch-client: {}
 
-  packages/symbol-websocket-monitor:
+  packages/symbol-websocket:
     dependencies:
       '@stomp/stompjs':
         specifier: ^7.2.1
