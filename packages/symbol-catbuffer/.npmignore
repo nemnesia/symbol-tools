@@ -1,5 +1,0 @@
-scripts/
-test/
-*.log
-.DS_Store
-tsconfig.json
