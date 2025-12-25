@@ -1,0 +1,79 @@
+{
+  "name": "nem-symbol-node-picker",
+  "version": "1.1.0",
+  "description": "A lightweight Node.js package for picking random NEM and Symbol blockchain nodes from NodeWatch API",
+  "keywords": [
+    "nem",
+    "symbol",
+    "nodewatch",
+    "blockchain",
+    "node",
+    "picker",
+    "nodejs"
+  ],
+  "author": "ccHarvestasya",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nemnesia/nem-symbol-node-picker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nemnesia/nem-symbol-node-picker/issues"
+  },
+  "homepage": "https://github.com/nemnesia/nem-symbol-node-picker#readme",
+  "type": "module",
+  "main": "dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    "import": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/esm/index.js"
+    },
+    "require": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/cjs/index.js"
+    },
+    "default": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/esm/index.js"
+    }
+  },
+  "unpkg": "./dist/umd/index.js",
+  "browser": "./dist/umd/index.js",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "lint": "eslint \"{src,test,e2e}/**/*.ts\" --fix",
+    "format": "prettier --write \"{src,test,e2e}/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:ui": "vitest --ui --coverage",
+    "test:e2e": "vitest run --dir e2e",
+    "test:e2e:watch": "vitest --watch --dir e2e",
+    "test:e2e:coverage": "vitest --coverage --dir e2e",
+    "test:e2e:coverage:ui": "vitest --ui --coverage --dir e2e",
+    "test:all": "vitest run",
+    "publish:dryrun": "npm publish --dry-run",
+    "publish:release": "npm run build && npm publish",
+    "install:local-module": "yarn add @nemnesia/nodewatch-openapi-typescript-fetch-client@portal:../../nodewatch-openapi-fetch-client/typescript"
+  },
+  "dependencies": {
+    "@nemnesia/nodewatch-openapi-typescript-fetch-client": "^1.0.1"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "volta": {
+    "node": "20.19.5",
+    "yarn": "4.12.0"
+  }
+}
