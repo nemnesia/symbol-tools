@@ -1,6 +1,17 @@
 {
   "name": "@nemnesia/nodewatch-openapi-fetch-client",
-  "description": "OpenAPI client for nodewatch-openapi-fetch-client",
+  "version": "1.0.1",
+  "description": "OpenAPI client for nodewatch-openapi-typescript-fetch-client",
+  "keywords": [
+    "nem",
+    "symbol",
+    "nodewatch",
+    "openapi",
+    "typescript",
+    "fetch",
+    "client",
+    "blockchain"
+  ],
   "author": "The Symbol Syndicate",
   "contributors": [
     {
@@ -11,7 +22,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nemnesia/nodewatch-openapi-fetch-client.git"
+    "url": "https://github.com/nemnesia/symbol-tools/tree/main/packages/nodewatch-openapi-fetch-client"
   },
   "scripts": {
     "build": "tsup",
