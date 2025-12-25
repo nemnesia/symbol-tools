@@ -1,8 +1,5 @@
-export * from "./BaseValue.js";
-export * from "./BufferView.js";
-export * from "./ByteArray.js";
-export * from "./CryptoTypes.js";
-export * from "./Writer.js";
-export * from "./arrayHelpers.js";
-export * from "./charMapping.js";
-export * from "./converter.js";
+export * as BaseValue from "./BaseValue.js";
+export * as ByteArray from "./ByteArray.js";
+export { deepCompare } from "./utils/arrayHelpers.js";
+export { bytesToBigInt, bytesToInt, hexToUint8, intToBytes, isHexString, tryParseUint, uint8ToHex } from "./utils/converter.js";
+export { Hash256, PrivateKey, PublicKey, SharedKey256, Signature } from "./CryptoTypes.js";

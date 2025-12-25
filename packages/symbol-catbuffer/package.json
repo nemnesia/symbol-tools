@@ -38,12 +38,12 @@
   "exports": {
     ".": {
       "import": "./src/index.js",
-      "types": "./ts/src/index.d.ts",
+      "types": "./types/index.d.ts",
       "default": "./src/index.js"
     },
     "./symbol": {
       "import": "./src/symbol/index.js",
-      "types": "./ts/src/symbol/index.d.ts",
+      "types": "./types/symbol/index.d.ts",
       "default": "./src/symbol/index.js"
     }
   },
