@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "packages/nodewatch-openapi-typescript-fetch-client"
+		},
+		{
+			"path": "packages/symbol-websocket-monitor"
 		}
 	],
 	"settings": {}
