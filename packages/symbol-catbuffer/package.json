@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nemnesia/symbol-tools.git",
+    "url": "git+https://github.com/nemnesia/symbol-tools.git",
     "directory": "packages/symbol-catbuffer"
   },
   "license": "MIT",
@@ -34,7 +34,7 @@
   ],
   "type": "module",
   "main": "./src/index.js",
-  "types": "./ts/src/index.d.ts",
+  "types": "./types/index.d.ts",
   "exports": {
     ".": {
       "import": "./src/index.js",
@@ -50,6 +50,7 @@
   "scripts": {
     "copy:models": "bash ./scripts/copy_models.sh",
     "test": "vitest run",
+    "prepublishOnly": "npm test",
     "publish:dryrun": "npm publish --dry-run",
     "publish:release": "npm publish"
   },
