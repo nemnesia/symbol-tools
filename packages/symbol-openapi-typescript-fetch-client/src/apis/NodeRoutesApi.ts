@@ -15,9 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-import * as runtime from '../runtime.js';
 import type {
   NodeHealthInfoDTO,
   NodeInfoDTO,
@@ -27,240 +24,267 @@ import type {
   UnlockedAccountDTO,
 } from '../models/index.js';
 import {
-    NodeHealthInfoDTOFromJSON,
-    NodeHealthInfoDTOToJSON,
-    NodeInfoDTOFromJSON,
-    NodeInfoDTOToJSON,
-    NodeTimeDTOFromJSON,
-    NodeTimeDTOToJSON,
-    ServerInfoDTOFromJSON,
-    ServerInfoDTOToJSON,
-    StorageInfoDTOFromJSON,
-    StorageInfoDTOToJSON,
-    UnlockedAccountDTOFromJSON,
-    UnlockedAccountDTOToJSON,
+  NodeHealthInfoDTOFromJSON,
+  NodeHealthInfoDTOToJSON,
+  NodeInfoDTOFromJSON,
+  NodeInfoDTOToJSON,
+  NodeTimeDTOFromJSON,
+  NodeTimeDTOToJSON,
+  ServerInfoDTOFromJSON,
+  ServerInfoDTOToJSON,
+  StorageInfoDTOFromJSON,
+  StorageInfoDTOToJSON,
+  UnlockedAccountDTOFromJSON,
+  UnlockedAccountDTOToJSON,
 } from '../models/index.js';
+import * as runtime from '../runtime.js';
 
 /**
- * 
+ *
  */
 export class NodeRoutesApi extends runtime.BaseAPI {
+  /**
+   * Supplies information regarding the connection and services status.
+   * Get the node health information
+   */
+  async getNodeHealthRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<NodeHealthInfoDTO>> {
+    const queryParameters: any = {};
 
-    /**
-     * Supplies information regarding the connection and services status.
-     * Get the node health information
-     */
-    async getNodeHealthRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NodeHealthInfoDTO>> {
-        const queryParameters: any = {};
+    const headerParameters: runtime.HTTPHeaders = {};
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    let urlPath = `/node/health`;
 
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides
+    );
 
-        let urlPath = `/node/health`;
+    return new runtime.JSONApiResponse(response, (jsonValue) => NodeHealthInfoDTOFromJSON(jsonValue));
+  }
 
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+  /**
+   * Supplies information regarding the connection and services status.
+   * Get the node health information
+   */
+  async getNodeHealth(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NodeHealthInfoDTO> {
+    const response = await this.getNodeHealthRaw(initOverrides);
+    return await response.value();
+  }
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => NodeHealthInfoDTOFromJSON(jsonValue));
-    }
+  /**
+   * Supplies additional information about the application running on a node.
+   * Get the node information
+   */
+  async getNodeInfoRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<NodeInfoDTO>> {
+    const queryParameters: any = {};
 
-    /**
-     * Supplies information regarding the connection and services status.
-     * Get the node health information
-     */
-    async getNodeHealth(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NodeHealthInfoDTO> {
-        const response = await this.getNodeHealthRaw(initOverrides);
-        return await response.value();
-    }
+    const headerParameters: runtime.HTTPHeaders = {};
 
-    /**
-     * Supplies additional information about the application running on a node.
-     * Get the node information
-     */
-    async getNodeInfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NodeInfoDTO>> {
-        const queryParameters: any = {};
+    let urlPath = `/node/info`;
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides
+    );
 
+    return new runtime.JSONApiResponse(response, (jsonValue) => NodeInfoDTOFromJSON(jsonValue));
+  }
 
-        let urlPath = `/node/info`;
+  /**
+   * Supplies additional information about the application running on a node.
+   * Get the node information
+   */
+  async getNodeInfo(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NodeInfoDTO> {
+    const response = await this.getNodeInfoRaw(initOverrides);
+    return await response.value();
+  }
 
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+  /**
+   * Gets the list of peers visible by the node.
+   * Get peers information
+   */
+  async getNodePeersRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<Array<NodeInfoDTO>>> {
+    const queryParameters: any = {};
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => NodeInfoDTOFromJSON(jsonValue));
-    }
+    const headerParameters: runtime.HTTPHeaders = {};
 
-    /**
-     * Supplies additional information about the application running on a node.
-     * Get the node information
-     */
-    async getNodeInfo(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NodeInfoDTO> {
-        const response = await this.getNodeInfoRaw(initOverrides);
-        return await response.value();
-    }
+    let urlPath = `/node/peers`;
 
-    /**
-     * Gets the list of peers visible by the node.
-     * Get peers information
-     */
-    async getNodePeersRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NodeInfoDTO>>> {
-        const queryParameters: any = {};
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides
+    );
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NodeInfoDTOFromJSON));
+  }
 
+  /**
+   * Gets the list of peers visible by the node.
+   * Get peers information
+   */
+  async getNodePeers(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<NodeInfoDTO>> {
+    const response = await this.getNodePeersRaw(initOverrides);
+    return await response.value();
+  }
 
-        let urlPath = `/node/peers`;
+  /**
+   * Returns storage information about the node.
+   * Get the storage information of the node
+   */
+  async getNodeStorageRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<StorageInfoDTO>> {
+    const queryParameters: any = {};
 
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+    const headerParameters: runtime.HTTPHeaders = {};
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NodeInfoDTOFromJSON));
-    }
+    let urlPath = `/node/storage`;
 
-    /**
-     * Gets the list of peers visible by the node.
-     * Get peers information
-     */
-    async getNodePeers(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<NodeInfoDTO>> {
-        const response = await this.getNodePeersRaw(initOverrides);
-        return await response.value();
-    }
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides
+    );
 
-    /**
-     * Returns storage information about the node.
-     * Get the storage information of the node
-     */
-    async getNodeStorageRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StorageInfoDTO>> {
-        const queryParameters: any = {};
+    return new runtime.JSONApiResponse(response, (jsonValue) => StorageInfoDTOFromJSON(jsonValue));
+  }
 
-        const headerParameters: runtime.HTTPHeaders = {};
+  /**
+   * Returns storage information about the node.
+   * Get the storage information of the node
+   */
+  async getNodeStorage(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StorageInfoDTO> {
+    const response = await this.getNodeStorageRaw(initOverrides);
+    return await response.value();
+  }
 
+  /**
+   * Gets the node time at the moment the reply was sent and received.
+   * Get the node time
+   */
+  async getNodeTimeRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<NodeTimeDTO>> {
+    const queryParameters: any = {};
 
-        let urlPath = `/node/storage`;
+    const headerParameters: runtime.HTTPHeaders = {};
 
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+    let urlPath = `/node/time`;
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => StorageInfoDTOFromJSON(jsonValue));
-    }
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides
+    );
 
-    /**
-     * Returns storage information about the node.
-     * Get the storage information of the node
-     */
-    async getNodeStorage(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StorageInfoDTO> {
-        const response = await this.getNodeStorageRaw(initOverrides);
-        return await response.value();
-    }
+    return new runtime.JSONApiResponse(response, (jsonValue) => NodeTimeDTOFromJSON(jsonValue));
+  }
 
-    /**
-     * Gets the node time at the moment the reply was sent and received.
-     * Get the node time
-     */
-    async getNodeTimeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NodeTimeDTO>> {
-        const queryParameters: any = {};
+  /**
+   * Gets the node time at the moment the reply was sent and received.
+   * Get the node time
+   */
+  async getNodeTime(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NodeTimeDTO> {
+    const response = await this.getNodeTimeRaw(initOverrides);
+    return await response.value();
+  }
 
-        const headerParameters: runtime.HTTPHeaders = {};
+  /**
+   * Returns the version of the running catapult-rest component.
+   * Get the version of the running REST component
+   */
+  async getServerInfoRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<ServerInfoDTO>> {
+    const queryParameters: any = {};
 
+    const headerParameters: runtime.HTTPHeaders = {};
 
-        let urlPath = `/node/time`;
+    let urlPath = `/node/server`;
 
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides
+    );
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => NodeTimeDTOFromJSON(jsonValue));
-    }
+    return new runtime.JSONApiResponse(response, (jsonValue) => ServerInfoDTOFromJSON(jsonValue));
+  }
 
-    /**
-     * Gets the node time at the moment the reply was sent and received.
-     * Get the node time
-     */
-    async getNodeTime(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NodeTimeDTO> {
-        const response = await this.getNodeTimeRaw(initOverrides);
-        return await response.value();
-    }
+  /**
+   * Returns the version of the running catapult-rest component.
+   * Get the version of the running REST component
+   */
+  async getServerInfo(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ServerInfoDTO> {
+    const response = await this.getServerInfoRaw(initOverrides);
+    return await response.value();
+  }
 
-    /**
-     * Returns the version of the running catapult-rest component.
-     * Get the version of the running REST component
-     */
-    async getServerInfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ServerInfoDTO>> {
-        const queryParameters: any = {};
+  /**
+   * Returns array of unlocked account public keys.
+   * Get the unlocked harvesting account public keys.
+   */
+  async getUnlockedAccountRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<UnlockedAccountDTO>> {
+    const queryParameters: any = {};
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    const headerParameters: runtime.HTTPHeaders = {};
 
+    let urlPath = `/node/unlockedaccount`;
 
-        let urlPath = `/node/server`;
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides
+    );
 
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+    return new runtime.JSONApiResponse(response, (jsonValue) => UnlockedAccountDTOFromJSON(jsonValue));
+  }
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ServerInfoDTOFromJSON(jsonValue));
-    }
-
-    /**
-     * Returns the version of the running catapult-rest component.
-     * Get the version of the running REST component
-     */
-    async getServerInfo(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ServerInfoDTO> {
-        const response = await this.getServerInfoRaw(initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Returns array of unlocked account public keys.
-     * Get the unlocked harvesting account public keys.
-     */
-    async getUnlockedAccountRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UnlockedAccountDTO>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-
-        let urlPath = `/node/unlockedaccount`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => UnlockedAccountDTOFromJSON(jsonValue));
-    }
-
-    /**
-     * Returns array of unlocked account public keys.
-     * Get the unlocked harvesting account public keys.
-     */
-    async getUnlockedAccount(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UnlockedAccountDTO> {
-        const response = await this.getUnlockedAccountRaw(initOverrides);
-        return await response.value();
-    }
-
+  /**
+   * Returns array of unlocked account public keys.
+   * Get the unlocked harvesting account public keys.
+   */
+  async getUnlockedAccount(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UnlockedAccountDTO> {
+    const response = await this.getUnlockedAccountRaw(initOverrides);
+    return await response.value();
+  }
 }

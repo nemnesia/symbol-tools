@@ -15,55 +15,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface MetadataNetworkPropertiesDTO
  */
 export interface MetadataNetworkPropertiesDTO {
-    /**
-     * Maximum metadata value size.
-     * @type {string}
-     * @memberof MetadataNetworkPropertiesDTO
-     */
-    maxValueSize?: string;
+  /**
+   * Maximum metadata value size.
+   * @type {string}
+   * @memberof MetadataNetworkPropertiesDTO
+   */
+  maxValueSize?: string;
 }
 
 /**
  * Check if a given object implements the MetadataNetworkPropertiesDTO interface.
  */
 export function instanceOfMetadataNetworkPropertiesDTO(value: object): value is MetadataNetworkPropertiesDTO {
-    return true;
+  return true;
 }
 
 export function MetadataNetworkPropertiesDTOFromJSON(json: any): MetadataNetworkPropertiesDTO {
-    return MetadataNetworkPropertiesDTOFromJSONTyped(json, false);
+  return MetadataNetworkPropertiesDTOFromJSONTyped(json, false);
 }
 
-export function MetadataNetworkPropertiesDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): MetadataNetworkPropertiesDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'maxValueSize': json['maxValueSize'] == null ? undefined : json['maxValueSize'],
-    };
+export function MetadataNetworkPropertiesDTOFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): MetadataNetworkPropertiesDTO {
+  if (json == null) {
+    return json;
+  }
+  return {
+    maxValueSize: json['maxValueSize'] == null ? undefined : json['maxValueSize'],
+  };
 }
 
 export function MetadataNetworkPropertiesDTOToJSON(json: any): MetadataNetworkPropertiesDTO {
-    return MetadataNetworkPropertiesDTOToJSONTyped(json, false);
+  return MetadataNetworkPropertiesDTOToJSONTyped(json, false);
 }
 
-export function MetadataNetworkPropertiesDTOToJSONTyped(value?: MetadataNetworkPropertiesDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function MetadataNetworkPropertiesDTOToJSONTyped(
+  value?: MetadataNetworkPropertiesDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'maxValueSize': value['maxValueSize'],
-    };
+  return {
+    maxValueSize: value['maxValueSize'],
+  };
 }
-

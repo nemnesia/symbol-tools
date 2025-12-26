@@ -15,73 +15,69 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
 import type { ParentPublicKeySignaturePair } from './ParentPublicKeySignaturePair.js';
 import {
-    ParentPublicKeySignaturePairFromJSON,
-    ParentPublicKeySignaturePairFromJSONTyped,
-    ParentPublicKeySignaturePairToJSON,
-    ParentPublicKeySignaturePairToJSONTyped,
+  ParentPublicKeySignaturePairFromJSON,
+  ParentPublicKeySignaturePairFromJSONTyped,
+  ParentPublicKeySignaturePairToJSON,
+  ParentPublicKeySignaturePairToJSONTyped,
 } from './ParentPublicKeySignaturePair.js';
 
 /**
- * 
+ *
  * @export
  * @interface BmTreeSignature
  */
 export interface BmTreeSignature {
-    /**
-     * 
-     * @type {ParentPublicKeySignaturePair}
-     * @memberof BmTreeSignature
-     */
-    root: ParentPublicKeySignaturePair;
-    /**
-     * 
-     * @type {ParentPublicKeySignaturePair}
-     * @memberof BmTreeSignature
-     */
-    bottom: ParentPublicKeySignaturePair;
+  /**
+   *
+   * @type {ParentPublicKeySignaturePair}
+   * @memberof BmTreeSignature
+   */
+  root: ParentPublicKeySignaturePair;
+  /**
+   *
+   * @type {ParentPublicKeySignaturePair}
+   * @memberof BmTreeSignature
+   */
+  bottom: ParentPublicKeySignaturePair;
 }
 
 /**
  * Check if a given object implements the BmTreeSignature interface.
  */
 export function instanceOfBmTreeSignature(value: object): value is BmTreeSignature {
-    if (!('root' in value) || value['root'] === undefined) return false;
-    if (!('bottom' in value) || value['bottom'] === undefined) return false;
-    return true;
+  if (!('root' in value) || value['root'] === undefined) return false;
+  if (!('bottom' in value) || value['bottom'] === undefined) return false;
+  return true;
 }
 
 export function BmTreeSignatureFromJSON(json: any): BmTreeSignature {
-    return BmTreeSignatureFromJSONTyped(json, false);
+  return BmTreeSignatureFromJSONTyped(json, false);
 }
 
 export function BmTreeSignatureFromJSONTyped(json: any, ignoreDiscriminator: boolean): BmTreeSignature {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'root': ParentPublicKeySignaturePairFromJSON(json['root']),
-        'bottom': ParentPublicKeySignaturePairFromJSON(json['bottom']),
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    root: ParentPublicKeySignaturePairFromJSON(json['root']),
+    bottom: ParentPublicKeySignaturePairFromJSON(json['bottom']),
+  };
 }
 
 export function BmTreeSignatureToJSON(json: any): BmTreeSignature {
-    return BmTreeSignatureToJSONTyped(json, false);
+  return BmTreeSignatureToJSONTyped(json, false);
 }
 
 export function BmTreeSignatureToJSONTyped(value?: BmTreeSignature | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'root': ParentPublicKeySignaturePairToJSON(value['root']),
-        'bottom': ParentPublicKeySignaturePairToJSON(value['bottom']),
-    };
+  return {
+    root: ParentPublicKeySignaturePairToJSON(value['root']),
+    bottom: ParentPublicKeySignaturePairToJSON(value['bottom']),
+  };
 }
-

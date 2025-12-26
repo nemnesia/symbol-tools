@@ -15,55 +15,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface VrfKeyLinkNetworkPropertiesDTO
  */
 export interface VrfKeyLinkNetworkPropertiesDTO {
-    /**
-     * to trigger plugin load
-     * @type {string}
-     * @memberof VrfKeyLinkNetworkPropertiesDTO
-     */
-    dummy?: string;
+  /**
+   * to trigger plugin load
+   * @type {string}
+   * @memberof VrfKeyLinkNetworkPropertiesDTO
+   */
+  dummy?: string;
 }
 
 /**
  * Check if a given object implements the VrfKeyLinkNetworkPropertiesDTO interface.
  */
 export function instanceOfVrfKeyLinkNetworkPropertiesDTO(value: object): value is VrfKeyLinkNetworkPropertiesDTO {
-    return true;
+  return true;
 }
 
 export function VrfKeyLinkNetworkPropertiesDTOFromJSON(json: any): VrfKeyLinkNetworkPropertiesDTO {
-    return VrfKeyLinkNetworkPropertiesDTOFromJSONTyped(json, false);
+  return VrfKeyLinkNetworkPropertiesDTOFromJSONTyped(json, false);
 }
 
-export function VrfKeyLinkNetworkPropertiesDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): VrfKeyLinkNetworkPropertiesDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'dummy': json['dummy'] == null ? undefined : json['dummy'],
-    };
+export function VrfKeyLinkNetworkPropertiesDTOFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): VrfKeyLinkNetworkPropertiesDTO {
+  if (json == null) {
+    return json;
+  }
+  return {
+    dummy: json['dummy'] == null ? undefined : json['dummy'],
+  };
 }
 
 export function VrfKeyLinkNetworkPropertiesDTOToJSON(json: any): VrfKeyLinkNetworkPropertiesDTO {
-    return VrfKeyLinkNetworkPropertiesDTOToJSONTyped(json, false);
+  return VrfKeyLinkNetworkPropertiesDTOToJSONTyped(json, false);
 }
 
-export function VrfKeyLinkNetworkPropertiesDTOToJSONTyped(value?: VrfKeyLinkNetworkPropertiesDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function VrfKeyLinkNetworkPropertiesDTOToJSONTyped(
+  value?: VrfKeyLinkNetworkPropertiesDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'dummy': value['dummy'],
-    };
+  return {
+    dummy: value['dummy'],
+  };
 }
-

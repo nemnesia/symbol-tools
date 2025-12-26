@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 /**
  * A transaction could be classified in the following groups:
  * * Unconfirmed: The transaction reached the P2P network.
@@ -24,42 +23,40 @@
  * * Confirmed: The transaction is included in a block.
  * * Partial: The transaction requires to be cosigned by other transaction participants in order to be included in a block.
  * * Failed: The transaction did not pass the network validation, and it was rejected.
- * 
+ *
  * @export
  */
 export const TransactionGroupEnum = {
-    Unconfirmed: 'unconfirmed',
-    Confirmed: 'confirmed',
-    Failed: 'failed',
-    Partial: 'partial'
+  Unconfirmed: 'unconfirmed',
+  Confirmed: 'confirmed',
+  Failed: 'failed',
+  Partial: 'partial',
 } as const;
-export type TransactionGroupEnum = typeof TransactionGroupEnum[keyof typeof TransactionGroupEnum];
-
+export type TransactionGroupEnum = (typeof TransactionGroupEnum)[keyof typeof TransactionGroupEnum];
 
 export function instanceOfTransactionGroupEnum(value: any): boolean {
-    for (const key in TransactionGroupEnum) {
-        if (Object.prototype.hasOwnProperty.call(TransactionGroupEnum, key)) {
-            if (TransactionGroupEnum[key as keyof typeof TransactionGroupEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in TransactionGroupEnum) {
+    if (Object.prototype.hasOwnProperty.call(TransactionGroupEnum, key)) {
+      if (TransactionGroupEnum[key as keyof typeof TransactionGroupEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function TransactionGroupEnumFromJSON(json: any): TransactionGroupEnum {
-    return TransactionGroupEnumFromJSONTyped(json, false);
+  return TransactionGroupEnumFromJSONTyped(json, false);
 }
 
 export function TransactionGroupEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): TransactionGroupEnum {
-    return json as TransactionGroupEnum;
+  return json as TransactionGroupEnum;
 }
 
 export function TransactionGroupEnumToJSON(value?: TransactionGroupEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function TransactionGroupEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): TransactionGroupEnum {
-    return value as TransactionGroupEnum;
+  return value as TransactionGroupEnum;
 }
-

@@ -15,65 +15,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface NamespaceMetaDTO
  */
 export interface NamespaceMetaDTO {
-    /**
-     * If true, the namespace is active.
-     * @type {boolean}
-     * @memberof NamespaceMetaDTO
-     */
-    active: boolean;
-    /**
-     * 
-     * @type {number}
-     * @memberof NamespaceMetaDTO
-     */
-    index: number;
+  /**
+   * If true, the namespace is active.
+   * @type {boolean}
+   * @memberof NamespaceMetaDTO
+   */
+  active: boolean;
+  /**
+   *
+   * @type {number}
+   * @memberof NamespaceMetaDTO
+   */
+  index: number;
 }
 
 /**
  * Check if a given object implements the NamespaceMetaDTO interface.
  */
 export function instanceOfNamespaceMetaDTO(value: object): value is NamespaceMetaDTO {
-    if (!('active' in value) || value['active'] === undefined) return false;
-    if (!('index' in value) || value['index'] === undefined) return false;
-    return true;
+  if (!('active' in value) || value['active'] === undefined) return false;
+  if (!('index' in value) || value['index'] === undefined) return false;
+  return true;
 }
 
 export function NamespaceMetaDTOFromJSON(json: any): NamespaceMetaDTO {
-    return NamespaceMetaDTOFromJSONTyped(json, false);
+  return NamespaceMetaDTOFromJSONTyped(json, false);
 }
 
 export function NamespaceMetaDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): NamespaceMetaDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'active': json['active'],
-        'index': json['index'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    active: json['active'],
+    index: json['index'],
+  };
 }
 
 export function NamespaceMetaDTOToJSON(json: any): NamespaceMetaDTO {
-    return NamespaceMetaDTOToJSONTyped(json, false);
+  return NamespaceMetaDTOToJSONTyped(json, false);
 }
 
-export function NamespaceMetaDTOToJSONTyped(value?: NamespaceMetaDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function NamespaceMetaDTOToJSONTyped(
+  value?: NamespaceMetaDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'active': value['active'],
-        'index': value['index'],
-    };
+  return {
+    active: value['active'],
+    index: value['index'],
+  };
 }
-

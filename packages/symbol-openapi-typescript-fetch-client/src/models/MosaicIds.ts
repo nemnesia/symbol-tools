@@ -15,55 +15,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface MosaicIds
  */
 export interface MosaicIds {
-    /**
-     * Array of mosaic identifiers.
-     * @type {Array<string>}
-     * @memberof MosaicIds
-     */
-    mosaicIds?: Array<string>;
+  /**
+   * Array of mosaic identifiers.
+   * @type {Array<string>}
+   * @memberof MosaicIds
+   */
+  mosaicIds?: Array<string>;
 }
 
 /**
  * Check if a given object implements the MosaicIds interface.
  */
 export function instanceOfMosaicIds(value: object): value is MosaicIds {
-    return true;
+  return true;
 }
 
 export function MosaicIdsFromJSON(json: any): MosaicIds {
-    return MosaicIdsFromJSONTyped(json, false);
+  return MosaicIdsFromJSONTyped(json, false);
 }
 
 export function MosaicIdsFromJSONTyped(json: any, ignoreDiscriminator: boolean): MosaicIds {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'mosaicIds': json['mosaicIds'] == null ? undefined : json['mosaicIds'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    mosaicIds: json['mosaicIds'] == null ? undefined : json['mosaicIds'],
+  };
 }
 
 export function MosaicIdsToJSON(json: any): MosaicIds {
-    return MosaicIdsToJSONTyped(json, false);
+  return MosaicIdsToJSONTyped(json, false);
 }
 
 export function MosaicIdsToJSONTyped(value?: MosaicIds | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'mosaicIds': value['mosaicIds'],
-    };
+  return {
+    mosaicIds: value['mosaicIds'],
+  };
 }
-

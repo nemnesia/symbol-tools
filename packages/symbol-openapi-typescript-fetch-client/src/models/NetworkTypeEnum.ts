@@ -16,45 +16,42 @@
  * limitations under the License.
  */
 
-
 /**
  * Network type:
  * * 0x68 (104 decimal) - Main network.
  * * 0x98 (152 decimal) - Test network.
- * 
+ *
  * @export
  */
 export const NetworkTypeEnum = {
-    NUMBER_104: 104,
-    NUMBER_152: 152
+  NUMBER_104: 104,
+  NUMBER_152: 152,
 } as const;
-export type NetworkTypeEnum = typeof NetworkTypeEnum[keyof typeof NetworkTypeEnum];
-
+export type NetworkTypeEnum = (typeof NetworkTypeEnum)[keyof typeof NetworkTypeEnum];
 
 export function instanceOfNetworkTypeEnum(value: any): boolean {
-    for (const key in NetworkTypeEnum) {
-        if (Object.prototype.hasOwnProperty.call(NetworkTypeEnum, key)) {
-            if (NetworkTypeEnum[key as keyof typeof NetworkTypeEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in NetworkTypeEnum) {
+    if (Object.prototype.hasOwnProperty.call(NetworkTypeEnum, key)) {
+      if (NetworkTypeEnum[key as keyof typeof NetworkTypeEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function NetworkTypeEnumFromJSON(json: any): NetworkTypeEnum {
-    return NetworkTypeEnumFromJSONTyped(json, false);
+  return NetworkTypeEnumFromJSONTyped(json, false);
 }
 
 export function NetworkTypeEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): NetworkTypeEnum {
-    return json as NetworkTypeEnum;
+  return json as NetworkTypeEnum;
 }
 
 export function NetworkTypeEnumToJSON(value?: NetworkTypeEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function NetworkTypeEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): NetworkTypeEnum {
-    return value as NetworkTypeEnum;
+  return value as NetworkTypeEnum;
 }
-

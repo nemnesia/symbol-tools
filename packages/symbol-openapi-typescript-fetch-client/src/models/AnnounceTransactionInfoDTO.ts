@@ -15,56 +15,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface AnnounceTransactionInfoDTO
  */
 export interface AnnounceTransactionInfoDTO {
-    /**
-     * 
-     * @type {string}
-     * @memberof AnnounceTransactionInfoDTO
-     */
-    message: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AnnounceTransactionInfoDTO
+   */
+  message: string;
 }
 
 /**
  * Check if a given object implements the AnnounceTransactionInfoDTO interface.
  */
 export function instanceOfAnnounceTransactionInfoDTO(value: object): value is AnnounceTransactionInfoDTO {
-    if (!('message' in value) || value['message'] === undefined) return false;
-    return true;
+  if (!('message' in value) || value['message'] === undefined) return false;
+  return true;
 }
 
 export function AnnounceTransactionInfoDTOFromJSON(json: any): AnnounceTransactionInfoDTO {
-    return AnnounceTransactionInfoDTOFromJSONTyped(json, false);
+  return AnnounceTransactionInfoDTOFromJSONTyped(json, false);
 }
 
-export function AnnounceTransactionInfoDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): AnnounceTransactionInfoDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'message': json['message'],
-    };
+export function AnnounceTransactionInfoDTOFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): AnnounceTransactionInfoDTO {
+  if (json == null) {
+    return json;
+  }
+  return {
+    message: json['message'],
+  };
 }
 
 export function AnnounceTransactionInfoDTOToJSON(json: any): AnnounceTransactionInfoDTO {
-    return AnnounceTransactionInfoDTOToJSONTyped(json, false);
+  return AnnounceTransactionInfoDTOToJSONTyped(json, false);
 }
 
-export function AnnounceTransactionInfoDTOToJSONTyped(value?: AnnounceTransactionInfoDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function AnnounceTransactionInfoDTOToJSONTyped(
+  value?: AnnounceTransactionInfoDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'message': value['message'],
-    };
+  return {
+    message: value['message'],
+  };
 }
-

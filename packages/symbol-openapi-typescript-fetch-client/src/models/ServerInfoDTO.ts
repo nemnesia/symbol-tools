@@ -15,64 +15,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
 import type { ServerDTO } from './ServerDTO.js';
-import {
-    ServerDTOFromJSON,
-    ServerDTOFromJSONTyped,
-    ServerDTOToJSON,
-    ServerDTOToJSONTyped,
-} from './ServerDTO.js';
+import { ServerDTOFromJSON, ServerDTOFromJSONTyped, ServerDTOToJSON, ServerDTOToJSONTyped } from './ServerDTO.js';
 
 /**
- * 
+ *
  * @export
  * @interface ServerInfoDTO
  */
 export interface ServerInfoDTO {
-    /**
-     * 
-     * @type {ServerDTO}
-     * @memberof ServerInfoDTO
-     */
-    serverInfo: ServerDTO;
+  /**
+   *
+   * @type {ServerDTO}
+   * @memberof ServerInfoDTO
+   */
+  serverInfo: ServerDTO;
 }
 
 /**
  * Check if a given object implements the ServerInfoDTO interface.
  */
 export function instanceOfServerInfoDTO(value: object): value is ServerInfoDTO {
-    if (!('serverInfo' in value) || value['serverInfo'] === undefined) return false;
-    return true;
+  if (!('serverInfo' in value) || value['serverInfo'] === undefined) return false;
+  return true;
 }
 
 export function ServerInfoDTOFromJSON(json: any): ServerInfoDTO {
-    return ServerInfoDTOFromJSONTyped(json, false);
+  return ServerInfoDTOFromJSONTyped(json, false);
 }
 
 export function ServerInfoDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): ServerInfoDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'serverInfo': ServerDTOFromJSON(json['serverInfo']),
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    serverInfo: ServerDTOFromJSON(json['serverInfo']),
+  };
 }
 
 export function ServerInfoDTOToJSON(json: any): ServerInfoDTO {
-    return ServerInfoDTOToJSONTyped(json, false);
+  return ServerInfoDTOToJSONTyped(json, false);
 }
 
 export function ServerInfoDTOToJSONTyped(value?: ServerInfoDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'serverInfo': ServerDTOToJSON(value['serverInfo']),
-    };
+  return {
+    serverInfo: ServerDTOToJSON(value['serverInfo']),
+  };
 }
-

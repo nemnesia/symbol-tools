@@ -16,47 +16,44 @@
  * limitations under the License.
  */
 
-
 /**
  * Type of stage:
  * * 0 - Prevote.
  * * 1 - Precommit.
  * * 2 - Count.
- * 
+ *
  * @export
  */
 export const StageEnum = {
-    NUMBER_0: 0,
-    NUMBER_1: 1,
-    NUMBER_2: 2
+  NUMBER_0: 0,
+  NUMBER_1: 1,
+  NUMBER_2: 2,
 } as const;
-export type StageEnum = typeof StageEnum[keyof typeof StageEnum];
-
+export type StageEnum = (typeof StageEnum)[keyof typeof StageEnum];
 
 export function instanceOfStageEnum(value: any): boolean {
-    for (const key in StageEnum) {
-        if (Object.prototype.hasOwnProperty.call(StageEnum, key)) {
-            if (StageEnum[key as keyof typeof StageEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in StageEnum) {
+    if (Object.prototype.hasOwnProperty.call(StageEnum, key)) {
+      if (StageEnum[key as keyof typeof StageEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function StageEnumFromJSON(json: any): StageEnum {
-    return StageEnumFromJSONTyped(json, false);
+  return StageEnumFromJSONTyped(json, false);
 }
 
 export function StageEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): StageEnum {
-    return json as StageEnum;
+  return json as StageEnum;
 }
 
 export function StageEnumToJSON(value?: StageEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function StageEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): StageEnum {
-    return value as StageEnum;
+  return value as StageEnum;
 }
-

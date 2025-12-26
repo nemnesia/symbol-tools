@@ -15,55 +15,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface Addresses
  */
 export interface Addresses {
-    /**
-     * Array of addresses.
-     * @type {Array<string>}
-     * @memberof Addresses
-     */
-    addresses?: Array<string>;
+  /**
+   * Array of addresses.
+   * @type {Array<string>}
+   * @memberof Addresses
+   */
+  addresses?: Array<string>;
 }
 
 /**
  * Check if a given object implements the Addresses interface.
  */
 export function instanceOfAddresses(value: object): value is Addresses {
-    return true;
+  return true;
 }
 
 export function AddressesFromJSON(json: any): Addresses {
-    return AddressesFromJSONTyped(json, false);
+  return AddressesFromJSONTyped(json, false);
 }
 
 export function AddressesFromJSONTyped(json: any, ignoreDiscriminator: boolean): Addresses {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'addresses': json['addresses'] == null ? undefined : json['addresses'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    addresses: json['addresses'] == null ? undefined : json['addresses'],
+  };
 }
 
 export function AddressesToJSON(json: any): Addresses {
-    return AddressesToJSONTyped(json, false);
+  return AddressesToJSONTyped(json, false);
 }
 
 export function AddressesToJSONTyped(value?: Addresses | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'addresses': value['addresses'],
-    };
+  return {
+    addresses: value['addresses'],
+  };
 }
-

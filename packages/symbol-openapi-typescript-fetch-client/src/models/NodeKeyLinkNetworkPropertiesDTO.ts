@@ -15,55 +15,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface NodeKeyLinkNetworkPropertiesDTO
  */
 export interface NodeKeyLinkNetworkPropertiesDTO {
-    /**
-     * to trigger plugin load
-     * @type {string}
-     * @memberof NodeKeyLinkNetworkPropertiesDTO
-     */
-    dummy?: string;
+  /**
+   * to trigger plugin load
+   * @type {string}
+   * @memberof NodeKeyLinkNetworkPropertiesDTO
+   */
+  dummy?: string;
 }
 
 /**
  * Check if a given object implements the NodeKeyLinkNetworkPropertiesDTO interface.
  */
 export function instanceOfNodeKeyLinkNetworkPropertiesDTO(value: object): value is NodeKeyLinkNetworkPropertiesDTO {
-    return true;
+  return true;
 }
 
 export function NodeKeyLinkNetworkPropertiesDTOFromJSON(json: any): NodeKeyLinkNetworkPropertiesDTO {
-    return NodeKeyLinkNetworkPropertiesDTOFromJSONTyped(json, false);
+  return NodeKeyLinkNetworkPropertiesDTOFromJSONTyped(json, false);
 }
 
-export function NodeKeyLinkNetworkPropertiesDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): NodeKeyLinkNetworkPropertiesDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'dummy': json['dummy'] == null ? undefined : json['dummy'],
-    };
+export function NodeKeyLinkNetworkPropertiesDTOFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): NodeKeyLinkNetworkPropertiesDTO {
+  if (json == null) {
+    return json;
+  }
+  return {
+    dummy: json['dummy'] == null ? undefined : json['dummy'],
+  };
 }
 
 export function NodeKeyLinkNetworkPropertiesDTOToJSON(json: any): NodeKeyLinkNetworkPropertiesDTO {
-    return NodeKeyLinkNetworkPropertiesDTOToJSONTyped(json, false);
+  return NodeKeyLinkNetworkPropertiesDTOToJSONTyped(json, false);
 }
 
-export function NodeKeyLinkNetworkPropertiesDTOToJSONTyped(value?: NodeKeyLinkNetworkPropertiesDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function NodeKeyLinkNetworkPropertiesDTOToJSONTyped(
+  value?: NodeKeyLinkNetworkPropertiesDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'dummy': value['dummy'],
-    };
+  return {
+    dummy: value['dummy'],
+  };
 }
-

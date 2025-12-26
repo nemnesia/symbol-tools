@@ -16,45 +16,42 @@
  * limitations under the License.
  */
 
-
 /**
  * Type of action:
  * * 0 - Unlink.
  * * 1 - Link.
- * 
+ *
  * @export
  */
 export const LinkActionEnum = {
-    NUMBER_0: 0,
-    NUMBER_1: 1
+  NUMBER_0: 0,
+  NUMBER_1: 1,
 } as const;
-export type LinkActionEnum = typeof LinkActionEnum[keyof typeof LinkActionEnum];
-
+export type LinkActionEnum = (typeof LinkActionEnum)[keyof typeof LinkActionEnum];
 
 export function instanceOfLinkActionEnum(value: any): boolean {
-    for (const key in LinkActionEnum) {
-        if (Object.prototype.hasOwnProperty.call(LinkActionEnum, key)) {
-            if (LinkActionEnum[key as keyof typeof LinkActionEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in LinkActionEnum) {
+    if (Object.prototype.hasOwnProperty.call(LinkActionEnum, key)) {
+      if (LinkActionEnum[key as keyof typeof LinkActionEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function LinkActionEnumFromJSON(json: any): LinkActionEnum {
-    return LinkActionEnumFromJSONTyped(json, false);
+  return LinkActionEnumFromJSONTyped(json, false);
 }
 
 export function LinkActionEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): LinkActionEnum {
-    return json as LinkActionEnum;
+  return json as LinkActionEnum;
 }
 
 export function LinkActionEnumToJSON(value?: LinkActionEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function LinkActionEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): LinkActionEnum {
-    return value as LinkActionEnum;
+  return value as LinkActionEnum;
 }
-

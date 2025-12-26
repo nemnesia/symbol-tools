@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 /**
  * Type of account restriction:
  * * 0x0001 (1 decimal) - Allow only incoming transactions from a given address.
@@ -27,46 +26,51 @@
  * * 0x8002 (32770 decimal) - Block incoming transactions containing a given mosaic identifier.
  * * 0xC001 (49153 decimal) - Block outgoing transactions to a given address.
  * * 0xC004 (49156 decimal) - Block outgoing transactions with a given transaction type.
- * 
+ *
  * @export
  */
 export const AccountRestrictionFlagsEnum = {
-    NUMBER_1: 1,
-    NUMBER_2: 2,
-    NUMBER_16385: 16385,
-    NUMBER_16388: 16388,
-    NUMBER_32769: 32769,
-    NUMBER_32770: 32770,
-    NUMBER_49153: 49153,
-    NUMBER_49156: 49156
+  NUMBER_1: 1,
+  NUMBER_2: 2,
+  NUMBER_16385: 16385,
+  NUMBER_16388: 16388,
+  NUMBER_32769: 32769,
+  NUMBER_32770: 32770,
+  NUMBER_49153: 49153,
+  NUMBER_49156: 49156,
 } as const;
-export type AccountRestrictionFlagsEnum = typeof AccountRestrictionFlagsEnum[keyof typeof AccountRestrictionFlagsEnum];
-
+export type AccountRestrictionFlagsEnum =
+  (typeof AccountRestrictionFlagsEnum)[keyof typeof AccountRestrictionFlagsEnum];
 
 export function instanceOfAccountRestrictionFlagsEnum(value: any): boolean {
-    for (const key in AccountRestrictionFlagsEnum) {
-        if (Object.prototype.hasOwnProperty.call(AccountRestrictionFlagsEnum, key)) {
-            if (AccountRestrictionFlagsEnum[key as keyof typeof AccountRestrictionFlagsEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in AccountRestrictionFlagsEnum) {
+    if (Object.prototype.hasOwnProperty.call(AccountRestrictionFlagsEnum, key)) {
+      if (AccountRestrictionFlagsEnum[key as keyof typeof AccountRestrictionFlagsEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function AccountRestrictionFlagsEnumFromJSON(json: any): AccountRestrictionFlagsEnum {
-    return AccountRestrictionFlagsEnumFromJSONTyped(json, false);
+  return AccountRestrictionFlagsEnumFromJSONTyped(json, false);
 }
 
-export function AccountRestrictionFlagsEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): AccountRestrictionFlagsEnum {
-    return json as AccountRestrictionFlagsEnum;
+export function AccountRestrictionFlagsEnumFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): AccountRestrictionFlagsEnum {
+  return json as AccountRestrictionFlagsEnum;
 }
 
 export function AccountRestrictionFlagsEnumToJSON(value?: AccountRestrictionFlagsEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
-export function AccountRestrictionFlagsEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): AccountRestrictionFlagsEnum {
-    return value as AccountRestrictionFlagsEnum;
+export function AccountRestrictionFlagsEnumToJSONTyped(
+  value: any,
+  ignoreDiscriminator: boolean
+): AccountRestrictionFlagsEnum {
+  return value as AccountRestrictionFlagsEnum;
 }
-

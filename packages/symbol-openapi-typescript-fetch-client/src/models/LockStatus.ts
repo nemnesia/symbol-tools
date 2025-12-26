@@ -16,45 +16,42 @@
  * limitations under the License.
  */
 
-
 /**
  * Possible status of lock states:
  * * 0 - UNUSED.
  * * 1 - USED.
- * 
+ *
  * @export
  */
 export const LockStatus = {
-    NUMBER_0: 0,
-    NUMBER_1: 1
+  NUMBER_0: 0,
+  NUMBER_1: 1,
 } as const;
-export type LockStatus = typeof LockStatus[keyof typeof LockStatus];
-
+export type LockStatus = (typeof LockStatus)[keyof typeof LockStatus];
 
 export function instanceOfLockStatus(value: any): boolean {
-    for (const key in LockStatus) {
-        if (Object.prototype.hasOwnProperty.call(LockStatus, key)) {
-            if (LockStatus[key as keyof typeof LockStatus] === value) {
-                return true;
-            }
-        }
+  for (const key in LockStatus) {
+    if (Object.prototype.hasOwnProperty.call(LockStatus, key)) {
+      if (LockStatus[key as keyof typeof LockStatus] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function LockStatusFromJSON(json: any): LockStatus {
-    return LockStatusFromJSONTyped(json, false);
+  return LockStatusFromJSONTyped(json, false);
 }
 
 export function LockStatusFromJSONTyped(json: any, ignoreDiscriminator: boolean): LockStatus {
-    return json as LockStatus;
+  return json as LockStatus;
 }
 
 export function LockStatusToJSON(value?: LockStatus | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function LockStatusToJSONTyped(value: any, ignoreDiscriminator: boolean): LockStatus {
-    return value as LockStatus;
+  return value as LockStatus;
 }
-

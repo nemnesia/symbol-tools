@@ -15,65 +15,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
  * Merkle tree branch link.
  * @export
  * @interface MerkleTreeBranchLinkDTO
  */
 export interface MerkleTreeBranchLinkDTO {
-    /**
-     * Branch link nibble bit index (hexadecimal).
-     * @type {string}
-     * @memberof MerkleTreeBranchLinkDTO
-     */
-    bit: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof MerkleTreeBranchLinkDTO
-     */
-    link: string;
+  /**
+   * Branch link nibble bit index (hexadecimal).
+   * @type {string}
+   * @memberof MerkleTreeBranchLinkDTO
+   */
+  bit: string;
+  /**
+   *
+   * @type {string}
+   * @memberof MerkleTreeBranchLinkDTO
+   */
+  link: string;
 }
 
 /**
  * Check if a given object implements the MerkleTreeBranchLinkDTO interface.
  */
 export function instanceOfMerkleTreeBranchLinkDTO(value: object): value is MerkleTreeBranchLinkDTO {
-    if (!('bit' in value) || value['bit'] === undefined) return false;
-    if (!('link' in value) || value['link'] === undefined) return false;
-    return true;
+  if (!('bit' in value) || value['bit'] === undefined) return false;
+  if (!('link' in value) || value['link'] === undefined) return false;
+  return true;
 }
 
 export function MerkleTreeBranchLinkDTOFromJSON(json: any): MerkleTreeBranchLinkDTO {
-    return MerkleTreeBranchLinkDTOFromJSONTyped(json, false);
+  return MerkleTreeBranchLinkDTOFromJSONTyped(json, false);
 }
 
 export function MerkleTreeBranchLinkDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): MerkleTreeBranchLinkDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'bit': json['bit'],
-        'link': json['link'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    bit: json['bit'],
+    link: json['link'],
+  };
 }
 
 export function MerkleTreeBranchLinkDTOToJSON(json: any): MerkleTreeBranchLinkDTO {
-    return MerkleTreeBranchLinkDTOToJSONTyped(json, false);
+  return MerkleTreeBranchLinkDTOToJSONTyped(json, false);
 }
 
-export function MerkleTreeBranchLinkDTOToJSONTyped(value?: MerkleTreeBranchLinkDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function MerkleTreeBranchLinkDTOToJSONTyped(
+  value?: MerkleTreeBranchLinkDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'bit': value['bit'],
-        'link': value['link'],
-    };
+  return {
+    bit: value['bit'],
+    link: value['link'],
+  };
 }
-

@@ -16,45 +16,42 @@
  * limitations under the License.
  */
 
-
 /**
  * Type of Merkle tree node:
  * * 0 - Branch node.
  * * 255 - Leaf node.
- * 
+ *
  * @export
  */
 export const MerkleTreeNodeTypeEnum = {
-    NUMBER_0: 0,
-    NUMBER_255: 255
+  NUMBER_0: 0,
+  NUMBER_255: 255,
 } as const;
-export type MerkleTreeNodeTypeEnum = typeof MerkleTreeNodeTypeEnum[keyof typeof MerkleTreeNodeTypeEnum];
-
+export type MerkleTreeNodeTypeEnum = (typeof MerkleTreeNodeTypeEnum)[keyof typeof MerkleTreeNodeTypeEnum];
 
 export function instanceOfMerkleTreeNodeTypeEnum(value: any): boolean {
-    for (const key in MerkleTreeNodeTypeEnum) {
-        if (Object.prototype.hasOwnProperty.call(MerkleTreeNodeTypeEnum, key)) {
-            if (MerkleTreeNodeTypeEnum[key as keyof typeof MerkleTreeNodeTypeEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in MerkleTreeNodeTypeEnum) {
+    if (Object.prototype.hasOwnProperty.call(MerkleTreeNodeTypeEnum, key)) {
+      if (MerkleTreeNodeTypeEnum[key as keyof typeof MerkleTreeNodeTypeEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function MerkleTreeNodeTypeEnumFromJSON(json: any): MerkleTreeNodeTypeEnum {
-    return MerkleTreeNodeTypeEnumFromJSONTyped(json, false);
+  return MerkleTreeNodeTypeEnumFromJSONTyped(json, false);
 }
 
 export function MerkleTreeNodeTypeEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): MerkleTreeNodeTypeEnum {
-    return json as MerkleTreeNodeTypeEnum;
+  return json as MerkleTreeNodeTypeEnum;
 }
 
 export function MerkleTreeNodeTypeEnumToJSON(value?: MerkleTreeNodeTypeEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function MerkleTreeNodeTypeEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): MerkleTreeNodeTypeEnum {
-    return value as MerkleTreeNodeTypeEnum;
+  return value as MerkleTreeNodeTypeEnum;
 }
-

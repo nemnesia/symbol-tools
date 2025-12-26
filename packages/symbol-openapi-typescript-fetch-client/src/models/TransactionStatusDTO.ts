@@ -15,107 +15,104 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
 import type { TransactionGroupEnum } from './TransactionGroupEnum.js';
 import {
-    TransactionGroupEnumFromJSON,
-    TransactionGroupEnumFromJSONTyped,
-    TransactionGroupEnumToJSON,
-    TransactionGroupEnumToJSONTyped,
+  TransactionGroupEnumFromJSON,
+  TransactionGroupEnumFromJSONTyped,
+  TransactionGroupEnumToJSON,
+  TransactionGroupEnumToJSONTyped,
 } from './TransactionGroupEnum.js';
 import type { TransactionStatusEnum } from './TransactionStatusEnum.js';
 import {
-    TransactionStatusEnumFromJSON,
-    TransactionStatusEnumFromJSONTyped,
-    TransactionStatusEnumToJSON,
-    TransactionStatusEnumToJSONTyped,
+  TransactionStatusEnumFromJSON,
+  TransactionStatusEnumFromJSONTyped,
+  TransactionStatusEnumToJSON,
+  TransactionStatusEnumToJSONTyped,
 } from './TransactionStatusEnum.js';
 
 /**
- * 
+ *
  * @export
  * @interface TransactionStatusDTO
  */
 export interface TransactionStatusDTO {
-    /**
-     * 
-     * @type {TransactionGroupEnum}
-     * @memberof TransactionStatusDTO
-     */
-    group: TransactionGroupEnum;
-    /**
-     * 
-     * @type {TransactionStatusEnum}
-     * @memberof TransactionStatusDTO
-     */
-    code?: TransactionStatusEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof TransactionStatusDTO
-     */
-    hash: string;
-    /**
-     * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof TransactionStatusDTO
-     */
-    deadline: string;
-    /**
-     * Height of the blockchain.
-     * @type {string}
-     * @memberof TransactionStatusDTO
-     */
-    height?: string;
+  /**
+   *
+   * @type {TransactionGroupEnum}
+   * @memberof TransactionStatusDTO
+   */
+  group: TransactionGroupEnum;
+  /**
+   *
+   * @type {TransactionStatusEnum}
+   * @memberof TransactionStatusDTO
+   */
+  code?: TransactionStatusEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof TransactionStatusDTO
+   */
+  hash: string;
+  /**
+   * Duration expressed in number of blocks.
+   * @type {string}
+   * @memberof TransactionStatusDTO
+   */
+  deadline: string;
+  /**
+   * Height of the blockchain.
+   * @type {string}
+   * @memberof TransactionStatusDTO
+   */
+  height?: string;
 }
-
-
 
 /**
  * Check if a given object implements the TransactionStatusDTO interface.
  */
 export function instanceOfTransactionStatusDTO(value: object): value is TransactionStatusDTO {
-    if (!('group' in value) || value['group'] === undefined) return false;
-    if (!('hash' in value) || value['hash'] === undefined) return false;
-    if (!('deadline' in value) || value['deadline'] === undefined) return false;
-    return true;
+  if (!('group' in value) || value['group'] === undefined) return false;
+  if (!('hash' in value) || value['hash'] === undefined) return false;
+  if (!('deadline' in value) || value['deadline'] === undefined) return false;
+  return true;
 }
 
 export function TransactionStatusDTOFromJSON(json: any): TransactionStatusDTO {
-    return TransactionStatusDTOFromJSONTyped(json, false);
+  return TransactionStatusDTOFromJSONTyped(json, false);
 }
 
 export function TransactionStatusDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): TransactionStatusDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'group': TransactionGroupEnumFromJSON(json['group']),
-        'code': json['code'] == null ? undefined : TransactionStatusEnumFromJSON(json['code']),
-        'hash': json['hash'],
-        'deadline': json['deadline'],
-        'height': json['height'] == null ? undefined : json['height'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    group: TransactionGroupEnumFromJSON(json['group']),
+    code: json['code'] == null ? undefined : TransactionStatusEnumFromJSON(json['code']),
+    hash: json['hash'],
+    deadline: json['deadline'],
+    height: json['height'] == null ? undefined : json['height'],
+  };
 }
 
 export function TransactionStatusDTOToJSON(json: any): TransactionStatusDTO {
-    return TransactionStatusDTOToJSONTyped(json, false);
+  return TransactionStatusDTOToJSONTyped(json, false);
 }
 
-export function TransactionStatusDTOToJSONTyped(value?: TransactionStatusDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function TransactionStatusDTOToJSONTyped(
+  value?: TransactionStatusDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'group': TransactionGroupEnumToJSON(value['group']),
-        'code': TransactionStatusEnumToJSON(value['code']),
-        'hash': value['hash'],
-        'deadline': value['deadline'],
-        'height': value['height'],
-    };
+  return {
+    group: TransactionGroupEnumToJSON(value['group']),
+    code: TransactionStatusEnumToJSON(value['code']),
+    hash: value['hash'],
+    deadline: value['deadline'],
+    height: value['height'],
+  };
 }
-

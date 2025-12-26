@@ -15,137 +15,134 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface MosaicDTO
  */
 export interface MosaicDTO {
-    /**
-     * The version of the state
-     * @type {number}
-     * @memberof MosaicDTO
-     */
-    version: number;
-    /**
-     * Mosaic identifier.
-     * @type {string}
-     * @memberof MosaicDTO
-     */
-    id: string;
-    /**
-     * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
-     * @type {string}
-     * @memberof MosaicDTO
-     */
-    supply: string;
-    /**
-     * Height of the blockchain.
-     * @type {string}
-     * @memberof MosaicDTO
-     */
-    startHeight: string;
-    /**
-     * Address encoded using a 32-character set.
-     * @type {string}
-     * @memberof MosaicDTO
-     */
-    ownerAddress: string;
-    /**
-     * A number that allows uint 32 values.
-     * @type {number}
-     * @memberof MosaicDTO
-     */
-    revision: number;
-    /**
-     * - 0x00 (none) - No flags present.
-     * - 0x01 (supplyMutable) - Mosaic supports supply changes even when mosaic owner owns partial supply.
-     * - 0x02 (transferable) - Mosaic supports transfers between arbitrary accounts. When not set, mosaic can only be transferred to
-     *     and from mosaic owner.
-     * - 0x04 (restrictable) - Mosaic supports custom restrictions configured by mosaic owner.
-     * - 0x08 (revokable) - Mosaic allows creator to revoke balances from another user.
-     * 
-     * @type {number}
-     * @memberof MosaicDTO
-     */
-    flags: number;
-    /**
-     * Determines up to what decimal place the mosaic can be divided.
-     * Divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics.
-     * The divisibility must be in the range of 0 and 6.
-     * 
-     * @type {number}
-     * @memberof MosaicDTO
-     */
-    divisibility: number;
-    /**
-     * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof MosaicDTO
-     */
-    duration: string;
+  /**
+   * The version of the state
+   * @type {number}
+   * @memberof MosaicDTO
+   */
+  version: number;
+  /**
+   * Mosaic identifier.
+   * @type {string}
+   * @memberof MosaicDTO
+   */
+  id: string;
+  /**
+   * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
+   * @type {string}
+   * @memberof MosaicDTO
+   */
+  supply: string;
+  /**
+   * Height of the blockchain.
+   * @type {string}
+   * @memberof MosaicDTO
+   */
+  startHeight: string;
+  /**
+   * Address encoded using a 32-character set.
+   * @type {string}
+   * @memberof MosaicDTO
+   */
+  ownerAddress: string;
+  /**
+   * A number that allows uint 32 values.
+   * @type {number}
+   * @memberof MosaicDTO
+   */
+  revision: number;
+  /**
+   * - 0x00 (none) - No flags present.
+   * - 0x01 (supplyMutable) - Mosaic supports supply changes even when mosaic owner owns partial supply.
+   * - 0x02 (transferable) - Mosaic supports transfers between arbitrary accounts. When not set, mosaic can only be transferred to
+   *     and from mosaic owner.
+   * - 0x04 (restrictable) - Mosaic supports custom restrictions configured by mosaic owner.
+   * - 0x08 (revokable) - Mosaic allows creator to revoke balances from another user.
+   *
+   * @type {number}
+   * @memberof MosaicDTO
+   */
+  flags: number;
+  /**
+   * Determines up to what decimal place the mosaic can be divided.
+   * Divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics.
+   * The divisibility must be in the range of 0 and 6.
+   *
+   * @type {number}
+   * @memberof MosaicDTO
+   */
+  divisibility: number;
+  /**
+   * Duration expressed in number of blocks.
+   * @type {string}
+   * @memberof MosaicDTO
+   */
+  duration: string;
 }
 
 /**
  * Check if a given object implements the MosaicDTO interface.
  */
 export function instanceOfMosaicDTO(value: object): value is MosaicDTO {
-    if (!('version' in value) || value['version'] === undefined) return false;
-    if (!('id' in value) || value['id'] === undefined) return false;
-    if (!('supply' in value) || value['supply'] === undefined) return false;
-    if (!('startHeight' in value) || value['startHeight'] === undefined) return false;
-    if (!('ownerAddress' in value) || value['ownerAddress'] === undefined) return false;
-    if (!('revision' in value) || value['revision'] === undefined) return false;
-    if (!('flags' in value) || value['flags'] === undefined) return false;
-    if (!('divisibility' in value) || value['divisibility'] === undefined) return false;
-    if (!('duration' in value) || value['duration'] === undefined) return false;
-    return true;
+  if (!('version' in value) || value['version'] === undefined) return false;
+  if (!('id' in value) || value['id'] === undefined) return false;
+  if (!('supply' in value) || value['supply'] === undefined) return false;
+  if (!('startHeight' in value) || value['startHeight'] === undefined) return false;
+  if (!('ownerAddress' in value) || value['ownerAddress'] === undefined) return false;
+  if (!('revision' in value) || value['revision'] === undefined) return false;
+  if (!('flags' in value) || value['flags'] === undefined) return false;
+  if (!('divisibility' in value) || value['divisibility'] === undefined) return false;
+  if (!('duration' in value) || value['duration'] === undefined) return false;
+  return true;
 }
 
 export function MosaicDTOFromJSON(json: any): MosaicDTO {
-    return MosaicDTOFromJSONTyped(json, false);
+  return MosaicDTOFromJSONTyped(json, false);
 }
 
 export function MosaicDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): MosaicDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'version': json['version'],
-        'id': json['id'],
-        'supply': json['supply'],
-        'startHeight': json['startHeight'],
-        'ownerAddress': json['ownerAddress'],
-        'revision': json['revision'],
-        'flags': json['flags'],
-        'divisibility': json['divisibility'],
-        'duration': json['duration'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    version: json['version'],
+    id: json['id'],
+    supply: json['supply'],
+    startHeight: json['startHeight'],
+    ownerAddress: json['ownerAddress'],
+    revision: json['revision'],
+    flags: json['flags'],
+    divisibility: json['divisibility'],
+    duration: json['duration'],
+  };
 }
 
 export function MosaicDTOToJSON(json: any): MosaicDTO {
-    return MosaicDTOToJSONTyped(json, false);
+  return MosaicDTOToJSONTyped(json, false);
 }
 
 export function MosaicDTOToJSONTyped(value?: MosaicDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'version': value['version'],
-        'id': value['id'],
-        'supply': value['supply'],
-        'startHeight': value['startHeight'],
-        'ownerAddress': value['ownerAddress'],
-        'revision': value['revision'],
-        'flags': value['flags'],
-        'divisibility': value['divisibility'],
-        'duration': value['duration'],
-    };
+  return {
+    version: value['version'],
+    id: value['id'],
+    supply: value['supply'],
+    startHeight: value['startHeight'],
+    ownerAddress: value['ownerAddress'],
+    revision: value['revision'],
+    flags: value['flags'],
+    divisibility: value['divisibility'],
+    duration: value['duration'],
+  };
 }
-

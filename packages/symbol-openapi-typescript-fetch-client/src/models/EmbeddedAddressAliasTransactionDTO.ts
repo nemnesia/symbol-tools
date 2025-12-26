@@ -15,127 +15,129 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
-import type { NetworkTypeEnum } from './NetworkTypeEnum.js';
-import {
-    NetworkTypeEnumFromJSON,
-    NetworkTypeEnumFromJSONTyped,
-    NetworkTypeEnumToJSON,
-    NetworkTypeEnumToJSONTyped,
-} from './NetworkTypeEnum.js';
 import type { AliasActionEnum } from './AliasActionEnum.js';
 import {
-    AliasActionEnumFromJSON,
-    AliasActionEnumFromJSONTyped,
-    AliasActionEnumToJSON,
-    AliasActionEnumToJSONTyped,
+  AliasActionEnumFromJSON,
+  AliasActionEnumFromJSONTyped,
+  AliasActionEnumToJSON,
+  AliasActionEnumToJSONTyped,
 } from './AliasActionEnum.js';
+import type { NetworkTypeEnum } from './NetworkTypeEnum.js';
+import {
+  NetworkTypeEnumFromJSON,
+  NetworkTypeEnumFromJSONTyped,
+  NetworkTypeEnumToJSON,
+  NetworkTypeEnumToJSONTyped,
+} from './NetworkTypeEnum.js';
 
 /**
- * 
+ *
  * @export
  * @interface EmbeddedAddressAliasTransactionDTO
  */
 export interface EmbeddedAddressAliasTransactionDTO {
-    /**
-     * Public key.
-     * @type {string}
-     * @memberof EmbeddedAddressAliasTransactionDTO
-     */
-    signerPublicKey: string;
-    /**
-     * Entity version.
-     * @type {number}
-     * @memberof EmbeddedAddressAliasTransactionDTO
-     */
-    version: number;
-    /**
-     * 
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedAddressAliasTransactionDTO
-     */
-    network: NetworkTypeEnum;
-    /**
-     * 
-     * @type {number}
-     * @memberof EmbeddedAddressAliasTransactionDTO
-     */
-    type: number;
-    /**
-     * Namespace identifier.
-     * @type {string}
-     * @memberof EmbeddedAddressAliasTransactionDTO
-     */
-    namespaceId: string;
-    /**
-     * Address encoded using a 32-character set.
-     * @type {string}
-     * @memberof EmbeddedAddressAliasTransactionDTO
-     */
-    address: string;
-    /**
-     * 
-     * @type {AliasActionEnum}
-     * @memberof EmbeddedAddressAliasTransactionDTO
-     */
-    aliasAction: AliasActionEnum;
+  /**
+   * Public key.
+   * @type {string}
+   * @memberof EmbeddedAddressAliasTransactionDTO
+   */
+  signerPublicKey: string;
+  /**
+   * Entity version.
+   * @type {number}
+   * @memberof EmbeddedAddressAliasTransactionDTO
+   */
+  version: number;
+  /**
+   *
+   * @type {NetworkTypeEnum}
+   * @memberof EmbeddedAddressAliasTransactionDTO
+   */
+  network: NetworkTypeEnum;
+  /**
+   *
+   * @type {number}
+   * @memberof EmbeddedAddressAliasTransactionDTO
+   */
+  type: number;
+  /**
+   * Namespace identifier.
+   * @type {string}
+   * @memberof EmbeddedAddressAliasTransactionDTO
+   */
+  namespaceId: string;
+  /**
+   * Address encoded using a 32-character set.
+   * @type {string}
+   * @memberof EmbeddedAddressAliasTransactionDTO
+   */
+  address: string;
+  /**
+   *
+   * @type {AliasActionEnum}
+   * @memberof EmbeddedAddressAliasTransactionDTO
+   */
+  aliasAction: AliasActionEnum;
 }
-
-
 
 /**
  * Check if a given object implements the EmbeddedAddressAliasTransactionDTO interface.
  */
-export function instanceOfEmbeddedAddressAliasTransactionDTO(value: object): value is EmbeddedAddressAliasTransactionDTO {
-    if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
-    if (!('version' in value) || value['version'] === undefined) return false;
-    if (!('network' in value) || value['network'] === undefined) return false;
-    if (!('type' in value) || value['type'] === undefined) return false;
-    if (!('namespaceId' in value) || value['namespaceId'] === undefined) return false;
-    if (!('address' in value) || value['address'] === undefined) return false;
-    if (!('aliasAction' in value) || value['aliasAction'] === undefined) return false;
-    return true;
+export function instanceOfEmbeddedAddressAliasTransactionDTO(
+  value: object
+): value is EmbeddedAddressAliasTransactionDTO {
+  if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
+  if (!('version' in value) || value['version'] === undefined) return false;
+  if (!('network' in value) || value['network'] === undefined) return false;
+  if (!('type' in value) || value['type'] === undefined) return false;
+  if (!('namespaceId' in value) || value['namespaceId'] === undefined) return false;
+  if (!('address' in value) || value['address'] === undefined) return false;
+  if (!('aliasAction' in value) || value['aliasAction'] === undefined) return false;
+  return true;
 }
 
 export function EmbeddedAddressAliasTransactionDTOFromJSON(json: any): EmbeddedAddressAliasTransactionDTO {
-    return EmbeddedAddressAliasTransactionDTOFromJSONTyped(json, false);
+  return EmbeddedAddressAliasTransactionDTOFromJSONTyped(json, false);
 }
 
-export function EmbeddedAddressAliasTransactionDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): EmbeddedAddressAliasTransactionDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'signerPublicKey': json['signerPublicKey'],
-        'version': json['version'],
-        'network': NetworkTypeEnumFromJSON(json['network']),
-        'type': json['type'],
-        'namespaceId': json['namespaceId'],
-        'address': json['address'],
-        'aliasAction': AliasActionEnumFromJSON(json['aliasAction']),
-    };
+export function EmbeddedAddressAliasTransactionDTOFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): EmbeddedAddressAliasTransactionDTO {
+  if (json == null) {
+    return json;
+  }
+  return {
+    signerPublicKey: json['signerPublicKey'],
+    version: json['version'],
+    network: NetworkTypeEnumFromJSON(json['network']),
+    type: json['type'],
+    namespaceId: json['namespaceId'],
+    address: json['address'],
+    aliasAction: AliasActionEnumFromJSON(json['aliasAction']),
+  };
 }
 
 export function EmbeddedAddressAliasTransactionDTOToJSON(json: any): EmbeddedAddressAliasTransactionDTO {
-    return EmbeddedAddressAliasTransactionDTOToJSONTyped(json, false);
+  return EmbeddedAddressAliasTransactionDTOToJSONTyped(json, false);
 }
 
-export function EmbeddedAddressAliasTransactionDTOToJSONTyped(value?: EmbeddedAddressAliasTransactionDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function EmbeddedAddressAliasTransactionDTOToJSONTyped(
+  value?: EmbeddedAddressAliasTransactionDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'signerPublicKey': value['signerPublicKey'],
-        'version': value['version'],
-        'network': NetworkTypeEnumToJSON(value['network']),
-        'type': value['type'],
-        'namespaceId': value['namespaceId'],
-        'address': value['address'],
-        'aliasAction': AliasActionEnumToJSON(value['aliasAction']),
-    };
+  return {
+    signerPublicKey: value['signerPublicKey'],
+    version: value['version'],
+    network: NetworkTypeEnumToJSON(value['network']),
+    type: value['type'],
+    namespaceId: value['namespaceId'],
+    address: value['address'],
+    aliasAction: AliasActionEnumToJSON(value['aliasAction']),
+  };
 }
-

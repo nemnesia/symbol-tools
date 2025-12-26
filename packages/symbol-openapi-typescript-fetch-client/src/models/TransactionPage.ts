@@ -15,80 +15,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
 import type { Pagination } from './Pagination.js';
-import {
-    PaginationFromJSON,
-    PaginationFromJSONTyped,
-    PaginationToJSON,
-    PaginationToJSONTyped,
-} from './Pagination.js';
+import { PaginationFromJSON, PaginationFromJSONTyped, PaginationToJSON, PaginationToJSONTyped } from './Pagination.js';
 import type { TransactionInfoDTO } from './TransactionInfoDTO.js';
 import {
-    TransactionInfoDTOFromJSON,
-    TransactionInfoDTOFromJSONTyped,
-    TransactionInfoDTOToJSON,
-    TransactionInfoDTOToJSONTyped,
+  TransactionInfoDTOFromJSON,
+  TransactionInfoDTOFromJSONTyped,
+  TransactionInfoDTOToJSON,
+  TransactionInfoDTOToJSONTyped,
 } from './TransactionInfoDTO.js';
 
 /**
- * 
+ *
  * @export
  * @interface TransactionPage
  */
 export interface TransactionPage {
-    /**
-     * Array of transactions.
-     * @type {Array<TransactionInfoDTO>}
-     * @memberof TransactionPage
-     */
-    data: Array<TransactionInfoDTO>;
-    /**
-     * 
-     * @type {Pagination}
-     * @memberof TransactionPage
-     */
-    pagination: Pagination;
+  /**
+   * Array of transactions.
+   * @type {Array<TransactionInfoDTO>}
+   * @memberof TransactionPage
+   */
+  data: Array<TransactionInfoDTO>;
+  /**
+   *
+   * @type {Pagination}
+   * @memberof TransactionPage
+   */
+  pagination: Pagination;
 }
 
 /**
  * Check if a given object implements the TransactionPage interface.
  */
 export function instanceOfTransactionPage(value: object): value is TransactionPage {
-    if (!('data' in value) || value['data'] === undefined) return false;
-    if (!('pagination' in value) || value['pagination'] === undefined) return false;
-    return true;
+  if (!('data' in value) || value['data'] === undefined) return false;
+  if (!('pagination' in value) || value['pagination'] === undefined) return false;
+  return true;
 }
 
 export function TransactionPageFromJSON(json: any): TransactionPage {
-    return TransactionPageFromJSONTyped(json, false);
+  return TransactionPageFromJSONTyped(json, false);
 }
 
 export function TransactionPageFromJSONTyped(json: any, ignoreDiscriminator: boolean): TransactionPage {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'data': ((json['data'] as Array<any>).map(TransactionInfoDTOFromJSON)),
-        'pagination': PaginationFromJSON(json['pagination']),
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    data: (json['data'] as Array<any>).map(TransactionInfoDTOFromJSON),
+    pagination: PaginationFromJSON(json['pagination']),
+  };
 }
 
 export function TransactionPageToJSON(json: any): TransactionPage {
-    return TransactionPageToJSONTyped(json, false);
+  return TransactionPageToJSONTyped(json, false);
 }
 
 export function TransactionPageToJSONTyped(value?: TransactionPage | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'data': ((value['data'] as Array<any>).map(TransactionInfoDTOToJSON)),
-        'pagination': PaginationToJSON(value['pagination']),
-    };
+  return {
+    data: (value['data'] as Array<any>).map(TransactionInfoDTOToJSON),
+    pagination: PaginationToJSON(value['pagination']),
+  };
 }
-

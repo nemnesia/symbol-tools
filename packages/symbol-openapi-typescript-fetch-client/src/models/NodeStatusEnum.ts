@@ -16,42 +16,39 @@
  * limitations under the License.
  */
 
-
 /**
- * 
+ *
  * @export
  */
 export const NodeStatusEnum = {
-    Up: 'up',
-    Down: 'down'
+  Up: 'up',
+  Down: 'down',
 } as const;
-export type NodeStatusEnum = typeof NodeStatusEnum[keyof typeof NodeStatusEnum];
-
+export type NodeStatusEnum = (typeof NodeStatusEnum)[keyof typeof NodeStatusEnum];
 
 export function instanceOfNodeStatusEnum(value: any): boolean {
-    for (const key in NodeStatusEnum) {
-        if (Object.prototype.hasOwnProperty.call(NodeStatusEnum, key)) {
-            if (NodeStatusEnum[key as keyof typeof NodeStatusEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in NodeStatusEnum) {
+    if (Object.prototype.hasOwnProperty.call(NodeStatusEnum, key)) {
+      if (NodeStatusEnum[key as keyof typeof NodeStatusEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function NodeStatusEnumFromJSON(json: any): NodeStatusEnum {
-    return NodeStatusEnumFromJSONTyped(json, false);
+  return NodeStatusEnumFromJSONTyped(json, false);
 }
 
 export function NodeStatusEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): NodeStatusEnum {
-    return json as NodeStatusEnum;
+  return json as NodeStatusEnum;
 }
 
 export function NodeStatusEnumToJSON(value?: NodeStatusEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function NodeStatusEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): NodeStatusEnum {
-    return value as NodeStatusEnum;
+  return value as NodeStatusEnum;
 }
-

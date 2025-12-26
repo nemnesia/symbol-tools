@@ -15,14 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
 import type { ReceiptTypeEnum } from './ReceiptTypeEnum.js';
 import {
-    ReceiptTypeEnumFromJSON,
-    ReceiptTypeEnumFromJSONTyped,
-    ReceiptTypeEnumToJSON,
-    ReceiptTypeEnumToJSONTyped,
+  ReceiptTypeEnumFromJSON,
+  ReceiptTypeEnumFromJSONTyped,
+  ReceiptTypeEnumToJSON,
+  ReceiptTypeEnumToJSONTyped,
 } from './ReceiptTypeEnum.js';
 
 /**
@@ -31,86 +30,84 @@ import {
  * @interface BalanceChangeReceiptDTO
  */
 export interface BalanceChangeReceiptDTO {
-    /**
-     * Version of the receipt.
-     * @type {number}
-     * @memberof BalanceChangeReceiptDTO
-     */
-    version: number;
-    /**
-     * 
-     * @type {ReceiptTypeEnum}
-     * @memberof BalanceChangeReceiptDTO
-     */
-    type: ReceiptTypeEnum;
-    /**
-     * Mosaic identifier.
-     * @type {string}
-     * @memberof BalanceChangeReceiptDTO
-     */
-    mosaicId: string;
-    /**
-     * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
-     * @type {string}
-     * @memberof BalanceChangeReceiptDTO
-     */
-    amount: string;
-    /**
-     * Address encoded using a 32-character set.
-     * @type {string}
-     * @memberof BalanceChangeReceiptDTO
-     */
-    targetAddress: string;
+  /**
+   * Version of the receipt.
+   * @type {number}
+   * @memberof BalanceChangeReceiptDTO
+   */
+  version: number;
+  /**
+   *
+   * @type {ReceiptTypeEnum}
+   * @memberof BalanceChangeReceiptDTO
+   */
+  type: ReceiptTypeEnum;
+  /**
+   * Mosaic identifier.
+   * @type {string}
+   * @memberof BalanceChangeReceiptDTO
+   */
+  mosaicId: string;
+  /**
+   * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
+   * @type {string}
+   * @memberof BalanceChangeReceiptDTO
+   */
+  amount: string;
+  /**
+   * Address encoded using a 32-character set.
+   * @type {string}
+   * @memberof BalanceChangeReceiptDTO
+   */
+  targetAddress: string;
 }
-
-
 
 /**
  * Check if a given object implements the BalanceChangeReceiptDTO interface.
  */
 export function instanceOfBalanceChangeReceiptDTO(value: object): value is BalanceChangeReceiptDTO {
-    if (!('version' in value) || value['version'] === undefined) return false;
-    if (!('type' in value) || value['type'] === undefined) return false;
-    if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
-    if (!('amount' in value) || value['amount'] === undefined) return false;
-    if (!('targetAddress' in value) || value['targetAddress'] === undefined) return false;
-    return true;
+  if (!('version' in value) || value['version'] === undefined) return false;
+  if (!('type' in value) || value['type'] === undefined) return false;
+  if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
+  if (!('amount' in value) || value['amount'] === undefined) return false;
+  if (!('targetAddress' in value) || value['targetAddress'] === undefined) return false;
+  return true;
 }
 
 export function BalanceChangeReceiptDTOFromJSON(json: any): BalanceChangeReceiptDTO {
-    return BalanceChangeReceiptDTOFromJSONTyped(json, false);
+  return BalanceChangeReceiptDTOFromJSONTyped(json, false);
 }
 
 export function BalanceChangeReceiptDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): BalanceChangeReceiptDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'version': json['version'],
-        'type': ReceiptTypeEnumFromJSON(json['type']),
-        'mosaicId': json['mosaicId'],
-        'amount': json['amount'],
-        'targetAddress': json['targetAddress'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    version: json['version'],
+    type: ReceiptTypeEnumFromJSON(json['type']),
+    mosaicId: json['mosaicId'],
+    amount: json['amount'],
+    targetAddress: json['targetAddress'],
+  };
 }
 
 export function BalanceChangeReceiptDTOToJSON(json: any): BalanceChangeReceiptDTO {
-    return BalanceChangeReceiptDTOToJSONTyped(json, false);
+  return BalanceChangeReceiptDTOToJSONTyped(json, false);
 }
 
-export function BalanceChangeReceiptDTOToJSONTyped(value?: BalanceChangeReceiptDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function BalanceChangeReceiptDTOToJSONTyped(
+  value?: BalanceChangeReceiptDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'version': value['version'],
-        'type': ReceiptTypeEnumToJSON(value['type']),
-        'mosaicId': value['mosaicId'],
-        'amount': value['amount'],
-        'targetAddress': value['targetAddress'],
-    };
+  return {
+    version: value['version'],
+    type: ReceiptTypeEnumToJSON(value['type']),
+    mosaicId: value['mosaicId'],
+    amount: value['amount'],
+    targetAddress: value['targetAddress'],
+  };
 }
-

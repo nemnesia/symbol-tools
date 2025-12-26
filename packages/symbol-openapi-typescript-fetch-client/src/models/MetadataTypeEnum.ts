@@ -16,47 +16,44 @@
  * limitations under the License.
  */
 
-
 /**
  * Metadata type:
  * * 0 - Account.
  * * 1 - Mosaic.
  * * 2 - Namespace.
- * 
+ *
  * @export
  */
 export const MetadataTypeEnum = {
-    NUMBER_0: 0,
-    NUMBER_1: 1,
-    NUMBER_2: 2
+  NUMBER_0: 0,
+  NUMBER_1: 1,
+  NUMBER_2: 2,
 } as const;
-export type MetadataTypeEnum = typeof MetadataTypeEnum[keyof typeof MetadataTypeEnum];
-
+export type MetadataTypeEnum = (typeof MetadataTypeEnum)[keyof typeof MetadataTypeEnum];
 
 export function instanceOfMetadataTypeEnum(value: any): boolean {
-    for (const key in MetadataTypeEnum) {
-        if (Object.prototype.hasOwnProperty.call(MetadataTypeEnum, key)) {
-            if (MetadataTypeEnum[key as keyof typeof MetadataTypeEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in MetadataTypeEnum) {
+    if (Object.prototype.hasOwnProperty.call(MetadataTypeEnum, key)) {
+      if (MetadataTypeEnum[key as keyof typeof MetadataTypeEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function MetadataTypeEnumFromJSON(json: any): MetadataTypeEnum {
-    return MetadataTypeEnumFromJSONTyped(json, false);
+  return MetadataTypeEnumFromJSONTyped(json, false);
 }
 
 export function MetadataTypeEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): MetadataTypeEnum {
-    return json as MetadataTypeEnum;
+  return json as MetadataTypeEnum;
 }
 
 export function MetadataTypeEnumToJSON(value?: MetadataTypeEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function MetadataTypeEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): MetadataTypeEnum {
-    return value as MetadataTypeEnum;
+  return value as MetadataTypeEnum;
 }
-

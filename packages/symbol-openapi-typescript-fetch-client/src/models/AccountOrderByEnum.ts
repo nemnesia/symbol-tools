@@ -16,42 +16,39 @@
  * limitations under the License.
  */
 
-
 /**
- * 
+ *
  * @export
  */
 export const AccountOrderByEnum = {
-    Id: 'id',
-    Balance: 'balance'
+  Id: 'id',
+  Balance: 'balance',
 } as const;
-export type AccountOrderByEnum = typeof AccountOrderByEnum[keyof typeof AccountOrderByEnum];
-
+export type AccountOrderByEnum = (typeof AccountOrderByEnum)[keyof typeof AccountOrderByEnum];
 
 export function instanceOfAccountOrderByEnum(value: any): boolean {
-    for (const key in AccountOrderByEnum) {
-        if (Object.prototype.hasOwnProperty.call(AccountOrderByEnum, key)) {
-            if (AccountOrderByEnum[key as keyof typeof AccountOrderByEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in AccountOrderByEnum) {
+    if (Object.prototype.hasOwnProperty.call(AccountOrderByEnum, key)) {
+      if (AccountOrderByEnum[key as keyof typeof AccountOrderByEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function AccountOrderByEnumFromJSON(json: any): AccountOrderByEnum {
-    return AccountOrderByEnumFromJSONTyped(json, false);
+  return AccountOrderByEnumFromJSONTyped(json, false);
 }
 
 export function AccountOrderByEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): AccountOrderByEnum {
-    return json as AccountOrderByEnum;
+  return json as AccountOrderByEnum;
 }
 
 export function AccountOrderByEnumToJSON(value?: AccountOrderByEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function AccountOrderByEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): AccountOrderByEnum {
-    return value as AccountOrderByEnum;
+  return value as AccountOrderByEnum;
 }
-

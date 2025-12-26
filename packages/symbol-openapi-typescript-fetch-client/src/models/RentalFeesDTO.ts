@@ -15,74 +15,76 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface RentalFeesDTO
  */
 export interface RentalFeesDTO {
-    /**
-     * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
-     * @type {string}
-     * @memberof RentalFeesDTO
-     */
-    effectiveRootNamespaceRentalFeePerBlock: string;
-    /**
-     * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
-     * @type {string}
-     * @memberof RentalFeesDTO
-     */
-    effectiveChildNamespaceRentalFee: string;
-    /**
-     * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
-     * @type {string}
-     * @memberof RentalFeesDTO
-     */
-    effectiveMosaicRentalFee: string;
+  /**
+   * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
+   * @type {string}
+   * @memberof RentalFeesDTO
+   */
+  effectiveRootNamespaceRentalFeePerBlock: string;
+  /**
+   * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
+   * @type {string}
+   * @memberof RentalFeesDTO
+   */
+  effectiveChildNamespaceRentalFee: string;
+  /**
+   * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
+   * @type {string}
+   * @memberof RentalFeesDTO
+   */
+  effectiveMosaicRentalFee: string;
 }
 
 /**
  * Check if a given object implements the RentalFeesDTO interface.
  */
 export function instanceOfRentalFeesDTO(value: object): value is RentalFeesDTO {
-    if (!('effectiveRootNamespaceRentalFeePerBlock' in value) || value['effectiveRootNamespaceRentalFeePerBlock'] === undefined) return false;
-    if (!('effectiveChildNamespaceRentalFee' in value) || value['effectiveChildNamespaceRentalFee'] === undefined) return false;
-    if (!('effectiveMosaicRentalFee' in value) || value['effectiveMosaicRentalFee'] === undefined) return false;
-    return true;
+  if (
+    !('effectiveRootNamespaceRentalFeePerBlock' in value) ||
+    value['effectiveRootNamespaceRentalFeePerBlock'] === undefined
+  )
+    return false;
+  if (!('effectiveChildNamespaceRentalFee' in value) || value['effectiveChildNamespaceRentalFee'] === undefined)
+    return false;
+  if (!('effectiveMosaicRentalFee' in value) || value['effectiveMosaicRentalFee'] === undefined) return false;
+  return true;
 }
 
 export function RentalFeesDTOFromJSON(json: any): RentalFeesDTO {
-    return RentalFeesDTOFromJSONTyped(json, false);
+  return RentalFeesDTOFromJSONTyped(json, false);
 }
 
 export function RentalFeesDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): RentalFeesDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'effectiveRootNamespaceRentalFeePerBlock': json['effectiveRootNamespaceRentalFeePerBlock'],
-        'effectiveChildNamespaceRentalFee': json['effectiveChildNamespaceRentalFee'],
-        'effectiveMosaicRentalFee': json['effectiveMosaicRentalFee'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    effectiveRootNamespaceRentalFeePerBlock: json['effectiveRootNamespaceRentalFeePerBlock'],
+    effectiveChildNamespaceRentalFee: json['effectiveChildNamespaceRentalFee'],
+    effectiveMosaicRentalFee: json['effectiveMosaicRentalFee'],
+  };
 }
 
 export function RentalFeesDTOToJSON(json: any): RentalFeesDTO {
-    return RentalFeesDTOToJSONTyped(json, false);
+  return RentalFeesDTOToJSONTyped(json, false);
 }
 
 export function RentalFeesDTOToJSONTyped(value?: RentalFeesDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'effectiveRootNamespaceRentalFeePerBlock': value['effectiveRootNamespaceRentalFeePerBlock'],
-        'effectiveChildNamespaceRentalFee': value['effectiveChildNamespaceRentalFee'],
-        'effectiveMosaicRentalFee': value['effectiveMosaicRentalFee'],
-    };
+  return {
+    effectiveRootNamespaceRentalFeePerBlock: value['effectiveRootNamespaceRentalFeePerBlock'],
+    effectiveChildNamespaceRentalFee: value['effectiveChildNamespaceRentalFee'],
+    effectiveMosaicRentalFee: value['effectiveMosaicRentalFee'],
+  };
 }
-

@@ -15,14 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
 import type { ReceiptTypeEnum } from './ReceiptTypeEnum.js';
 import {
-    ReceiptTypeEnumFromJSON,
-    ReceiptTypeEnumFromJSONTyped,
-    ReceiptTypeEnumToJSON,
-    ReceiptTypeEnumToJSONTyped,
+  ReceiptTypeEnumFromJSON,
+  ReceiptTypeEnumFromJSONTyped,
+  ReceiptTypeEnumToJSON,
+  ReceiptTypeEnumToJSONTyped,
 } from './ReceiptTypeEnum.js';
 
 /**
@@ -31,77 +30,75 @@ import {
  * @interface InflationReceiptDTO
  */
 export interface InflationReceiptDTO {
-    /**
-     * Version of the receipt.
-     * @type {number}
-     * @memberof InflationReceiptDTO
-     */
-    version: number;
-    /**
-     * 
-     * @type {ReceiptTypeEnum}
-     * @memberof InflationReceiptDTO
-     */
-    type: ReceiptTypeEnum;
-    /**
-     * Mosaic identifier.
-     * @type {string}
-     * @memberof InflationReceiptDTO
-     */
-    mosaicId: string;
-    /**
-     * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
-     * @type {string}
-     * @memberof InflationReceiptDTO
-     */
-    amount: string;
+  /**
+   * Version of the receipt.
+   * @type {number}
+   * @memberof InflationReceiptDTO
+   */
+  version: number;
+  /**
+   *
+   * @type {ReceiptTypeEnum}
+   * @memberof InflationReceiptDTO
+   */
+  type: ReceiptTypeEnum;
+  /**
+   * Mosaic identifier.
+   * @type {string}
+   * @memberof InflationReceiptDTO
+   */
+  mosaicId: string;
+  /**
+   * Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
+   * @type {string}
+   * @memberof InflationReceiptDTO
+   */
+  amount: string;
 }
-
-
 
 /**
  * Check if a given object implements the InflationReceiptDTO interface.
  */
 export function instanceOfInflationReceiptDTO(value: object): value is InflationReceiptDTO {
-    if (!('version' in value) || value['version'] === undefined) return false;
-    if (!('type' in value) || value['type'] === undefined) return false;
-    if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
-    if (!('amount' in value) || value['amount'] === undefined) return false;
-    return true;
+  if (!('version' in value) || value['version'] === undefined) return false;
+  if (!('type' in value) || value['type'] === undefined) return false;
+  if (!('mosaicId' in value) || value['mosaicId'] === undefined) return false;
+  if (!('amount' in value) || value['amount'] === undefined) return false;
+  return true;
 }
 
 export function InflationReceiptDTOFromJSON(json: any): InflationReceiptDTO {
-    return InflationReceiptDTOFromJSONTyped(json, false);
+  return InflationReceiptDTOFromJSONTyped(json, false);
 }
 
 export function InflationReceiptDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): InflationReceiptDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'version': json['version'],
-        'type': ReceiptTypeEnumFromJSON(json['type']),
-        'mosaicId': json['mosaicId'],
-        'amount': json['amount'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    version: json['version'],
+    type: ReceiptTypeEnumFromJSON(json['type']),
+    mosaicId: json['mosaicId'],
+    amount: json['amount'],
+  };
 }
 
 export function InflationReceiptDTOToJSON(json: any): InflationReceiptDTO {
-    return InflationReceiptDTOToJSONTyped(json, false);
+  return InflationReceiptDTOToJSONTyped(json, false);
 }
 
-export function InflationReceiptDTOToJSONTyped(value?: InflationReceiptDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function InflationReceiptDTOToJSONTyped(
+  value?: InflationReceiptDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'version': value['version'],
-        'type': ReceiptTypeEnumToJSON(value['type']),
-        'mosaicId': value['mosaicId'],
-        'amount': value['amount'],
-    };
+  return {
+    version: value['version'],
+    type: ReceiptTypeEnumToJSON(value['type']),
+    mosaicId: value['mosaicId'],
+    amount: value['amount'],
+  };
 }
-

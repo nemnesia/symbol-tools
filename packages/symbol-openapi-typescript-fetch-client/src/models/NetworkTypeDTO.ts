@@ -15,65 +15,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface NetworkTypeDTO
  */
 export interface NetworkTypeDTO {
-    /**
-     * Network name.
-     * @type {string}
-     * @memberof NetworkTypeDTO
-     */
-    name: string;
-    /**
-     * A short text describing the network.
-     * @type {string}
-     * @memberof NetworkTypeDTO
-     */
-    description: string;
+  /**
+   * Network name.
+   * @type {string}
+   * @memberof NetworkTypeDTO
+   */
+  name: string;
+  /**
+   * A short text describing the network.
+   * @type {string}
+   * @memberof NetworkTypeDTO
+   */
+  description: string;
 }
 
 /**
  * Check if a given object implements the NetworkTypeDTO interface.
  */
 export function instanceOfNetworkTypeDTO(value: object): value is NetworkTypeDTO {
-    if (!('name' in value) || value['name'] === undefined) return false;
-    if (!('description' in value) || value['description'] === undefined) return false;
-    return true;
+  if (!('name' in value) || value['name'] === undefined) return false;
+  if (!('description' in value) || value['description'] === undefined) return false;
+  return true;
 }
 
 export function NetworkTypeDTOFromJSON(json: any): NetworkTypeDTO {
-    return NetworkTypeDTOFromJSONTyped(json, false);
+  return NetworkTypeDTOFromJSONTyped(json, false);
 }
 
 export function NetworkTypeDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): NetworkTypeDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'name': json['name'],
-        'description': json['description'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    name: json['name'],
+    description: json['description'],
+  };
 }
 
 export function NetworkTypeDTOToJSON(json: any): NetworkTypeDTO {
-    return NetworkTypeDTOToJSONTyped(json, false);
+  return NetworkTypeDTOToJSONTyped(json, false);
 }
 
 export function NetworkTypeDTOToJSONTyped(value?: NetworkTypeDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'name': value['name'],
-        'description': value['description'],
-    };
+  return {
+    name: value['name'],
+    description: value['description'],
+  };
 }
-

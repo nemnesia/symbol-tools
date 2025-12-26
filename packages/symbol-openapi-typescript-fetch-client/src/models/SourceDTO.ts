@@ -15,65 +15,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
  * Transaction that triggered the receipt.
  * @export
  * @interface SourceDTO
  */
 export interface SourceDTO {
-    /**
-     * A number that allows uint 32 values.
-     * @type {number}
-     * @memberof SourceDTO
-     */
-    primaryId: number;
-    /**
-     * A number that allows uint 32 values.
-     * @type {number}
-     * @memberof SourceDTO
-     */
-    secondaryId: number;
+  /**
+   * A number that allows uint 32 values.
+   * @type {number}
+   * @memberof SourceDTO
+   */
+  primaryId: number;
+  /**
+   * A number that allows uint 32 values.
+   * @type {number}
+   * @memberof SourceDTO
+   */
+  secondaryId: number;
 }
 
 /**
  * Check if a given object implements the SourceDTO interface.
  */
 export function instanceOfSourceDTO(value: object): value is SourceDTO {
-    if (!('primaryId' in value) || value['primaryId'] === undefined) return false;
-    if (!('secondaryId' in value) || value['secondaryId'] === undefined) return false;
-    return true;
+  if (!('primaryId' in value) || value['primaryId'] === undefined) return false;
+  if (!('secondaryId' in value) || value['secondaryId'] === undefined) return false;
+  return true;
 }
 
 export function SourceDTOFromJSON(json: any): SourceDTO {
-    return SourceDTOFromJSONTyped(json, false);
+  return SourceDTOFromJSONTyped(json, false);
 }
 
 export function SourceDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): SourceDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'primaryId': json['primaryId'],
-        'secondaryId': json['secondaryId'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    primaryId: json['primaryId'],
+    secondaryId: json['secondaryId'],
+  };
 }
 
 export function SourceDTOToJSON(json: any): SourceDTO {
-    return SourceDTOToJSONTyped(json, false);
+  return SourceDTOToJSONTyped(json, false);
 }
 
 export function SourceDTOToJSONTyped(value?: SourceDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'primaryId': value['primaryId'],
-        'secondaryId': value['secondaryId'],
-    };
+  return {
+    primaryId: value['primaryId'],
+    secondaryId: value['secondaryId'],
+  };
 }
-

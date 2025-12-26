@@ -15,63 +15,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface CommunicationTimestampsDTO
  */
 export interface CommunicationTimestampsDTO {
-    /**
-     * Number of milliseconds elapsed since the creation of the nemesis block. This value can be converted to epoch time by adding the network's 'epochAdjustment'.
-     * @type {string}
-     * @memberof CommunicationTimestampsDTO
-     */
-    sendTimestamp?: string;
-    /**
-     * Number of milliseconds elapsed since the creation of the nemesis block. This value can be converted to epoch time by adding the network's 'epochAdjustment'.
-     * @type {string}
-     * @memberof CommunicationTimestampsDTO
-     */
-    receiveTimestamp?: string;
+  /**
+   * Number of milliseconds elapsed since the creation of the nemesis block. This value can be converted to epoch time by adding the network's 'epochAdjustment'.
+   * @type {string}
+   * @memberof CommunicationTimestampsDTO
+   */
+  sendTimestamp?: string;
+  /**
+   * Number of milliseconds elapsed since the creation of the nemesis block. This value can be converted to epoch time by adding the network's 'epochAdjustment'.
+   * @type {string}
+   * @memberof CommunicationTimestampsDTO
+   */
+  receiveTimestamp?: string;
 }
 
 /**
  * Check if a given object implements the CommunicationTimestampsDTO interface.
  */
 export function instanceOfCommunicationTimestampsDTO(value: object): value is CommunicationTimestampsDTO {
-    return true;
+  return true;
 }
 
 export function CommunicationTimestampsDTOFromJSON(json: any): CommunicationTimestampsDTO {
-    return CommunicationTimestampsDTOFromJSONTyped(json, false);
+  return CommunicationTimestampsDTOFromJSONTyped(json, false);
 }
 
-export function CommunicationTimestampsDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): CommunicationTimestampsDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'sendTimestamp': json['sendTimestamp'] == null ? undefined : json['sendTimestamp'],
-        'receiveTimestamp': json['receiveTimestamp'] == null ? undefined : json['receiveTimestamp'],
-    };
+export function CommunicationTimestampsDTOFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): CommunicationTimestampsDTO {
+  if (json == null) {
+    return json;
+  }
+  return {
+    sendTimestamp: json['sendTimestamp'] == null ? undefined : json['sendTimestamp'],
+    receiveTimestamp: json['receiveTimestamp'] == null ? undefined : json['receiveTimestamp'],
+  };
 }
 
 export function CommunicationTimestampsDTOToJSON(json: any): CommunicationTimestampsDTO {
-    return CommunicationTimestampsDTOToJSONTyped(json, false);
+  return CommunicationTimestampsDTOToJSONTyped(json, false);
 }
 
-export function CommunicationTimestampsDTOToJSONTyped(value?: CommunicationTimestampsDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function CommunicationTimestampsDTOToJSONTyped(
+  value?: CommunicationTimestampsDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'sendTimestamp': value['sendTimestamp'],
-        'receiveTimestamp': value['receiveTimestamp'],
-    };
+  return {
+    sendTimestamp: value['sendTimestamp'],
+    receiveTimestamp: value['receiveTimestamp'],
+  };
 }
-

@@ -15,55 +15,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface NamespaceIds
  */
 export interface NamespaceIds {
-    /**
-     * Array of namespace identifiers.
-     * @type {Array<string>}
-     * @memberof NamespaceIds
-     */
-    namespaceIds?: Array<string>;
+  /**
+   * Array of namespace identifiers.
+   * @type {Array<string>}
+   * @memberof NamespaceIds
+   */
+  namespaceIds?: Array<string>;
 }
 
 /**
  * Check if a given object implements the NamespaceIds interface.
  */
 export function instanceOfNamespaceIds(value: object): value is NamespaceIds {
-    return true;
+  return true;
 }
 
 export function NamespaceIdsFromJSON(json: any): NamespaceIds {
-    return NamespaceIdsFromJSONTyped(json, false);
+  return NamespaceIdsFromJSONTyped(json, false);
 }
 
 export function NamespaceIdsFromJSONTyped(json: any, ignoreDiscriminator: boolean): NamespaceIds {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'namespaceIds': json['namespaceIds'] == null ? undefined : json['namespaceIds'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    namespaceIds: json['namespaceIds'] == null ? undefined : json['namespaceIds'],
+  };
 }
 
 export function NamespaceIdsToJSON(json: any): NamespaceIds {
-    return NamespaceIdsToJSONTyped(json, false);
+  return NamespaceIdsToJSONTyped(json, false);
 }
 
 export function NamespaceIdsToJSONTyped(value?: NamespaceIds | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'namespaceIds': value['namespaceIds'],
-    };
+  return {
+    namespaceIds: value['namespaceIds'],
+  };
 }
-

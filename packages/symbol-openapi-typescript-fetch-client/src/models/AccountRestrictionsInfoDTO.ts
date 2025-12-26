@@ -15,64 +15,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
 import type { AccountRestrictionsDTO } from './AccountRestrictionsDTO.js';
 import {
-    AccountRestrictionsDTOFromJSON,
-    AccountRestrictionsDTOFromJSONTyped,
-    AccountRestrictionsDTOToJSON,
-    AccountRestrictionsDTOToJSONTyped,
+  AccountRestrictionsDTOFromJSON,
+  AccountRestrictionsDTOFromJSONTyped,
+  AccountRestrictionsDTOToJSON,
+  AccountRestrictionsDTOToJSONTyped,
 } from './AccountRestrictionsDTO.js';
 
 /**
- * 
+ *
  * @export
  * @interface AccountRestrictionsInfoDTO
  */
 export interface AccountRestrictionsInfoDTO {
-    /**
-     * 
-     * @type {AccountRestrictionsDTO}
-     * @memberof AccountRestrictionsInfoDTO
-     */
-    accountRestrictions: AccountRestrictionsDTO;
+  /**
+   *
+   * @type {AccountRestrictionsDTO}
+   * @memberof AccountRestrictionsInfoDTO
+   */
+  accountRestrictions: AccountRestrictionsDTO;
 }
 
 /**
  * Check if a given object implements the AccountRestrictionsInfoDTO interface.
  */
 export function instanceOfAccountRestrictionsInfoDTO(value: object): value is AccountRestrictionsInfoDTO {
-    if (!('accountRestrictions' in value) || value['accountRestrictions'] === undefined) return false;
-    return true;
+  if (!('accountRestrictions' in value) || value['accountRestrictions'] === undefined) return false;
+  return true;
 }
 
 export function AccountRestrictionsInfoDTOFromJSON(json: any): AccountRestrictionsInfoDTO {
-    return AccountRestrictionsInfoDTOFromJSONTyped(json, false);
+  return AccountRestrictionsInfoDTOFromJSONTyped(json, false);
 }
 
-export function AccountRestrictionsInfoDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): AccountRestrictionsInfoDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'accountRestrictions': AccountRestrictionsDTOFromJSON(json['accountRestrictions']),
-    };
+export function AccountRestrictionsInfoDTOFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): AccountRestrictionsInfoDTO {
+  if (json == null) {
+    return json;
+  }
+  return {
+    accountRestrictions: AccountRestrictionsDTOFromJSON(json['accountRestrictions']),
+  };
 }
 
 export function AccountRestrictionsInfoDTOToJSON(json: any): AccountRestrictionsInfoDTO {
-    return AccountRestrictionsInfoDTOToJSONTyped(json, false);
+  return AccountRestrictionsInfoDTOToJSONTyped(json, false);
 }
 
-export function AccountRestrictionsInfoDTOToJSONTyped(value?: AccountRestrictionsInfoDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function AccountRestrictionsInfoDTOToJSONTyped(
+  value?: AccountRestrictionsInfoDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'accountRestrictions': AccountRestrictionsDTOToJSON(value['accountRestrictions']),
-    };
+  return {
+    accountRestrictions: AccountRestrictionsDTOToJSON(value['accountRestrictions']),
+  };
 }
-

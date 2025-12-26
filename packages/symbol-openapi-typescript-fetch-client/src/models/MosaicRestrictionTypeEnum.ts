@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 /**
  * Type of mosaic restriction.
  * * 0 - Uninitialized value indicating no restriction.
@@ -26,45 +25,49 @@
  * * 4 (LE) - Allow if less than or equal.
  * * 5 (GT) - Allow if greater than.
  * * 6 (GE) - Allow if greater than or equal.
- * 
+ *
  * @export
  */
 export const MosaicRestrictionTypeEnum = {
-    NUMBER_0: 0,
-    NUMBER_1: 1,
-    NUMBER_2: 2,
-    NUMBER_3: 3,
-    NUMBER_4: 4,
-    NUMBER_5: 5,
-    NUMBER_6: 6
+  NUMBER_0: 0,
+  NUMBER_1: 1,
+  NUMBER_2: 2,
+  NUMBER_3: 3,
+  NUMBER_4: 4,
+  NUMBER_5: 5,
+  NUMBER_6: 6,
 } as const;
-export type MosaicRestrictionTypeEnum = typeof MosaicRestrictionTypeEnum[keyof typeof MosaicRestrictionTypeEnum];
-
+export type MosaicRestrictionTypeEnum = (typeof MosaicRestrictionTypeEnum)[keyof typeof MosaicRestrictionTypeEnum];
 
 export function instanceOfMosaicRestrictionTypeEnum(value: any): boolean {
-    for (const key in MosaicRestrictionTypeEnum) {
-        if (Object.prototype.hasOwnProperty.call(MosaicRestrictionTypeEnum, key)) {
-            if (MosaicRestrictionTypeEnum[key as keyof typeof MosaicRestrictionTypeEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in MosaicRestrictionTypeEnum) {
+    if (Object.prototype.hasOwnProperty.call(MosaicRestrictionTypeEnum, key)) {
+      if (MosaicRestrictionTypeEnum[key as keyof typeof MosaicRestrictionTypeEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function MosaicRestrictionTypeEnumFromJSON(json: any): MosaicRestrictionTypeEnum {
-    return MosaicRestrictionTypeEnumFromJSONTyped(json, false);
+  return MosaicRestrictionTypeEnumFromJSONTyped(json, false);
 }
 
-export function MosaicRestrictionTypeEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): MosaicRestrictionTypeEnum {
-    return json as MosaicRestrictionTypeEnum;
+export function MosaicRestrictionTypeEnumFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): MosaicRestrictionTypeEnum {
+  return json as MosaicRestrictionTypeEnum;
 }
 
 export function MosaicRestrictionTypeEnumToJSON(value?: MosaicRestrictionTypeEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
-export function MosaicRestrictionTypeEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): MosaicRestrictionTypeEnum {
-    return value as MosaicRestrictionTypeEnum;
+export function MosaicRestrictionTypeEnumToJSONTyped(
+  value: any,
+  ignoreDiscriminator: boolean
+): MosaicRestrictionTypeEnum {
+  return value as MosaicRestrictionTypeEnum;
 }
-

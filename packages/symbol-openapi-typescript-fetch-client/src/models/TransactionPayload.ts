@@ -15,55 +15,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface TransactionPayload
  */
 export interface TransactionPayload {
-    /**
-     * Transaction payload in hexadecimal format.
-     * @type {string}
-     * @memberof TransactionPayload
-     */
-    payload?: string;
+  /**
+   * Transaction payload in hexadecimal format.
+   * @type {string}
+   * @memberof TransactionPayload
+   */
+  payload?: string;
 }
 
 /**
  * Check if a given object implements the TransactionPayload interface.
  */
 export function instanceOfTransactionPayload(value: object): value is TransactionPayload {
-    return true;
+  return true;
 }
 
 export function TransactionPayloadFromJSON(json: any): TransactionPayload {
-    return TransactionPayloadFromJSONTyped(json, false);
+  return TransactionPayloadFromJSONTyped(json, false);
 }
 
 export function TransactionPayloadFromJSONTyped(json: any, ignoreDiscriminator: boolean): TransactionPayload {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'payload': json['payload'] == null ? undefined : json['payload'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    payload: json['payload'] == null ? undefined : json['payload'],
+  };
 }
 
 export function TransactionPayloadToJSON(json: any): TransactionPayload {
-    return TransactionPayloadToJSONTyped(json, false);
+  return TransactionPayloadToJSONTyped(json, false);
 }
 
-export function TransactionPayloadToJSONTyped(value?: TransactionPayload | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function TransactionPayloadToJSONTyped(
+  value?: TransactionPayload | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'payload': value['payload'],
-    };
+  return {
+    payload: value['payload'],
+  };
 }
-

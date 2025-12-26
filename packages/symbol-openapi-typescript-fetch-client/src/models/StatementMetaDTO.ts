@@ -15,56 +15,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
  * Metadata related to the statment, including block information.
  * @export
  * @interface StatementMetaDTO
  */
 export interface StatementMetaDTO {
-    /**
-     * Number of milliseconds elapsed since the creation of the nemesis block. This value can be converted to epoch time by adding the network's 'epochAdjustment'.
-     * @type {string}
-     * @memberof StatementMetaDTO
-     */
-    timestamp: string;
+  /**
+   * Number of milliseconds elapsed since the creation of the nemesis block. This value can be converted to epoch time by adding the network's 'epochAdjustment'.
+   * @type {string}
+   * @memberof StatementMetaDTO
+   */
+  timestamp: string;
 }
 
 /**
  * Check if a given object implements the StatementMetaDTO interface.
  */
 export function instanceOfStatementMetaDTO(value: object): value is StatementMetaDTO {
-    if (!('timestamp' in value) || value['timestamp'] === undefined) return false;
-    return true;
+  if (!('timestamp' in value) || value['timestamp'] === undefined) return false;
+  return true;
 }
 
 export function StatementMetaDTOFromJSON(json: any): StatementMetaDTO {
-    return StatementMetaDTOFromJSONTyped(json, false);
+  return StatementMetaDTOFromJSONTyped(json, false);
 }
 
 export function StatementMetaDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): StatementMetaDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'timestamp': json['timestamp'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    timestamp: json['timestamp'],
+  };
 }
 
 export function StatementMetaDTOToJSON(json: any): StatementMetaDTO {
-    return StatementMetaDTOToJSONTyped(json, false);
+  return StatementMetaDTOToJSONTyped(json, false);
 }
 
-export function StatementMetaDTOToJSONTyped(value?: StatementMetaDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function StatementMetaDTOToJSONTyped(
+  value?: StatementMetaDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'timestamp': value['timestamp'],
-    };
+  return {
+    timestamp: value['timestamp'],
+  };
 }
-

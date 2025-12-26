@@ -15,56 +15,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface SizePrefixedEntityDTO
  */
 export interface SizePrefixedEntityDTO {
-    /**
-     * A number that allows uint 32 values.
-     * @type {number}
-     * @memberof SizePrefixedEntityDTO
-     */
-    size: number;
+  /**
+   * A number that allows uint 32 values.
+   * @type {number}
+   * @memberof SizePrefixedEntityDTO
+   */
+  size: number;
 }
 
 /**
  * Check if a given object implements the SizePrefixedEntityDTO interface.
  */
 export function instanceOfSizePrefixedEntityDTO(value: object): value is SizePrefixedEntityDTO {
-    if (!('size' in value) || value['size'] === undefined) return false;
-    return true;
+  if (!('size' in value) || value['size'] === undefined) return false;
+  return true;
 }
 
 export function SizePrefixedEntityDTOFromJSON(json: any): SizePrefixedEntityDTO {
-    return SizePrefixedEntityDTOFromJSONTyped(json, false);
+  return SizePrefixedEntityDTOFromJSONTyped(json, false);
 }
 
 export function SizePrefixedEntityDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): SizePrefixedEntityDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'size': json['size'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    size: json['size'],
+  };
 }
 
 export function SizePrefixedEntityDTOToJSON(json: any): SizePrefixedEntityDTO {
-    return SizePrefixedEntityDTOToJSONTyped(json, false);
+  return SizePrefixedEntityDTOToJSONTyped(json, false);
 }
 
-export function SizePrefixedEntityDTOToJSONTyped(value?: SizePrefixedEntityDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function SizePrefixedEntityDTOToJSONTyped(
+  value?: SizePrefixedEntityDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'size': value['size'],
-    };
+  return {
+    size: value['size'],
+  };
 }
-

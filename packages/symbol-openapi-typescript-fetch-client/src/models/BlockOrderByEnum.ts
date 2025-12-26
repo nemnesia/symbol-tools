@@ -16,42 +16,39 @@
  * limitations under the License.
  */
 
-
 /**
- * 
+ *
  * @export
  */
 export const BlockOrderByEnum = {
-    Id: 'id',
-    Height: 'height'
+  Id: 'id',
+  Height: 'height',
 } as const;
-export type BlockOrderByEnum = typeof BlockOrderByEnum[keyof typeof BlockOrderByEnum];
-
+export type BlockOrderByEnum = (typeof BlockOrderByEnum)[keyof typeof BlockOrderByEnum];
 
 export function instanceOfBlockOrderByEnum(value: any): boolean {
-    for (const key in BlockOrderByEnum) {
-        if (Object.prototype.hasOwnProperty.call(BlockOrderByEnum, key)) {
-            if (BlockOrderByEnum[key as keyof typeof BlockOrderByEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in BlockOrderByEnum) {
+    if (Object.prototype.hasOwnProperty.call(BlockOrderByEnum, key)) {
+      if (BlockOrderByEnum[key as keyof typeof BlockOrderByEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function BlockOrderByEnumFromJSON(json: any): BlockOrderByEnum {
-    return BlockOrderByEnumFromJSONTyped(json, false);
+  return BlockOrderByEnumFromJSONTyped(json, false);
 }
 
 export function BlockOrderByEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): BlockOrderByEnum {
-    return json as BlockOrderByEnum;
+  return json as BlockOrderByEnum;
 }
 
 export function BlockOrderByEnumToJSON(value?: BlockOrderByEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function BlockOrderByEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): BlockOrderByEnum {
-    return value as BlockOrderByEnum;
+  return value as BlockOrderByEnum;
 }
-

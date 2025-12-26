@@ -15,96 +15,96 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
 import type { LockHashAlgorithmEnum } from './LockHashAlgorithmEnum.js';
 import {
-    LockHashAlgorithmEnumFromJSON,
-    LockHashAlgorithmEnumFromJSONTyped,
-    LockHashAlgorithmEnumToJSON,
-    LockHashAlgorithmEnumToJSONTyped,
+  LockHashAlgorithmEnumFromJSON,
+  LockHashAlgorithmEnumFromJSONTyped,
+  LockHashAlgorithmEnumToJSON,
+  LockHashAlgorithmEnumToJSONTyped,
 } from './LockHashAlgorithmEnum.js';
 
 /**
- * 
+ *
  * @export
  * @interface SecretProofTransactionBodyDTO
  */
 export interface SecretProofTransactionBodyDTO {
-    /**
-     * Address expressed in Base32 format. If the bit 0 of byte 0 is not set (like in 0x90), then it is a
-     * regular address. Example: TAOXUJOTTW3W5XTBQMQEX3SQNA6MCUVGXLXR3TA.
-     * Otherwise (e.g. 0x91) it represents a namespace id which starts at byte 1. Example: THBIMC3THGH5RUYAAAAAAAAAAAAAAAAAAAAAAAA
-     * 
-     * @type {string}
-     * @memberof SecretProofTransactionBodyDTO
-     */
-    recipientAddress: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof SecretProofTransactionBodyDTO
-     */
-    secret: string;
-    /**
-     * 
-     * @type {LockHashAlgorithmEnum}
-     * @memberof SecretProofTransactionBodyDTO
-     */
-    hashAlgorithm: LockHashAlgorithmEnum;
-    /**
-     * Original random set of bytes.
-     * @type {string}
-     * @memberof SecretProofTransactionBodyDTO
-     */
-    proof: string;
+  /**
+   * Address expressed in Base32 format. If the bit 0 of byte 0 is not set (like in 0x90), then it is a
+   * regular address. Example: TAOXUJOTTW3W5XTBQMQEX3SQNA6MCUVGXLXR3TA.
+   * Otherwise (e.g. 0x91) it represents a namespace id which starts at byte 1. Example: THBIMC3THGH5RUYAAAAAAAAAAAAAAAAAAAAAAAA
+   *
+   * @type {string}
+   * @memberof SecretProofTransactionBodyDTO
+   */
+  recipientAddress: string;
+  /**
+   *
+   * @type {string}
+   * @memberof SecretProofTransactionBodyDTO
+   */
+  secret: string;
+  /**
+   *
+   * @type {LockHashAlgorithmEnum}
+   * @memberof SecretProofTransactionBodyDTO
+   */
+  hashAlgorithm: LockHashAlgorithmEnum;
+  /**
+   * Original random set of bytes.
+   * @type {string}
+   * @memberof SecretProofTransactionBodyDTO
+   */
+  proof: string;
 }
-
-
 
 /**
  * Check if a given object implements the SecretProofTransactionBodyDTO interface.
  */
 export function instanceOfSecretProofTransactionBodyDTO(value: object): value is SecretProofTransactionBodyDTO {
-    if (!('recipientAddress' in value) || value['recipientAddress'] === undefined) return false;
-    if (!('secret' in value) || value['secret'] === undefined) return false;
-    if (!('hashAlgorithm' in value) || value['hashAlgorithm'] === undefined) return false;
-    if (!('proof' in value) || value['proof'] === undefined) return false;
-    return true;
+  if (!('recipientAddress' in value) || value['recipientAddress'] === undefined) return false;
+  if (!('secret' in value) || value['secret'] === undefined) return false;
+  if (!('hashAlgorithm' in value) || value['hashAlgorithm'] === undefined) return false;
+  if (!('proof' in value) || value['proof'] === undefined) return false;
+  return true;
 }
 
 export function SecretProofTransactionBodyDTOFromJSON(json: any): SecretProofTransactionBodyDTO {
-    return SecretProofTransactionBodyDTOFromJSONTyped(json, false);
+  return SecretProofTransactionBodyDTOFromJSONTyped(json, false);
 }
 
-export function SecretProofTransactionBodyDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): SecretProofTransactionBodyDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'recipientAddress': json['recipientAddress'],
-        'secret': json['secret'],
-        'hashAlgorithm': LockHashAlgorithmEnumFromJSON(json['hashAlgorithm']),
-        'proof': json['proof'],
-    };
+export function SecretProofTransactionBodyDTOFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): SecretProofTransactionBodyDTO {
+  if (json == null) {
+    return json;
+  }
+  return {
+    recipientAddress: json['recipientAddress'],
+    secret: json['secret'],
+    hashAlgorithm: LockHashAlgorithmEnumFromJSON(json['hashAlgorithm']),
+    proof: json['proof'],
+  };
 }
 
 export function SecretProofTransactionBodyDTOToJSON(json: any): SecretProofTransactionBodyDTO {
-    return SecretProofTransactionBodyDTOToJSONTyped(json, false);
+  return SecretProofTransactionBodyDTOToJSONTyped(json, false);
 }
 
-export function SecretProofTransactionBodyDTOToJSONTyped(value?: SecretProofTransactionBodyDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function SecretProofTransactionBodyDTOToJSONTyped(
+  value?: SecretProofTransactionBodyDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'recipientAddress': value['recipientAddress'],
-        'secret': value['secret'],
-        'hashAlgorithm': LockHashAlgorithmEnumToJSON(value['hashAlgorithm']),
-        'proof': value['proof'],
-    };
+  return {
+    recipientAddress: value['recipientAddress'],
+    secret: value['secret'],
+    hashAlgorithm: LockHashAlgorithmEnumToJSON(value['hashAlgorithm']),
+    proof: value['proof'],
+  };
 }
-

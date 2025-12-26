@@ -16,45 +16,42 @@
  * limitations under the License.
  */
 
-
 /**
  * Indicates how to sort the results:
  * * ``asc`` - ascending
  * * ``desc`` - descending
- * 
+ *
  * @export
  */
 export const Order = {
-    Asc: 'asc',
-    Desc: 'desc'
+  Asc: 'asc',
+  Desc: 'desc',
 } as const;
-export type Order = typeof Order[keyof typeof Order];
-
+export type Order = (typeof Order)[keyof typeof Order];
 
 export function instanceOfOrder(value: any): boolean {
-    for (const key in Order) {
-        if (Object.prototype.hasOwnProperty.call(Order, key)) {
-            if (Order[key as keyof typeof Order] === value) {
-                return true;
-            }
-        }
+  for (const key in Order) {
+    if (Object.prototype.hasOwnProperty.call(Order, key)) {
+      if (Order[key as keyof typeof Order] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function OrderFromJSON(json: any): Order {
-    return OrderFromJSONTyped(json, false);
+  return OrderFromJSONTyped(json, false);
 }
 
 export function OrderFromJSONTyped(json: any, ignoreDiscriminator: boolean): Order {
-    return json as Order;
+  return json as Order;
 }
 
 export function OrderToJSON(value?: Order | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function OrderToJSONTyped(value: any, ignoreDiscriminator: boolean): Order {
-    return value as Order;
+  return value as Order;
 }
-

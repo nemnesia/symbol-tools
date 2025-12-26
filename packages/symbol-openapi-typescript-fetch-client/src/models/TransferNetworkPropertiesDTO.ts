@@ -15,55 +15,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface TransferNetworkPropertiesDTO
  */
 export interface TransferNetworkPropertiesDTO {
-    /**
-     * Maximum transaction message size.
-     * @type {string}
-     * @memberof TransferNetworkPropertiesDTO
-     */
-    maxMessageSize?: string;
+  /**
+   * Maximum transaction message size.
+   * @type {string}
+   * @memberof TransferNetworkPropertiesDTO
+   */
+  maxMessageSize?: string;
 }
 
 /**
  * Check if a given object implements the TransferNetworkPropertiesDTO interface.
  */
 export function instanceOfTransferNetworkPropertiesDTO(value: object): value is TransferNetworkPropertiesDTO {
-    return true;
+  return true;
 }
 
 export function TransferNetworkPropertiesDTOFromJSON(json: any): TransferNetworkPropertiesDTO {
-    return TransferNetworkPropertiesDTOFromJSONTyped(json, false);
+  return TransferNetworkPropertiesDTOFromJSONTyped(json, false);
 }
 
-export function TransferNetworkPropertiesDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): TransferNetworkPropertiesDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'maxMessageSize': json['maxMessageSize'] == null ? undefined : json['maxMessageSize'],
-    };
+export function TransferNetworkPropertiesDTOFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): TransferNetworkPropertiesDTO {
+  if (json == null) {
+    return json;
+  }
+  return {
+    maxMessageSize: json['maxMessageSize'] == null ? undefined : json['maxMessageSize'],
+  };
 }
 
 export function TransferNetworkPropertiesDTOToJSON(json: any): TransferNetworkPropertiesDTO {
-    return TransferNetworkPropertiesDTOToJSONTyped(json, false);
+  return TransferNetworkPropertiesDTOToJSONTyped(json, false);
 }
 
-export function TransferNetworkPropertiesDTOToJSONTyped(value?: TransferNetworkPropertiesDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function TransferNetworkPropertiesDTOToJSONTyped(
+  value?: TransferNetworkPropertiesDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'maxMessageSize': value['maxMessageSize'],
-    };
+  return {
+    maxMessageSize: value['maxMessageSize'],
+  };
 }
-

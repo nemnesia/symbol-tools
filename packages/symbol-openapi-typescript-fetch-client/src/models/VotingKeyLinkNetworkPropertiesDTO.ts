@@ -15,55 +15,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
- * 
+ *
  * @export
  * @interface VotingKeyLinkNetworkPropertiesDTO
  */
 export interface VotingKeyLinkNetworkPropertiesDTO {
-    /**
-     * to trigger plugin load
-     * @type {string}
-     * @memberof VotingKeyLinkNetworkPropertiesDTO
-     */
-    dummy?: string;
+  /**
+   * to trigger plugin load
+   * @type {string}
+   * @memberof VotingKeyLinkNetworkPropertiesDTO
+   */
+  dummy?: string;
 }
 
 /**
  * Check if a given object implements the VotingKeyLinkNetworkPropertiesDTO interface.
  */
 export function instanceOfVotingKeyLinkNetworkPropertiesDTO(value: object): value is VotingKeyLinkNetworkPropertiesDTO {
-    return true;
+  return true;
 }
 
 export function VotingKeyLinkNetworkPropertiesDTOFromJSON(json: any): VotingKeyLinkNetworkPropertiesDTO {
-    return VotingKeyLinkNetworkPropertiesDTOFromJSONTyped(json, false);
+  return VotingKeyLinkNetworkPropertiesDTOFromJSONTyped(json, false);
 }
 
-export function VotingKeyLinkNetworkPropertiesDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): VotingKeyLinkNetworkPropertiesDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'dummy': json['dummy'] == null ? undefined : json['dummy'],
-    };
+export function VotingKeyLinkNetworkPropertiesDTOFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): VotingKeyLinkNetworkPropertiesDTO {
+  if (json == null) {
+    return json;
+  }
+  return {
+    dummy: json['dummy'] == null ? undefined : json['dummy'],
+  };
 }
 
 export function VotingKeyLinkNetworkPropertiesDTOToJSON(json: any): VotingKeyLinkNetworkPropertiesDTO {
-    return VotingKeyLinkNetworkPropertiesDTOToJSONTyped(json, false);
+  return VotingKeyLinkNetworkPropertiesDTOToJSONTyped(json, false);
 }
 
-export function VotingKeyLinkNetworkPropertiesDTOToJSONTyped(value?: VotingKeyLinkNetworkPropertiesDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function VotingKeyLinkNetworkPropertiesDTOToJSONTyped(
+  value?: VotingKeyLinkNetworkPropertiesDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'dummy': value['dummy'],
-    };
+  return {
+    dummy: value['dummy'],
+  };
 }
-

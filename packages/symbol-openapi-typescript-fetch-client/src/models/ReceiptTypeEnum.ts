@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-
 /**
  * Type of receipt:
  * * 0x124D (4685 decimal) - Mosaic_Rental_Fee.
@@ -35,54 +34,52 @@
  * * 0xE143 (57667 decimal) - Transaction_Group.
  * * 0xF143 (61763 decimal) - Address_Alias_Resolution.
  * * 0xF243 (62019 decimal) - Mosaic_Alias_Resolution.
- * 
+ *
  * @export
  */
 export const ReceiptTypeEnum = {
-    NUMBER_4685: 4685,
-    NUMBER_4942: 4942,
-    NUMBER_8515: 8515,
-    NUMBER_8776: 8776,
-    NUMBER_9032: 9032,
-    NUMBER_8786: 8786,
-    NUMBER_9042: 9042,
-    NUMBER_12616: 12616,
-    NUMBER_12626: 12626,
-    NUMBER_16717: 16717,
-    NUMBER_16718: 16718,
-    NUMBER_16974: 16974,
-    NUMBER_20803: 20803,
-    NUMBER_57667: 57667,
-    NUMBER_61763: 61763,
-    NUMBER_62019: 62019
+  NUMBER_4685: 4685,
+  NUMBER_4942: 4942,
+  NUMBER_8515: 8515,
+  NUMBER_8776: 8776,
+  NUMBER_9032: 9032,
+  NUMBER_8786: 8786,
+  NUMBER_9042: 9042,
+  NUMBER_12616: 12616,
+  NUMBER_12626: 12626,
+  NUMBER_16717: 16717,
+  NUMBER_16718: 16718,
+  NUMBER_16974: 16974,
+  NUMBER_20803: 20803,
+  NUMBER_57667: 57667,
+  NUMBER_61763: 61763,
+  NUMBER_62019: 62019,
 } as const;
-export type ReceiptTypeEnum = typeof ReceiptTypeEnum[keyof typeof ReceiptTypeEnum];
-
+export type ReceiptTypeEnum = (typeof ReceiptTypeEnum)[keyof typeof ReceiptTypeEnum];
 
 export function instanceOfReceiptTypeEnum(value: any): boolean {
-    for (const key in ReceiptTypeEnum) {
-        if (Object.prototype.hasOwnProperty.call(ReceiptTypeEnum, key)) {
-            if (ReceiptTypeEnum[key as keyof typeof ReceiptTypeEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in ReceiptTypeEnum) {
+    if (Object.prototype.hasOwnProperty.call(ReceiptTypeEnum, key)) {
+      if (ReceiptTypeEnum[key as keyof typeof ReceiptTypeEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function ReceiptTypeEnumFromJSON(json: any): ReceiptTypeEnum {
-    return ReceiptTypeEnumFromJSONTyped(json, false);
+  return ReceiptTypeEnumFromJSONTyped(json, false);
 }
 
 export function ReceiptTypeEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): ReceiptTypeEnum {
-    return json as ReceiptTypeEnum;
+  return json as ReceiptTypeEnum;
 }
 
 export function ReceiptTypeEnumToJSON(value?: ReceiptTypeEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function ReceiptTypeEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): ReceiptTypeEnum {
-    return value as ReceiptTypeEnum;
+  return value as ReceiptTypeEnum;
 }
-

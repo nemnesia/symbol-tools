@@ -16,45 +16,42 @@
  * limitations under the License.
  */
 
-
 /**
  * Alias action:
  * * 0 - Unlink alias.
  * * 1 - Link alias.
- * 
+ *
  * @export
  */
 export const AliasActionEnum = {
-    NUMBER_0: 0,
-    NUMBER_1: 1
+  NUMBER_0: 0,
+  NUMBER_1: 1,
 } as const;
-export type AliasActionEnum = typeof AliasActionEnum[keyof typeof AliasActionEnum];
-
+export type AliasActionEnum = (typeof AliasActionEnum)[keyof typeof AliasActionEnum];
 
 export function instanceOfAliasActionEnum(value: any): boolean {
-    for (const key in AliasActionEnum) {
-        if (Object.prototype.hasOwnProperty.call(AliasActionEnum, key)) {
-            if (AliasActionEnum[key as keyof typeof AliasActionEnum] === value) {
-                return true;
-            }
-        }
+  for (const key in AliasActionEnum) {
+    if (Object.prototype.hasOwnProperty.call(AliasActionEnum, key)) {
+      if (AliasActionEnum[key as keyof typeof AliasActionEnum] === value) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 export function AliasActionEnumFromJSON(json: any): AliasActionEnum {
-    return AliasActionEnumFromJSONTyped(json, false);
+  return AliasActionEnumFromJSONTyped(json, false);
 }
 
 export function AliasActionEnumFromJSONTyped(json: any, ignoreDiscriminator: boolean): AliasActionEnum {
-    return json as AliasActionEnum;
+  return json as AliasActionEnum;
 }
 
 export function AliasActionEnumToJSON(value?: AliasActionEnum | null): any {
-    return value as any;
+  return value as any;
 }
 
 export function AliasActionEnumToJSONTyped(value: any, ignoreDiscriminator: boolean): AliasActionEnum {
-    return value as AliasActionEnum;
+  return value as AliasActionEnum;
 }
-

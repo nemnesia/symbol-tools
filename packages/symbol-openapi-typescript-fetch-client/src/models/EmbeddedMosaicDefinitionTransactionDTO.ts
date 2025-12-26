@@ -15,147 +15,149 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
 import type { NetworkTypeEnum } from './NetworkTypeEnum.js';
 import {
-    NetworkTypeEnumFromJSON,
-    NetworkTypeEnumFromJSONTyped,
-    NetworkTypeEnumToJSON,
-    NetworkTypeEnumToJSONTyped,
+  NetworkTypeEnumFromJSON,
+  NetworkTypeEnumFromJSONTyped,
+  NetworkTypeEnumToJSON,
+  NetworkTypeEnumToJSONTyped,
 } from './NetworkTypeEnum.js';
 
 /**
- * 
+ *
  * @export
  * @interface EmbeddedMosaicDefinitionTransactionDTO
  */
 export interface EmbeddedMosaicDefinitionTransactionDTO {
-    /**
-     * Public key.
-     * @type {string}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
-     */
-    signerPublicKey: string;
-    /**
-     * Entity version.
-     * @type {number}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
-     */
-    version: number;
-    /**
-     * 
-     * @type {NetworkTypeEnum}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
-     */
-    network: NetworkTypeEnum;
-    /**
-     * 
-     * @type {number}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
-     */
-    type: number;
-    /**
-     * Mosaic identifier.
-     * @type {string}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
-     */
-    id: string;
-    /**
-     * Duration expressed in number of blocks.
-     * @type {string}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
-     */
-    duration: string;
-    /**
-     * A number that allows uint 32 values.
-     * @type {number}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
-     */
-    nonce: number;
-    /**
-     * - 0x00 (none) - No flags present.
-     * - 0x01 (supplyMutable) - Mosaic supports supply changes even when mosaic owner owns partial supply.
-     * - 0x02 (transferable) - Mosaic supports transfers between arbitrary accounts. When not set, mosaic can only be transferred to
-     *     and from mosaic owner.
-     * - 0x04 (restrictable) - Mosaic supports custom restrictions configured by mosaic owner.
-     * - 0x08 (revokable) - Mosaic allows creator to revoke balances from another user.
-     * 
-     * @type {number}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
-     */
-    flags: number;
-    /**
-     * Determines up to what decimal place the mosaic can be divided.
-     * Divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics.
-     * The divisibility must be in the range of 0 and 6.
-     * 
-     * @type {number}
-     * @memberof EmbeddedMosaicDefinitionTransactionDTO
-     */
-    divisibility: number;
+  /**
+   * Public key.
+   * @type {string}
+   * @memberof EmbeddedMosaicDefinitionTransactionDTO
+   */
+  signerPublicKey: string;
+  /**
+   * Entity version.
+   * @type {number}
+   * @memberof EmbeddedMosaicDefinitionTransactionDTO
+   */
+  version: number;
+  /**
+   *
+   * @type {NetworkTypeEnum}
+   * @memberof EmbeddedMosaicDefinitionTransactionDTO
+   */
+  network: NetworkTypeEnum;
+  /**
+   *
+   * @type {number}
+   * @memberof EmbeddedMosaicDefinitionTransactionDTO
+   */
+  type: number;
+  /**
+   * Mosaic identifier.
+   * @type {string}
+   * @memberof EmbeddedMosaicDefinitionTransactionDTO
+   */
+  id: string;
+  /**
+   * Duration expressed in number of blocks.
+   * @type {string}
+   * @memberof EmbeddedMosaicDefinitionTransactionDTO
+   */
+  duration: string;
+  /**
+   * A number that allows uint 32 values.
+   * @type {number}
+   * @memberof EmbeddedMosaicDefinitionTransactionDTO
+   */
+  nonce: number;
+  /**
+   * - 0x00 (none) - No flags present.
+   * - 0x01 (supplyMutable) - Mosaic supports supply changes even when mosaic owner owns partial supply.
+   * - 0x02 (transferable) - Mosaic supports transfers between arbitrary accounts. When not set, mosaic can only be transferred to
+   *     and from mosaic owner.
+   * - 0x04 (restrictable) - Mosaic supports custom restrictions configured by mosaic owner.
+   * - 0x08 (revokable) - Mosaic allows creator to revoke balances from another user.
+   *
+   * @type {number}
+   * @memberof EmbeddedMosaicDefinitionTransactionDTO
+   */
+  flags: number;
+  /**
+   * Determines up to what decimal place the mosaic can be divided.
+   * Divisibility of 3 means that a mosaic can be divided into smallest parts of 0.001 mosaics.
+   * The divisibility must be in the range of 0 and 6.
+   *
+   * @type {number}
+   * @memberof EmbeddedMosaicDefinitionTransactionDTO
+   */
+  divisibility: number;
 }
-
-
 
 /**
  * Check if a given object implements the EmbeddedMosaicDefinitionTransactionDTO interface.
  */
-export function instanceOfEmbeddedMosaicDefinitionTransactionDTO(value: object): value is EmbeddedMosaicDefinitionTransactionDTO {
-    if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
-    if (!('version' in value) || value['version'] === undefined) return false;
-    if (!('network' in value) || value['network'] === undefined) return false;
-    if (!('type' in value) || value['type'] === undefined) return false;
-    if (!('id' in value) || value['id'] === undefined) return false;
-    if (!('duration' in value) || value['duration'] === undefined) return false;
-    if (!('nonce' in value) || value['nonce'] === undefined) return false;
-    if (!('flags' in value) || value['flags'] === undefined) return false;
-    if (!('divisibility' in value) || value['divisibility'] === undefined) return false;
-    return true;
+export function instanceOfEmbeddedMosaicDefinitionTransactionDTO(
+  value: object
+): value is EmbeddedMosaicDefinitionTransactionDTO {
+  if (!('signerPublicKey' in value) || value['signerPublicKey'] === undefined) return false;
+  if (!('version' in value) || value['version'] === undefined) return false;
+  if (!('network' in value) || value['network'] === undefined) return false;
+  if (!('type' in value) || value['type'] === undefined) return false;
+  if (!('id' in value) || value['id'] === undefined) return false;
+  if (!('duration' in value) || value['duration'] === undefined) return false;
+  if (!('nonce' in value) || value['nonce'] === undefined) return false;
+  if (!('flags' in value) || value['flags'] === undefined) return false;
+  if (!('divisibility' in value) || value['divisibility'] === undefined) return false;
+  return true;
 }
 
 export function EmbeddedMosaicDefinitionTransactionDTOFromJSON(json: any): EmbeddedMosaicDefinitionTransactionDTO {
-    return EmbeddedMosaicDefinitionTransactionDTOFromJSONTyped(json, false);
+  return EmbeddedMosaicDefinitionTransactionDTOFromJSONTyped(json, false);
 }
 
-export function EmbeddedMosaicDefinitionTransactionDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): EmbeddedMosaicDefinitionTransactionDTO {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'signerPublicKey': json['signerPublicKey'],
-        'version': json['version'],
-        'network': NetworkTypeEnumFromJSON(json['network']),
-        'type': json['type'],
-        'id': json['id'],
-        'duration': json['duration'],
-        'nonce': json['nonce'],
-        'flags': json['flags'],
-        'divisibility': json['divisibility'],
-    };
+export function EmbeddedMosaicDefinitionTransactionDTOFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean
+): EmbeddedMosaicDefinitionTransactionDTO {
+  if (json == null) {
+    return json;
+  }
+  return {
+    signerPublicKey: json['signerPublicKey'],
+    version: json['version'],
+    network: NetworkTypeEnumFromJSON(json['network']),
+    type: json['type'],
+    id: json['id'],
+    duration: json['duration'],
+    nonce: json['nonce'],
+    flags: json['flags'],
+    divisibility: json['divisibility'],
+  };
 }
 
 export function EmbeddedMosaicDefinitionTransactionDTOToJSON(json: any): EmbeddedMosaicDefinitionTransactionDTO {
-    return EmbeddedMosaicDefinitionTransactionDTOToJSONTyped(json, false);
+  return EmbeddedMosaicDefinitionTransactionDTOToJSONTyped(json, false);
 }
 
-export function EmbeddedMosaicDefinitionTransactionDTOToJSONTyped(value?: EmbeddedMosaicDefinitionTransactionDTO | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+export function EmbeddedMosaicDefinitionTransactionDTOToJSONTyped(
+  value?: EmbeddedMosaicDefinitionTransactionDTO | null,
+  ignoreDiscriminator: boolean = false
+): any {
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'signerPublicKey': value['signerPublicKey'],
-        'version': value['version'],
-        'network': NetworkTypeEnumToJSON(value['network']),
-        'type': value['type'],
-        'id': value['id'],
-        'duration': value['duration'],
-        'nonce': value['nonce'],
-        'flags': value['flags'],
-        'divisibility': value['divisibility'],
-    };
+  return {
+    signerPublicKey: value['signerPublicKey'],
+    version: value['version'],
+    network: NetworkTypeEnumToJSON(value['network']),
+    type: value['type'],
+    id: value['id'],
+    duration: value['duration'],
+    nonce: value['nonce'],
+    flags: value['flags'],
+    divisibility: value['divisibility'],
+  };
 }
-
