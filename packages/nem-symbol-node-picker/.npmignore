@@ -4,6 +4,8 @@ tsconfig.json
 eslint.config.js
 
 # Development files
+test/
+e2e/
 *.test.ts
 *.spec.ts
 *.test.js
