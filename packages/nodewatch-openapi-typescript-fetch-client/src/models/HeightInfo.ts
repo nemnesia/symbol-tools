@@ -15,66 +15,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { mapValues } from '../runtime.js';
+
 /**
  * Node heights information, calculated as the median of the values returned by all known nodes.
- * 
+ *
  * @export
  * @interface HeightInfo
  */
 export interface HeightInfo {
-    /**
-     * Current blockchain height, as seen by the node.
-     * @type {number}
-     * @memberof HeightInfo
-     */
-    height: number;
-    /**
-     * Network-wide blockchain finalized height, agreed-upon by the majority of nodes.
-     * @type {number}
-     * @memberof HeightInfo
-     */
-    finalizedHeight: number;
+  /**
+   * Current blockchain height, as seen by the node.
+   * @type {number}
+   * @memberof HeightInfo
+   */
+  height: number;
+  /**
+   * Network-wide blockchain finalized height, agreed-upon by the majority of nodes.
+   * @type {number}
+   * @memberof HeightInfo
+   */
+  finalizedHeight: number;
 }
 
 /**
  * Check if a given object implements the HeightInfo interface.
  */
 export function instanceOfHeightInfo(value: object): value is HeightInfo {
-    if (!('height' in value) || value['height'] === undefined) return false;
-    if (!('finalizedHeight' in value) || value['finalizedHeight'] === undefined) return false;
-    return true;
+  if (!('height' in value) || value['height'] === undefined) return false;
+  if (!('finalizedHeight' in value) || value['finalizedHeight'] === undefined) return false;
+  return true;
 }
 
 export function HeightInfoFromJSON(json: any): HeightInfo {
-    return HeightInfoFromJSONTyped(json, false);
+  return HeightInfoFromJSONTyped(json, false);
 }
 
 export function HeightInfoFromJSONTyped(json: any, ignoreDiscriminator: boolean): HeightInfo {
-    if (json == null) {
-        return json;
-    }
-    return {
-        
-        'height': json['height'],
-        'finalizedHeight': json['finalizedHeight'],
-    };
+  if (json == null) {
+    return json;
+  }
+  return {
+    height: json['height'],
+    finalizedHeight: json['finalizedHeight'],
+  };
 }
 
 export function HeightInfoToJSON(json: any): HeightInfo {
-    return HeightInfoToJSONTyped(json, false);
+  return HeightInfoToJSONTyped(json, false);
 }
 
 export function HeightInfoToJSONTyped(value?: HeightInfo | null, ignoreDiscriminator: boolean = false): any {
-    if (value == null) {
-        return value;
-    }
+  if (value == null) {
+    return value;
+  }
 
-    return {
-        
-        'height': value['height'],
-        'finalizedHeight': value['finalizedHeight'],
-    };
+  return {
+    height: value['height'],
+    finalizedHeight: value['finalizedHeight'],
+  };
 }
-

@@ -15,113 +15,119 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-import * as runtime from '../runtime.js';
-import type {
-  HeightInfo,
-  Node,
-  TimeSeriesNodesCountInner,
-} from '../models/index.js';
+import type { HeightInfo, Node, TimeSeriesNodesCountInner } from '../models/index.js';
 import {
-    HeightInfoFromJSON,
-    HeightInfoToJSON,
-    NodeFromJSON,
-    NodeToJSON,
-    TimeSeriesNodesCountInnerFromJSON,
-    TimeSeriesNodesCountInnerToJSON,
+  HeightInfoFromJSON,
+  HeightInfoToJSON,
+  NodeFromJSON,
+  NodeToJSON,
+  TimeSeriesNodesCountInnerFromJSON,
+  TimeSeriesNodesCountInnerToJSON,
 } from '../models/index.js';
+import * as runtime from '../runtime.js';
 
 /**
- * 
+ *
  */
 export class NEMNodesApi extends runtime.BaseAPI {
+  /**
+   * Returns information about the NEM blockchain\'s heights.
+   */
+  async getNemHeightRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<HeightInfo>> {
+    const queryParameters: any = {};
 
-    /**
-     * Returns information about the NEM blockchain\'s heights.
-     */
-    async getNemHeightRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HeightInfo>> {
-        const queryParameters: any = {};
+    const headerParameters: runtime.HTTPHeaders = {};
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    let urlPath = `/api/nem/height`;
 
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides
+    );
 
-        let urlPath = `/api/nem/height`;
+    return new runtime.JSONApiResponse(response, (jsonValue) => HeightInfoFromJSON(jsonValue));
+  }
 
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+  /**
+   * Returns information about the NEM blockchain\'s heights.
+   */
+  async getNemHeight(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<HeightInfo> {
+    const response = await this.getNemHeightRaw(initOverrides);
+    return await response.value();
+  }
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => HeightInfoFromJSON(jsonValue));
-    }
+  /**
+   * Returns the list of known NEM nodes.
+   */
+  async getNemNodesRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<Array<Node>>> {
+    const queryParameters: any = {};
 
-    /**
-     * Returns information about the NEM blockchain\'s heights.
-     */
-    async getNemHeight(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<HeightInfo> {
-        const response = await this.getNemHeightRaw(initOverrides);
-        return await response.value();
-    }
+    const headerParameters: runtime.HTTPHeaders = {};
 
-    /**
-     * Returns the list of known NEM nodes.
-     */
-    async getNemNodesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Node>>> {
-        const queryParameters: any = {};
+    let urlPath = `/api/nem/nodes`;
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides
+    );
 
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NodeFromJSON));
+  }
 
-        let urlPath = `/api/nem/nodes`;
+  /**
+   * Returns the list of known NEM nodes.
+   */
+  async getNemNodes(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Node>> {
+    const response = await this.getNemNodesRaw(initOverrides);
+    return await response.value();
+  }
 
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+  /**
+   * Returns NEM node count time series.
+   */
+  async getNemNodesCountRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<Array<TimeSeriesNodesCountInner>>> {
+    const queryParameters: any = {};
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NodeFromJSON));
-    }
+    const headerParameters: runtime.HTTPHeaders = {};
 
-    /**
-     * Returns the list of known NEM nodes.
-     */
-    async getNemNodes(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Node>> {
-        const response = await this.getNemNodesRaw(initOverrides);
-        return await response.value();
-    }
+    let urlPath = `/api/nem/nodes/count`;
 
-    /**
-     * Returns NEM node count time series.
-     */
-    async getNemNodesCountRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<TimeSeriesNodesCountInner>>> {
-        const queryParameters: any = {};
+    const response = await this.request(
+      {
+        path: urlPath,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides
+    );
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TimeSeriesNodesCountInnerFromJSON));
+  }
 
-
-        let urlPath = `/api/nem/nodes/count`;
-
-        const response = await this.request({
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TimeSeriesNodesCountInnerFromJSON));
-    }
-
-    /**
-     * Returns NEM node count time series.
-     */
-    async getNemNodesCount(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<TimeSeriesNodesCountInner>> {
-        const response = await this.getNemNodesCountRaw(initOverrides);
-        return await response.value();
-    }
-
+  /**
+   * Returns NEM node count time series.
+   */
+  async getNemNodesCount(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<Array<TimeSeriesNodesCountInner>> {
+    const response = await this.getNemNodesCountRaw(initOverrides);
+    return await response.value();
+  }
 }

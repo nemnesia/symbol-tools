@@ -22,8 +22,32 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nemnesia/symbol-tools/tree/main/packages/nodewatch-openapi-fetch-client"
+    "url": "git+https://github.com/nemnesia/symbol-tools.git",
+    "directory": "packages/nodewatch-openapi-typescript-fetch-client"
   },
+  "bugs": {
+    "url": "https://github.com/nemnesia/symbol-tools/issues"
+  },
+  "homepage": "https://github.com/nemnesia/symbol-tools/tree/main/packages/nodewatch-openapi-typescript-fetch-client#readme",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "require": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsup",
     "clean": "rm -rf dist",
@@ -34,8 +58,11 @@
     "format": "prettier --write \"{src,test,e2e}/**/*.ts\"",
     "publish:dryrun": "npm publish --dry-run",
     "publish:release": "npm run build && npm publish",
-    "prepublish:check": "npm run lint && npm run format && npm run build && npm test",
+    "prepublishOnly": "npm run lint && npm run format && npm run build && npm test",
     "custom-templates": "openapi-generator-cli author template -g typescript-fetch -o custom-templates"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "engines": {
     "node": ">=20.0.0"
