@@ -9,32 +9,25 @@ Symbol ブロックチェーンのための TypeScript/JavaScript ツールと�
 ### Packages
 
 - **[symbol-openapi-typescript-fetch-client](./packages/symbol-openapi-typescript-fetch-client)**  
-  Symbol REST API の TypeScript クライアント。OpenAPI仕様から自動生成。  
-  npm: `@nemnesia/symbol-openapi-fetch-client`
+  Symbol REST API の TypeScript クライアント。OpenAPI仕様から自動生成。
 
 - **[nodewatch-openapi-typescript-fetch-client](./packages/nodewatch-openapi-typescript-fetch-client)**  
-  NodeWatch REST API の TypeScript クライアント。OpenAPI仕様から自動生成。  
-  npm: `nodewatch-openapi-fetch-client`
+  NodeWatch REST API の TypeScript クライアント。OpenAPI仕様から自動生成。
 
 - **[symbol-catbuffer](./packages/symbol-catbuffer)**  
-  Symbolプロトコルのバイナリシリアライゼーションライブラリ。  
-  npm: `symbol-catbuffer`
+  Symbolプロトコルのバイナリシリアライゼーションライブラリ。
 
 - **[symbol-websocket](./packages/symbol-websocket)**  
-  Symbol WebSocket接続のモニタリングライブラリ。  
-  npm: `@nemnesia/symbol-websocket`
+  Symbol WebSocket接続のモニタリングライブラリ。
 
 - **[symbol-announcer](./packages/symbol-announcer)**  
-  Symbolトランザクションのアナウンスツール。WebSocket監視機能もあり。  
-  npm: `symbol-announcer`
+  Symbolトランザクションのアナウンスツール。WebSocket監視機能もあり。
 
 - **[nem-symbol-node-picker](./packages/nem-symbol-node-picker)**  
-  NEM/Symbolノード選択ユーティリティ。NodeWatch APIからランダムノード取得。  
-  npm: `nem-symbol-node-picker`
+  NEM/Symbolノード選択ユーティリティ。NodeWatch APIからランダムノード取得。
 
 - **[nem-websocket](./packages/nem-websocket)**  
-  NEM WebSocketモニタリングツール。  
-  npm: `@nemnesia/nem-websocket`
+  NEM WebSocketモニタリングツール。
 
 ## 前提条件
 
