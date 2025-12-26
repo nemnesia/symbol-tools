@@ -1,20 +1,36 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "packages/symbol-catbuffer"
-		},
-		{
-			"path": "packages/symbol-openapi-typescript-fetch-client"
-		},
-		{
-			"path": "packages/nodewatch-openapi-typescript-fetch-client"
-		},
-		{
-			"path": "packages/symbol-websocket"
-		}
-	],
-	"settings": {}
+    "folders": [
+        {
+            "name": "symbol-tools",
+            "path": "."
+        },
+        {
+            "name": "symbol-openapi-typescript-fetch-client",
+            "path": "packages/symbol-openapi-typescript-fetch-client"
+        },
+        {
+            "name": "nodewatch-openapi-typescript-fetch-client",
+            "path": "packages/nodewatch-openapi-typescript-fetch-client"
+        },
+        {
+            "name": "nem-symbol-node-picker",
+            "path": "packages/nem-symbol-node-picker"
+        },
+        {
+            "name": "nem-websocket",
+            "path": "packages/nem-websocket"
+        },
+        {
+            "name": "symbol-websocket",
+            "path": "packages/symbol-websocket"
+        },
+        {
+            "name": "symbol-catbuffer",
+            "path": "packages/symbol-catbuffer"
+        },
+        {
+            "name": "symbol-announcer",
+            "path": "packages/symbol-announcer"
+        }
+    ],
 }
