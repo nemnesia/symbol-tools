@@ -33,7 +33,6 @@
     "eslint-plugin-react-refresh": "^0.4.26"
   },
   "volta": {
-    "node": "24.12.0",
-    "yarn": "4.12.0"
+    "node": "24.12.0"
   }
 }
