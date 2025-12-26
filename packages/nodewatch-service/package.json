@@ -1,0 +1,69 @@
+{
+  "name": "@nemnesia/nodewatch-service",
+  "version": "0.1.0",
+  "description": "NodeWatch service client with failover support for Symbol and NEM blockchain nodes",
+  "keywords": [
+    "nem",
+    "symbol",
+    "nodewatch",
+    "blockchain",
+    "failover",
+    "client"
+  ],
+  "author": "ccHarvestasya",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nemnesia/symbol-tools.git",
+    "directory": "packages/nodewatch-service"
+  },
+  "bugs": {
+    "url": "https://github.com/nemnesia/symbol-tools/issues"
+  },
+  "homepage": "https://github.com/nemnesia/symbol-tools/tree/main/packages/nodewatch-service#readme",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "require": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "lint": "eslint \"{src,test,e2e}/**/*.ts\" --fix",
+    "format": "prettier --write \"{src,test,e2e}/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:ui": "vitest --ui --coverage",
+    "prepublishOnly": "pnpm run lint && pnpm run format && pnpm run build && pnpm test",
+    "publish:dryrun": "npm publish --dry-run",
+    "publish:release": "npm run build && npm publish"
+  },
+  "packageManager": "pnpm@10.26.2",
+  "dependencies": {
+    "@nemnesia/nodewatch-openapi-typescript-fetch-client": "^1.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "volta": {
+    "node": "20.19.6"
+  }
+}
