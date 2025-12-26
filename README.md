@@ -6,18 +6,35 @@ Symbol ブロックチェーンのための TypeScript/JavaScript ツールと�
 
 このモノレポには以下のパッケージが含まれています:
 
-### Core Packages
+### Packages
 
-- **[symbol-catbuffer](./packages/symbol-catbuffer)** - Symbol プロトコルのバイナリシリアライゼーションライブラリ
-- **[symbol-openapi-typescript-fetch-client](./packages/symbol-openapi-typescript-fetch-client)** - Symbol REST API の TypeScript クライアント
-- **[symbol-websocket](./packages/symbol-websocket)** - Symbol WebSocket 接続のモニタリングライブラリ
+- **[symbol-openapi-typescript-fetch-client](./packages/symbol-openapi-typescript-fetch-client)**  
+  Symbol REST API の TypeScript クライアント。OpenAPI仕様から自動生成。  
+  npm: `@nemnesia/symbol-openapi-fetch-client`
 
-### Utilities
+- **[nodewatch-openapi-typescript-fetch-client](./packages/nodewatch-openapi-typescript-fetch-client)**  
+  NodeWatch REST API の TypeScript クライアント。OpenAPI仕様から自動生成。  
+  npm: `nodewatch-openapi-fetch-client`
 
-- **[symbol-announcer](./packages/symbol-announcer)** - Symbol トランザクションのアナウンスツール
-- **[nem-symbol-node-picker](./packages/nem-symbol-node-picker)** - NEM/Symbol ノード選択ユーティリティ
-- **[nem-websocket-monitor](./packages/nem-websocket-monitor)** - NEM WebSocket モニタリングツール
-- **[nodewatch-openapi-typescript-fetch-client](./packages/nodewatch-openapi-typescript-fetch-client)** - Nodewatch API の TypeScript クライアント
+- **[symbol-catbuffer](./packages/symbol-catbuffer)**  
+  Symbolプロトコルのバイナリシリアライゼーションライブラリ。  
+  npm: `symbol-catbuffer`
+
+- **[symbol-websocket](./packages/symbol-websocket)**  
+  Symbol WebSocket接続のモニタリングライブラリ。  
+  npm: `@nemnesia/symbol-websocket`
+
+- **[symbol-announcer](./packages/symbol-announcer)**  
+  Symbolトランザクションのアナウンスツール。WebSocket監視機能もあり。  
+  npm: `symbol-announcer`
+
+- **[nem-symbol-node-picker](./packages/nem-symbol-node-picker)**  
+  NEM/Symbolノード選択ユーティリティ。NodeWatch APIからランダムノード取得。  
+  npm: `nem-symbol-node-picker`
+
+- **[nem-websocket](./packages/nem-websocket)**  
+  NEM WebSocketモニタリングツール。  
+  npm: `@nemnesia/nem-websocket`
 
 ## 前提条件
 
