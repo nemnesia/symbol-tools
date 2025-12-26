@@ -31,6 +31,9 @@
         {
             "name": "symbol-announcer",
             "path": "packages/symbol-announcer"
+        },
+        {
+            "path": "apps/symbol-finalization-proof-viewer"
         }
     ],
 }

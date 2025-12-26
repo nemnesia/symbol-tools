@@ -1,0 +1,39 @@
+{
+  "name": "symbol-finalization-proof-viewer",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist",
+    "lint": "eslint .",
+    "generate:api": "openapi-typescript openapi/openapi.yml --output src/schema.ts",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "preview": "vite preview",
+    "metal:forge:test": "pnpm build && cd ../metal && npx metal forge -o ../symbol-finalization-proof-viewer/metalForgeInfo.json --node-url http://sakia.harvestasya.com:3000 --seal 2 ../symbol-finalization-proof-viewer/dist/index.html",
+    "metal:scrap:test": "cd ../metal && npx metal scrap -o ../symbol-finalization-proof-viewer/metalScrapInfo.json --node-url http://sakia.harvestasya.com:3000"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@fontsource/roboto": "^5.2.9",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
+    "@nemnesia/symbol-openapi-typescript-fetch-client": "^1.0.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.26"
+  },
+  "volta": {
+    "node": "24.12.0",
+    "yarn": "4.12.0"
+  }
+}
