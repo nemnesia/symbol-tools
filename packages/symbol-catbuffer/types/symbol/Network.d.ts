@@ -1,7 +1,7 @@
 /**
  * Represents a Symbol network timestamp with millisecond resolution.
  */
-export class NetworkTimestamp {
+export class NetworkTimestamp extends BasicNetworkTimestamp {
     /**
      * Adds a specified number of milliseconds to this timestamp.
      * @param {number|bigint} count Number of milliseconds to add.
@@ -57,7 +57,7 @@ export class Address extends ByteArray {
 /**
  * Represents a Symbol network.
  */
-export class Network {
+export class Network extends BasicNetwork<any, any> {
     /**
      * Symbol main network.
      * @type {Network}
@@ -87,6 +87,8 @@ export class Network {
      */
     generationHashSeed: Hash256;
 }
+import { NetworkTimestamp as BasicNetworkTimestamp } from '../NetworkTimestamp.js';
 import ByteArray from '../ByteArray.js';
 import { NamespaceId } from './models.js';
+import { Network as BasicNetwork } from '../Network.js';
 import { Hash256 } from '../CryptoTypes.js';
