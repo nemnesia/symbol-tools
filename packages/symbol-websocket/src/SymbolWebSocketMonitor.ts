@@ -49,14 +49,13 @@ export class SymbolWebSocketMonitor {
    */
   private createConnection(): void {
     const endPointHost = this.options.host;
-    const timeout = this.options.timeout ?? 5000;
     const ssl = this.options.ssl ?? false;
 
     const protocol = ssl ? 'wss' : 'ws';
     const endPointPort = ssl ? '3001' : '3000';
 
     // クライアントを作成 / Create client
-    this._client = new WebSocket(`${protocol}://${endPointHost}:${endPointPort}/ws`, { timeout: timeout });
+    this._client = new WebSocket(`${protocol}://${endPointHost}:${endPointPort}/ws`);
 
     // クライアント接続時の処理 / On client connect
     this._client.onclose = (event: WebSocket.CloseEvent) => {
