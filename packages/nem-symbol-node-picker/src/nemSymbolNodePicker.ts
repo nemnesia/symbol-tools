@@ -13,11 +13,11 @@ export const nodewatchTestnetUrls = ['https://testnet.sse.nemnesia.com', 'https:
 /** チェーン名の型定義 */
 type ChainName = 'nem' | 'symbol';
 /** ネットワークの型定義 */
-type Network = 'mainnet' | 'testnet';
+type NetworkName = 'mainnet' | 'testnet' | string;
 /** ピッカーオプションのインターフェース */
 interface PickerOptions {
   chainName?: ChainName;
-  network?: Network;
+  network?: NetworkName;
   count?: number;
   isSsl?: boolean;
   timeoutMs?: number;
@@ -74,7 +74,7 @@ async function _fetchWithTimeout(promise: Promise<any>, timeoutMs: number): Prom
  * @returns ノードのエンドポイント配列
  */
 async function _symbolNodePicker(
-  network: 'mainnet' | 'testnet',
+  network: 'mainnet' | 'testnet' | string,
   count: number,
   isSsl: boolean,
   timeoutMs: number
@@ -136,9 +136,9 @@ async function _symbolNodePicker(
     filteredNodes = filteredNodes.filter((node) => node.isSslEnabled === true);
   }
   // ランダムに取得する
-  const randomNodes = filteredNodes.sort(() => 0.5 - Math.random()).slice(0, count);
+  filteredNodes = filteredNodes.sort(() => 0.5 - Math.random()).slice(0, count);
 
-  return randomNodes.map((node) => node.endpoint);
+  return filteredNodes.map((node) => node.endpoint);
 }
 
 /**
@@ -150,7 +150,7 @@ async function _symbolNodePicker(
  * @returns ノードのエンドポイント配列
  */
 async function _nemNodePicker(
-  network: 'mainnet' | 'testnet',
+  network: 'mainnet' | 'testnet' | string,
   count: number,
   isSsl: boolean,
   timeoutMs: number
@@ -223,7 +223,6 @@ async function _nemNodePicker(
  * @param network ネットワーク[mainnet|testnet] - default: mainnet
  * @param count 取得するノード数 - default: 1
  * @param isSsl SSLのみ取得するか - default: false
- * @param timeoutMs タイムアウト時間（ミリ秒） - default: 3000
  * @returns ノードのエンドポイント配列
  */
 export async function nemSymbolNodePicker({
