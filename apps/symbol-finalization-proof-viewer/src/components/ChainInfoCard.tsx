@@ -7,7 +7,7 @@ import {
   Configuration,
   FinalizedBlockDTO,
 } from '@nemnesia/symbol-openapi-typescript-fetch-client';
-import { SymbolWebSocketMonitor } from '@nemnesia/symbol-websocket';
+import { SymbolWebSocket } from '@nemnesia/symbol-websocket';
 import { nemSymbolNodePicker } from 'nem-symbol-node-picker';
 import { useEffect, useRef, useState } from 'react';
 
@@ -71,7 +71,7 @@ const ChainInfoCard: React.FC<ChainInfoCardProps> = ({ networkName, onHeightChan
 
       // WebSocket接続を確立してリアルタイム更新を受信
       console.log('Connecting to websocket node:', new URL(symbolNodes[0]).hostname);
-      const monitor = new SymbolWebSocketMonitor({
+      const monitor = new SymbolWebSocket({
         host: new URL(symbolNodes[0]).hostname,
         ssl: true,
       });
