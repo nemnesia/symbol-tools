@@ -7,9 +7,9 @@
 - 🔐 **現代的な暗号化**: Argon2id + AES-256-GCM
 - 🎯 **シンプルなAPI**: encrypt/decrypt の2つの関数のみ
 - 🛡️ **セキュリティ重視**: ベストプラクティスに従った実装
-- 🌐 **ブラウザ/Node.js両対応**: 環境に応じて最適な実装を自動選択
+- 🌐 **マルチプラットフォーム対応**: 環境に応じて最適な実装を自動選択
   - Node.js: ネイティブ`argon2`ライブラリ（高速）
-  - ブラウザ: `@noble/hashes`（純粋JS実装、React等で動作）
+  - ブラウザ/React Native: `@noble/hashes`（純粋JS実装）
 - 💻 **TPM不要**: ソフトウェアベースの暗号化
 
 ## 📥 インストール
@@ -59,8 +59,8 @@ const decrypted2 = await decrypt(restored, password);
 ### KDF (Key Derivation Function)
 
 - **Argon2id**: メモリハード関数、サイドチャネル攻撃に強い
-  - Memory: 64MB
-  - Time: 3回
+  - Memory: 32MB
+  - Time: 2回
   - Parallelism: 1
   - 実装:
     - Node.js: ネイティブ`argon2`ライブラリ（C++バインディング）
@@ -123,20 +123,21 @@ interface EncryptedData {
 | 暗号化 | ~150-250ms  |
 | 復号   | ~150-250ms  |
 
-### ブラウザ環境（@noble/hashes）
+### ブラウザ/React Native環境（@noble/hashes）
 
 | 操作   | 時間 (目安) |
 | ------ | ----------- |
 | 暗号化 | ~2-3秒      |
 | 復号   | ~2-3秒      |
 
-⚠️ **ブラウザ環境での注意**:  
-ブラウザでは純粋JavaScriptで実装された`@noble/hashes`を使用するため、ネイティブ実装に比べて10倍程度遅くなります。これはArgon2idのメモリハード特性により意図的なものです（ブルートフォース攻撃対策）。
+⚠️ **ブラウザ/React Native環境での注意**:  
+ブラウザおよびReact Nativeでは純粋JavaScriptで実装された`@noble/hashes`を使用するため、ネイティブ実装に比べて10倍程度遅くなります。これはArgon2idのメモリハード特性により意図的なものです（ブルートフォース攻撃対策）。
 
 💡 **推奨**:
 
 - UIブロックを避けるため、暗号化/復号処理中はローディング表示を実装
-- 可能であればWeb Workerでの実行を検討
+- ブラウザ: Web Workerでの実行を検討
+- React Native: バックグラウンドスレッドでの実行を検討（`react-native-workers`等）
 
 ## 🧪 テスト
 

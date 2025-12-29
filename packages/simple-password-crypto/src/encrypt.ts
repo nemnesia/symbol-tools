@@ -10,8 +10,8 @@ import { CURRENT_VERSION } from './version.js';
  * Argon2id パラメータ（固定値）
  */
 const ARGON2_PARAMS = {
-  m: 65536, // memoryCost: 64MB
-  t: 3, // timeCost
+  m: 32768, // memoryCost: 32MB（高速化）
+  t: 2, // timeCost（高速化）
   p: 1, // parallelism
 } as const;
 

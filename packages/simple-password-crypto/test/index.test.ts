@@ -79,8 +79,8 @@ describe('simple-password-crypto', () => {
   it('正しい Argon2id パラメータを持つこと', async () => {
     const encrypted = await encrypt(testData, password);
 
-    expect(encrypted.kdfParams.memoryCost).toBe(65536);
-    expect(encrypted.kdfParams.timeCost).toBe(3);
+    expect(encrypted.kdfParams.memoryCost).toBe(32768);
+    expect(encrypted.kdfParams.timeCost).toBe(2);
     expect(encrypted.kdfParams.parallelism).toBe(1);
   });
 
