@@ -55,6 +55,7 @@
     "test:e2e:coverage": "vitest --coverage --dir e2e",
     "test:e2e:coverage:ui": "vitest --ui --coverage --dir e2e",
     "test:all": "vitest run",
+    "prepublishOnly": "pnpm run lint && pnpm run format && pnpm run build && pnpm test",
     "publish:dryrun": "npm publish --dry-run",
     "publish:release": "npm run build && npm publish"
   },
