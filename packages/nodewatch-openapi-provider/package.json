@@ -1,5 +1,5 @@
 {
-  "name": "@nemnesia/nodewatch-service",
+  "name": "@nemnesia/nodewatch-openapi-provider",
   "version": "0.1.0",
   "description": "NodeWatch service client with failover support for Symbol and NEM blockchain nodes",
   "keywords": [
@@ -15,12 +15,12 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nemnesia/symbol-tools.git",
-    "directory": "packages/nodewatch-service"
+    "directory": "packages/nodewatch-openapi-provider"
   },
   "bugs": {
     "url": "https://github.com/nemnesia/symbol-tools/issues"
   },
-  "homepage": "https://github.com/nemnesia/symbol-tools/tree/main/packages/nodewatch-service#readme",
+  "homepage": "https://github.com/nemnesia/symbol-tools/tree/main/packages/nodewatch-openapi-provider#readme",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
