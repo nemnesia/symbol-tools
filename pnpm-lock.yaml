@@ -93,9 +93,24 @@ importers:
       '@mui/material':
         specifier: ^7.3.6
         version: 7.3.6(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react@19.2.3))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@nemnesia/nodewatch-openapi-provider':
+        specifier: workspace:*
+        version: link:../../packages/nodewatch-openapi-provider
+      '@nemnesia/nodewatch-openapi-typescript-fetch-client':
+        specifier: workspace:*
+        version: link:../../packages/nodewatch-openapi-typescript-fetch-client
+      '@nemnesia/symbol-catbuffer':
+        specifier: workspace:*
+        version: link:../../packages/symbol-catbuffer
       '@nemnesia/symbol-openapi-typescript-fetch-client':
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: workspace:*
+        version: link:../../packages/symbol-openapi-typescript-fetch-client
+      '@nemnesia/symbol-websocket':
+        specifier: workspace:*
+        version: link:../../packages/symbol-websocket
+      nem-symbol-node-picker:
+        specifier: workspace:*
+        version: link:../../packages/nem-symbol-node-picker
       react:
         specifier: ^19.2.3
         version: 19.2.3
@@ -121,6 +136,9 @@ importers:
 
   packages/nem-symbol-node-picker:
     dependencies:
+      '@nemnesia/nodewatch-openapi-provider':
+        specifier: workspace:*
+        version: link:../nodewatch-openapi-provider
       '@nemnesia/nodewatch-openapi-typescript-fetch-client':
         specifier: ^1.0.1
         version: 1.0.1
@@ -195,6 +213,12 @@ importers:
         specifier: ^4.0.15
         version: 4.0.16(@types/node@24.10.4)(@vitest/ui@4.0.16)(jsdom@27.3.0)(terser@5.44.1)(tsx@4.21.0)
 
+  packages/nodewatch-openapi-provider:
+    dependencies:
+      '@nemnesia/nodewatch-openapi-typescript-fetch-client':
+        specifier: ^1.0.1
+        version: 1.0.1
+
   packages/nodewatch-openapi-typescript-fetch-client: {}
 
   packages/symbol-announcer:
@@ -203,7 +227,11 @@ importers:
         specifier: workspace:*
         version: link:../symbol-websocket
 
-  packages/symbol-catbuffer: {}
+  packages/symbol-catbuffer:
+    dependencies:
+      '@noble/hashes':
+        specifier: ^2.0.1
+        version: 2.0.1
 
   packages/symbol-openapi-typescript-fetch-client: {}
 
@@ -760,9 +788,6 @@ packages:
   '@nemnesia/nodewatch-openapi-typescript-fetch-client@1.0.1':
     resolution: {integrity: sha512-/ZKoYX9b5ouzjOjd3iRvkicouuHFetBHguDw4Fk8gFR4jegZ3MpFkvmNMjxsIVuxjaRJylz2wuUudBxuSSR/Zw==}
 
-  '@nemnesia/symbol-openapi-typescript-fetch-client@1.0.0':
-    resolution: {integrity: sha512-khxCMfNddtDGrkuvaPsl3P4DItNmkTOuuFS6VuhZ6bSu35l8RMT6UQpqvzzbrNJVKI91EWoEJ6cnuB90KCqRgw==}
-
   '@nestjs/axios@4.0.1':
     resolution: {integrity: sha512-68pFJgu+/AZbWkGu65Z3r55bTsCPlgyKaV4BSG8yUAD72q1PPuyVRgUwFv6BxdnibTUHlyxm06FmYWNC+bjN7A==}
     peerDependencies:
@@ -804,6 +829,10 @@ packages:
   '@noble/hashes@1.8.0':
     resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
     engines: {node: ^14.21.3 || >=16}
+
+  '@noble/hashes@2.0.1':
+    resolution: {integrity: sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw==}
+    engines: {node: '>= 20.19.0'}
 
   '@nuxt/opencollective@0.4.1':
     resolution: {integrity: sha512-GXD3wy50qYbxCJ652bDrDzgMr3NFEkIS374+IgFQKkCvk9yiYcLvX2XDYr7UyQxf4wK0e+yqDYRubZ0DtOxnmQ==}
@@ -3378,8 +3407,6 @@ snapshots:
 
   '@nemnesia/nodewatch-openapi-typescript-fetch-client@1.0.1': {}
 
-  '@nemnesia/symbol-openapi-typescript-fetch-client@1.0.0': {}
-
   '@nestjs/axios@4.0.1(@nestjs/common@11.1.10(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.13.2)(rxjs@7.8.2)':
     dependencies:
       '@nestjs/common': 11.1.10(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -3411,6 +3438,8 @@ snapshots:
       uid: 2.0.2
 
   '@noble/hashes@1.8.0': {}
+
+  '@noble/hashes@2.0.1': {}
 
   '@nuxt/opencollective@0.4.1':
     dependencies:
