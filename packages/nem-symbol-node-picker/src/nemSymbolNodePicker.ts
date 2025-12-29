@@ -1,9 +1,5 @@
-import {
-  Configuration,
-  HeightInfo,
-  NEMNodesApi,
-  SymbolNodesApi,
-} from '@nemnesia/nodewatch-openapi-typescript-fetch-client';
+import { createNemNodeWatchApi, createSymbolNodeWatchApi } from '@nemnesia/nodewatch-openapi-provider';
+import { HeightInfo } from '@nemnesia/nodewatch-openapi-typescript-fetch-client';
 
 /** NodeWatch メインネット用URLリスト */
 export const nodewatchMainnetUrls = ['https://sse.nemnesia.com', 'https://sse2.nemnesia.com'];
@@ -85,49 +81,27 @@ async function _symbolNodePicker(
 
   let heightInfo: HeightInfo;
   let nodes: any[];
-
   if (cachedEntry && Date.now() - cachedEntry.timestamp < CACHE_DURATION) {
-    // キャッシュからデータを使用
     ({ heightInfo, nodes } = cachedEntry);
   } else {
-    // NodeWatchに接続して高さ情報とノード一覧を並列取得
-    const nodewatchUrls = network === 'mainnet' ? nodewatchMainnetUrls : nodewatchTestnetUrls;
-
-    // 全てのNodeWatchを並列で試行（最初に成功したものを使用）
-    const nodeWatchPromises = nodewatchUrls.map(async (baseUrl) => {
-      const openApi = new SymbolNodesApi(new Configuration({ basePath: baseUrl }));
-
-      try {
-        // 高さ情報とノード一覧を並列取得（タイムアウト付き）
-        const [heightInfo, nodes] = await Promise.all([
-          _fetchWithTimeout(openApi.getSymbolHeight(), timeoutMs),
-          _fetchWithTimeout(openApi.getSymbolPeerNodes(), timeoutMs),
-        ]);
-
-        return { heightInfo, nodes, baseUrl };
-      } catch (error) {
-        throw new Error(`Failed to connect to ${baseUrl}: ${error instanceof Error ? error.message : String(error)}`);
-      }
-    });
-
-    // 最初に成功したNodeWatchの結果を使用
-    let successfulResult: { heightInfo: HeightInfo; nodes: NodeEntry[]; baseUrl: string } | null = null;
-
+    const isMainnet = network === 'mainnet';
+    const openApi = createSymbolNodeWatchApi(isMainnet);
     try {
-      successfulResult = await Promise.any(nodeWatchPromises);
-    } catch {
-      throw new Error('No available NodeWatch found.');
+      const [height, nodeList] = await Promise.all([
+        _fetchWithTimeout(openApi.getSymbolHeight(), timeoutMs),
+        _fetchWithTimeout(openApi.getSymbolPeerNodes(), timeoutMs),
+      ]);
+      heightInfo = height;
+      nodes = nodeList;
+      symbolCache.set(cacheKey, {
+        heightInfo,
+        nodes,
+        timestamp: Date.now(),
+        baseUrl: '',
+      });
+    } catch (error) {
+      throw new Error('No available NodeWatch found. ' + (error instanceof Error ? error.message : String(error)));
     }
-
-    ({ heightInfo, nodes } = successfulResult);
-
-    // キャッシュに保存
-    symbolCache.set(cacheKey, {
-      heightInfo,
-      nodes,
-      timestamp: Date.now(),
-      baseUrl: successfulResult.baseUrl,
-    });
   }
   // フィルタリング
   let filteredNodes = nodes.filter((node) => node.height >= heightInfo!.height);
@@ -161,49 +135,27 @@ async function _nemNodePicker(
 
   let heightInfo: HeightInfo;
   let nodes: any[];
-
   if (cachedEntry && Date.now() - cachedEntry.timestamp < CACHE_DURATION) {
-    // キャッシュからデータを使用
     ({ heightInfo, nodes } = cachedEntry);
   } else {
-    // NodeWatchに接続して高さ情報とノード一覧を並列取得
-    const nodewatchUrls = network === 'mainnet' ? nodewatchMainnetUrls : nodewatchTestnetUrls;
-
-    // 全てのNodeWatchを並列で試行（最初に成功したものを使用）
-    const nodeWatchPromises = nodewatchUrls.map(async (baseUrl) => {
-      const openApi = new NEMNodesApi(new Configuration({ basePath: baseUrl }));
-
-      try {
-        // 高さ情報とノード一覧を並列取得（タイムアウト付き）
-        const [heightInfo, nodes] = await Promise.all([
-          _fetchWithTimeout(openApi.getNemHeight(), timeoutMs),
-          _fetchWithTimeout(openApi.getNemNodes(), timeoutMs),
-        ]);
-
-        return { heightInfo, nodes, baseUrl };
-      } catch (error) {
-        throw new Error(`Failed to connect to ${baseUrl}: ${error instanceof Error ? error.message : String(error)}`);
-      }
-    });
-
-    // 最初に成功したNodeWatchの結果を使用
-    let successfulResult: { heightInfo: HeightInfo; nodes: NodeEntry[]; baseUrl: string } | null = null;
-
+    const isMainnet = network === 'mainnet';
+    const openApi = createNemNodeWatchApi(isMainnet);
     try {
-      successfulResult = await Promise.any(nodeWatchPromises);
-    } catch {
-      throw new Error('No available NodeWatch found.');
+      const [height, nodeList] = await Promise.all([
+        _fetchWithTimeout(openApi.getNemHeight(), timeoutMs),
+        _fetchWithTimeout(openApi.getNemNodes(), timeoutMs),
+      ]);
+      heightInfo = height;
+      nodes = nodeList;
+      nemCache.set(cacheKey, {
+        heightInfo,
+        nodes,
+        timestamp: Date.now(),
+        baseUrl: '',
+      });
+    } catch (error) {
+      throw new Error('No available NodeWatch found. ' + (error instanceof Error ? error.message : String(error)));
     }
-
-    ({ heightInfo, nodes } = successfulResult);
-
-    // キャッシュに保存
-    nemCache.set(cacheKey, {
-      heightInfo,
-      nodes,
-      timestamp: Date.now(),
-      baseUrl: successfulResult.baseUrl,
-    });
   }
   // フィルタリング
   let filteredNodes = nodes.filter((node) => node.height >= heightInfo!.height);

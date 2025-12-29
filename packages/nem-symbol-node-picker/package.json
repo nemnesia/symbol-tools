@@ -23,12 +23,12 @@
   "homepage": "https://github.com/nemnesia/nem-symbol-node-picker#readme",
   "type": "module",
   "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     "import": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.mjs"
+      "default": "./dist/index.js"
     },
     "require": {
       "types": "./dist/index.d.cts",
@@ -42,8 +42,8 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "tsup",
     "clean": "rm -rf dist",
+    "build": "pnpm run clean && tsup",
     "lint": "eslint \"{src,test,e2e}/**/*.ts\" --fix",
     "format": "prettier --write \"{src,test,e2e}/**/*.ts\"",
     "test": "vitest run",
@@ -56,11 +56,11 @@
     "test:e2e:coverage:ui": "vitest --ui --coverage --dir e2e",
     "test:all": "vitest run",
     "publish:dryrun": "npm publish --dry-run",
-    "publish:release": "npm run build && npm publish",
-    "install:local-module": "yarn add @nemnesia/nodewatch-openapi-typescript-fetch-client@portal:../../nodewatch-openapi-fetch-client/typescript"
+    "publish:release": "npm run build && npm publish"
   },
   "dependencies": {
-    "@nemnesia/nodewatch-openapi-typescript-fetch-client": "^1.0.1"
+    "@nemnesia/nodewatch-openapi-typescript-fetch-client": "^1.0.1",
+    "@nemnesia/nodewatch-openapi-provider": "workspace:*"
   },
   "devDependencies": {},
   "engines": {
