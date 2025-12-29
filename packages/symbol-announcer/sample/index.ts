@@ -6,12 +6,13 @@ import { SymbolAnnouncer } from '../src/SymbolAnnouncer';
 const facade = new SymbolFacade('testnet');
 
 // 署名アカウント(送信者)
+// ⚠️ 本番環境では環境変数などから秘密鍵を取得してください
 const aliceAccount = facade.createAccount(
-  new PrivateKey('F10B02B6E6989445C8219EC0D5AFCD732830E79E2C029084ADC600DD1B594C69')
+  new PrivateKey('YOUR_PRIVATE_KEY_HERE_64_HEX_CHARACTERS_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 );
 // 受信アカウント
 const bobPublicAccount = facade.createPublicAccount(
-  new PublicKey('94EC711522B4B32A1B6A6ED61D86D1E3EE11AFB9B912A17F8983EED3808819FD')
+  new PublicKey('YOUR_PUBLIC_KEY_HERE_64_HEX_CHARACTERS_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 );
 
 // 転送モザイク設定
