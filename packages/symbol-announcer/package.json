@@ -56,9 +56,6 @@
   "dependencies": {
     "@nemnesia/symbol-websocket": "workspace:*"
   },
-  "peerDependencies": {
-    "@nemnesia/symbol-websocket": ">=0.1.0"
-  },
   "engines": {
     "node": ">=20.0.0"
   },
