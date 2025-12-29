@@ -54,7 +54,7 @@
     "publish:release": "npm run build && npm publish"
   },
   "dependencies": {
-    "@nemnesia/symbol-websocket": "workspace:*"
+    "@nemnesia/symbol-websocket": "^0.1.0"
   },
   "engines": {
     "node": ">=20.0.0"
