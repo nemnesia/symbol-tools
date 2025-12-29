@@ -15,7 +15,7 @@ Symbol WebSocket は、Symbol ブロックチェーンのリアルタイムデ�
 npm install @nemnesia/symbol-websocket
 ```
 
-## 使用方法
+## 使い方
 
 ```typescript
 import { SymbolWebSocket } from '@nemnesia/symbol-websocket';
@@ -90,4 +90,12 @@ new SymbolWebSocket(options: SymbolWebSocketOptions);
 
 ## ライセンス
 
-[MIT](./LICENSE)
+このプロジェクトは [MITライセンス](./LICENSE) のもとで公開されています。
+
+## 貢献方法
+
+バグ報告・機能要望・プルリクエストは [GitHubリポジトリ](https://github.com/nemnesia/symbol-tools/tree/main/packages/symbol-websocket) で受け付けています。お気軽にご参加ください。
+
+## バグ報告・質問
+
+問題や質問は [GitHub Issues](https://github.com/nemnesia/symbol-tools/issues) からご連絡ください。
