@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "description": "SymbolブロックチェーンへトランザクションをアナウンスするためのTypeScriptライブラリ",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     "import": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.mjs"
+      "default": "./dist/index.js"
     },
     "require": {
       "types": "./dist/index.d.ts",
@@ -41,7 +41,7 @@
     "url": "https://github.com/harvestasya/symbol-tools/issues"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "pnpm run clean && tsup",
     "clean": "rm -rf dist",
     "lint": "eslint \"{src,test,e2e}/**/*.ts\" --fix",
     "format": "prettier --write \"{src,test,e2e}/**/*.ts\"",
