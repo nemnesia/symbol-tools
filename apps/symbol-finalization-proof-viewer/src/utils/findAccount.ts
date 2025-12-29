@@ -1,4 +1,6 @@
+import {nemSymbolNodePicker} from 'nem-symbol-node-picker'
 import { AccountInfo } from '../types/Account'
+import {AccountRoutesApi, Configuration} from '@nemnesia/symbol-openapi-typescript-fetch-client'
 
 const TESTNET_XYM_MOSAIC_ID = '72C0212E67A08BCE'
 const MAINNET_XYM_MOSAIC_ID = '6BED913FA20223F8'
@@ -59,3 +61,4 @@ export const findAccountNativeCurrencyByPublicKey = (
 
   return accountInfo
 }
+

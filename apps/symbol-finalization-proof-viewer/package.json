@@ -21,7 +21,12 @@
     "@fontsource/roboto": "^5.2.9",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
-    "@nemnesia/symbol-openapi-typescript-fetch-client": "^1.0.0",
+    "@nemnesia/symbol-catbuffer": "workspace:*",
+    "@nemnesia/symbol-openapi-typescript-fetch-client": "workspace:*",
+    "@nemnesia/nodewatch-openapi-typescript-fetch-client": "workspace:*",
+    "@nemnesia/symbol-websocket": "workspace:*",
+    "@nemnesia/nodewatch-openapi-provider": "workspace:*",
+    "nem-symbol-node-picker": "workspace:*",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
