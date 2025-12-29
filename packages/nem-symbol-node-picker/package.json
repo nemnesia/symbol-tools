@@ -1,6 +1,6 @@
 {
   "name": "nem-symbol-node-picker",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A lightweight Node.js package for picking random NEM and Symbol blockchain nodes from NodeWatch API",
   "keywords": [
     "nem",
