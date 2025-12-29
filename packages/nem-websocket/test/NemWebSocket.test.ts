@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { NemWebSocketMonitor } from '../src/NemWebSocketMonitor.js';
+import { NemWebSocket } from '../src/NemWebSocket.js';
 import type { NemWebSocketOptions } from '../src/nem.types.js';
 
 // モック用
@@ -30,16 +30,16 @@ const defaultOptions: NemWebSocketOptions = {
 };
 
 describe('NemWebSocketMonitor', () => {
-  let monitor: NemWebSocketMonitor;
+  let monitor: NemWebSocket;
   let clientMock: any;
 
   beforeEach(() => {
-    monitor = new NemWebSocketMonitor(defaultOptions);
+    monitor = new NemWebSocket(defaultOptions);
     clientMock = monitor.client;
   });
 
   it('エラーなくインスタンス化されるべきである / should instantiate without error', () => {
-    expect(monitor).toBeInstanceOf(NemWebSocketMonitor);
+    expect(monitor).toBeInstanceOf(NemWebSocket);
   });
 
   it('エラーコールバックが登録され、エラー時に呼び出されるべきである / should register error callback and call it on error', () => {
@@ -126,17 +126,17 @@ describe('NemWebSocketMonitor', () => {
   });
 
   describe('NemWebSocketMonitor extra behavior', () => {
-    let monitor: NemWebSocketMonitor;
+    let monitor: NemWebSocket;
     let clientMock: any;
 
     beforeEach(() => {
-      monitor = new NemWebSocketMonitor(defaultOptions);
+      monitor = new NemWebSocket(defaultOptions);
       clientMock = monitor.client;
     });
 
     it('SSL=true でインスタンス化でき、例外をスローしない / can be instantiated with ssl=true without throwing', () => {
       const options: NemWebSocketOptions = { host: 'example', timeout: 1234, ssl: true };
-      expect(() => new NemWebSocketMonitor(options)).not.toThrow();
+      expect(() => new NemWebSocket(options)).not.toThrow();
     });
 
     it('切断すると、すべてのサブスクリプションが解除され、クライアントが無効化されます / disconnect unsubscribes all subscriptions and deactivates client', () => {
@@ -174,7 +174,7 @@ describe('NemWebSocketMonitor', () => {
         autoReconnect: true,
         reconnectInterval: 1000,
       };
-      const reconnectMonitor = new NemWebSocketMonitor(options);
+      const reconnectMonitor = new NemWebSocket(options);
 
       const reconnectCallback = vi.fn();
       reconnectMonitor.onReconnect(reconnectCallback);
@@ -198,7 +198,7 @@ describe('NemWebSocketMonitor', () => {
         maxReconnectAttempts: 2,
         reconnectInterval: 500,
       };
-      const reconnectMonitor = new NemWebSocketMonitor(options);
+      const reconnectMonitor = new NemWebSocket(options);
 
       // @ts-ignore
       reconnectMonitor.isManualDisconnect = false;
@@ -229,7 +229,7 @@ describe('NemWebSocketMonitor', () => {
         ssl: false,
         autoReconnect: true,
       };
-      const reconnectMonitor = new NemWebSocketMonitor(options);
+      const reconnectMonitor = new NemWebSocket(options);
 
       const reconnectCallback = vi.fn();
       reconnectMonitor.onReconnect(reconnectCallback);

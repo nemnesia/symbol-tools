@@ -52,7 +52,7 @@ describe('Channel path definitions', () => {
     });
 
     it('indexはモニターと型をエクスポートする / index exports monitors and types', () => {
-      expect(index.NemWebSocketMonitor).toBeDefined();
+      expect(index.NemWebSocket).toBeDefined();
     });
   });
 });

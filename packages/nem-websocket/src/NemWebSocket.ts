@@ -8,7 +8,7 @@ import type { NemChannel } from './nemChannelPaths.js';
 /**
  * NEMウェブソケットモニタークラス / NEM WebSocket Monitor Class
  */
-export class NemWebSocketMonitor {
+export class NemWebSocket {
   private _client!: Client;
   private _isConnected = false;
   private subscriptions: Map<string, StompSubscription> = new Map();
