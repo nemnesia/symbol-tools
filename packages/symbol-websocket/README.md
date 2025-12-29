@@ -18,31 +18,31 @@ npm install @nemnesia/symbol-websocket
 ## 使用方法
 
 ```typescript
-import { SymbolWebSocketMonitor } from '@nemnesia/symbol-websocket';
+import { SymbolWebSocket } from '@nemnesia/symbol-websocket';
 
-const monitor = new SymbolWebSocketMonitor({
+const ws = new SymbolWebSocket({
   host: 'localhost',
   ssl: true,
   timeout: 5000,
 });
 
 // チャネルにサブスクライブ
-monitor.on('transactions', (message) => {
-  console.log('New transaction:', message);
+ws.on('confirmedAdded', (message) => {
+  console.log('New confirmed transaction:', message);
 });
 
 // エラーイベントの登録
-monitor.onError((err) => {
+ws.onError((err) => {
   console.error('WebSocket error:', err);
 });
 
 // クローズイベントの登録
-monitor.onClose((event) => {
+ws.onClose((event) => {
   console.log('WebSocket closed:', event);
 });
 
 // 切断
-monitor.disconnect();
+ws.disconnect();
 ```
 
 ## API
@@ -50,13 +50,13 @@ monitor.disconnect();
 #### コンストラクタ
 
 ```typescript
-new SymbolWebSocketMonitor(options: SymbolWebSocketOptions);
+new SymbolWebSocket(options: SymbolWebSocketOptions);
 ```
 
 - `options`: 接続設定。
   - `host`: 接続先ホスト。
   - `ssl`: SSL を使用するかどうか。
-  - `timeout`: 接続タイムアウト（ミリ秒）。
+  - `timeout`: 接続タイムアウト（ミリ秒）。指定時間内に接続が完了しない場合はエラーになります。
   - `autoReconnect`: 自動再接続を有効にするか（デフォルト: `true`）。
   - `maxReconnectAttempts`: 最大再接続試行回数（デフォルト: `Infinity`）。
   - `reconnectInterval`: 再接続の間隔（ミリ秒、デフォルト: `3000`）。

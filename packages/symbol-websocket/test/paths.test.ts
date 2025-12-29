@@ -5,7 +5,7 @@ import { symbolChannelPaths } from '../src/symbolChannelPaths.js';
 
 describe('Channel path definitions', () => {
   describe('Symbol', () => {
-    it('symbolChannelPaths: 条件付きsubscribeはアドレスを正しく処理する / symbolChannelPaths: conditional subscribe handles address correctly', () => {
+    it('symbolChannelPaths: 条件付きsubscribeはアドレスを正しく処理する', () => {
       expect(symbolChannelPaths.confirmedAdded.subscribe('XYZ')).toBe('confirmedAdded/XYZ');
       expect(symbolChannelPaths.confirmedAdded.subscribe()).toBe('confirmedAdded');
       expect(symbolChannelPaths.unconfirmedAdded.subscribe('A')).toBe('unconfirmedAdded/A');
@@ -24,8 +24,8 @@ describe('Channel path definitions', () => {
       expect(symbolChannelPaths.finalizedBlock.subscribe()).toBe('finalizedBlock');
     });
 
-    it('indexはモニターと型をエクスポートする / index exports monitors and types', () => {
-      expect(index.SymbolWebSocketMonitor).toBeDefined();
+    it('indexはモニターと型をエクスポートする', () => {
+      expect(index.SymbolWebSocket).toBeDefined();
     });
   });
 });

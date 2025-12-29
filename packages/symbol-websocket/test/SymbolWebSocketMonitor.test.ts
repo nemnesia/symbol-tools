@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SymbolWebSocketMonitor } from '../src/SymbolWebSocketMonitor.js';
+import { SymbolWebSocket } from '../src/SymbolWebSocket.js';
 import type { SymbolWebSocketOptions } from '../src/symbol.types.js';
 
 // WebSocketのモック
@@ -30,19 +30,19 @@ const defaultOptions: SymbolWebSocketOptions = {
 };
 
 describe('SymbolWebSocketMonitor', () => {
-  let monitor: SymbolWebSocketMonitor;
+  let monitor: SymbolWebSocket;
 
   beforeEach(() => {
     sendMock.mockClear();
     // @ts-ignore
-    monitor = new SymbolWebSocketMonitor(defaultOptions);
+    monitor = new SymbolWebSocket(defaultOptions);
   });
 
-  it('エラーなくインスタンス化されるべきである / should instantiate without error', () => {
-    expect(monitor).toBeInstanceOf(SymbolWebSocketMonitor);
+  it('エラーなくインスタンス化されるべきである', () => {
+    expect(monitor).toBeInstanceOf(SymbolWebSocket);
   });
 
-  it('エラーコールバックが登録され、エラー時に呼び出されるべきである / should register error callback and call it', () => {
+  it('エラーコールバックが登録され、エラー時に呼び出されるべきである', () => {
     const cb = vi.fn();
     monitor.onError(cb);
     // @ts-ignore
@@ -50,7 +50,7 @@ describe('SymbolWebSocketMonitor', () => {
     expect(cb).toHaveBeenCalled();
   });
 
-  it('クローズコールバックが登録され、クローズ時に呼び出されるべきである / should register close callback and call it', () => {
+  it('クローズコールバックが登録され、クローズ時に呼び出されるべきである', () => {
     const cb = vi.fn();
     monitor.onClose(cb);
     // @ts-ignore
@@ -58,7 +58,7 @@ describe('SymbolWebSocketMonitor', () => {
     expect(cb).toHaveBeenCalled();
   });
 
-  it('uidが設定されていない場合、pendingSubscribesにプッシュされるべきである / should push to pendingSubscribes if uid is not set', () => {
+  it('uidが設定されていない場合、pendingSubscribesにプッシュされるべきである', () => {
     // @ts-ignore
     monitor._uid = null;
     // @ts-ignore
@@ -67,7 +67,7 @@ describe('SymbolWebSocketMonitor', () => {
     expect(monitor.pendingSubscribes.length).toBe(1);
   });
 
-  it('uidが設定されている場合、sendが呼び出されるべきである / should call send when uid is set', () => {
+  it('uidが設定されている場合、sendが呼び出されるべきである', () => {
     // @ts-ignore
     monitor._uid = 'test-uid';
     // @ts-ignore
@@ -77,7 +77,7 @@ describe('SymbolWebSocketMonitor', () => {
     expect(sendMock).toHaveBeenCalled();
   });
 
-  it('unsubscribe時にsendが呼び出されるべきである / should call send for unsubscribe', () => {
+  it('unsubscribe時にsendが呼び出されるべきである', () => {
     // @ts-ignore
     monitor._uid = 'test-uid';
     // @ts-ignore
@@ -87,7 +87,7 @@ describe('SymbolWebSocketMonitor', () => {
     expect(sendMock).toHaveBeenCalled();
   });
 
-  it('JSONパースエラー時にエラーコールバックが呼び出されるべきである / should call error callback on JSON parse error', () => {
+  it('JSONパースエラー時にエラーコールバックが呼び出されるべきである', () => {
     const cb = vi.fn();
     monitor.onError(cb);
     // @ts-ignore
@@ -95,12 +95,12 @@ describe('SymbolWebSocketMonitor', () => {
     expect(cb).toHaveBeenCalled();
   });
 
-  it('エラーコールバックが登録されていない場合、JSONパースエラー時に例外がスローされるべきである / should throw on JSON parse error if no error callback', () => {
+  it('エラーコールバックが登録されていない場合、JSONパースエラー時に例外がスローされるべきである', () => {
     // @ts-ignore
     expect(() => monitor.client.onmessage({ data: '{invalid json' })).toThrow();
   });
 
-  it('最初のメッセージを処理し、uidを設定し、pendingSubscribesをフラッシュするべきである / should handle first message and set uid, flush pendingSubscribes', () => {
+  it('最初のメッセージを処理し、uidを設定し、pendingSubscribesをフラッシュするべきである', () => {
     // @ts-ignore
     monitor.isFirstMessage = true;
     // @ts-ignore
@@ -117,7 +117,7 @@ describe('SymbolWebSocketMonitor', () => {
     expect(sendMock).toHaveBeenCalledTimes(2);
   });
 
-  it('特定のトピックに対してすべてのコールバックが呼び出されるべきである / should call all callbacks for a topic', () => {
+  it('特定のトピックに対してすべてのコールバックが呼び出されるべきである', () => {
     // @ts-ignore
     monitor.isFirstMessage = false;
     const cb1 = vi.fn();
@@ -130,7 +130,7 @@ describe('SymbolWebSocketMonitor', () => {
     expect(cb2).toHaveBeenCalledWith(expect.objectContaining({ topic: 'block', foo: 'bar' }));
   });
 
-  it('登録されていないトピックの場合、コールバックが呼び出されないべきである / should not call callback if topic is not registered', () => {
+  it('登録されていないトピックの場合、コールバックが呼び出されないべきである', () => {
     // @ts-ignore
     monitor.isFirstMessage = false;
     const cb = vi.fn();
@@ -141,7 +141,7 @@ describe('SymbolWebSocketMonitor', () => {
     expect(cb).not.toHaveBeenCalled();
   });
 
-  it('同じsubscribePathに対して複数のコールバックが許可されるべきである / should allow multiple callbacks for the same subscribePath', () => {
+  it('同じsubscribePathに対して複数のコールバックが許可されるべきである', () => {
     // @ts-ignore
     monitor._uid = 'test-uid';
     const cb1 = vi.fn();
@@ -154,7 +154,7 @@ describe('SymbolWebSocketMonitor', () => {
     expect(monitor.eventCallbacks['block'].length).toBe(2);
   });
 
-  it('uidが設定されていない場合、off呼び出し時に例外がスローされないべきである / should not throw when off is called without uid', () => {
+  it('uidが設定されていない場合、off呼び出し時に例外がスローされないべきである', () => {
     // @ts-ignore
     monitor._uid = null;
     // @ts-ignore
@@ -162,12 +162,12 @@ describe('SymbolWebSocketMonitor', () => {
   });
 
   describe('SymbolWebSocketMonitor extra branches', () => {
-    let monitor: SymbolWebSocketMonitor;
+    let monitor: SymbolWebSocket;
     let clientMock: any;
 
     beforeEach(() => {
       // @ts-ignore
-      monitor = new SymbolWebSocketMonitor(defaultOptions);
+      monitor = new SymbolWebSocket(defaultOptions);
       // @ts-ignore
       clientMock = monitor.client;
       // reset mocks if present
@@ -185,9 +185,9 @@ describe('SymbolWebSocketMonitor', () => {
       }
     });
 
-    it('SSL=true でインスタンス化できます / can be instantiated with ssl=true', () => {
+    it('SSL=true でインスタンス化できます', () => {
       const options: SymbolWebSocketOptions = { host: 'example', timeout: 2000, ssl: true };
-      expect(() => new SymbolWebSocketMonitor(options)).not.toThrow();
+      expect(() => new SymbolWebSocket(options)).not.toThrow();
     });
 
     it('on sends when uid present and socket OPEN', () => {
@@ -201,7 +201,7 @@ describe('SymbolWebSocketMonitor', () => {
       expect(monitor.client.send).toHaveBeenCalled();
     });
 
-    it('uidが存在しソケットがOPEN状態の場合、登録解除を送信する / off sends unsubscribe when uid present and socket OPEN', () => {
+    it('uidが存在しソケットがOPEN状態の場合、登録解除を送信するべきである', () => {
       // @ts-ignore
       monitor._uid = 'uid-2';
       // @ts-ignore
@@ -212,7 +212,7 @@ describe('SymbolWebSocketMonitor', () => {
       expect(monitor.client.send).toHaveBeenCalled();
     });
 
-    it('disconnect は OPEN 時にソケットを閉じる / disconnect closes socket when OPEN', () => {
+    it('disconnect は OPEN 時にソケットを閉じるべきである', () => {
       // @ts-ignore
       monitor._uid = 'uid-3';
       // @ts-ignore
@@ -243,7 +243,7 @@ describe('SymbolWebSocketMonitor', () => {
       vi.useRealTimers();
     });
 
-    it('自動再接続が有効な場合、切断時に再接続を試みるべきである / should attempt reconnect on close when autoReconnect is enabled', () => {
+    it('自動再接続が有効な場合、切断時に再接続を試みるべきである', () => {
       const options: SymbolWebSocketOptions = {
         host: 'localhost',
         timeout: 1000,
@@ -252,7 +252,7 @@ describe('SymbolWebSocketMonitor', () => {
         reconnectInterval: 1000,
       };
       // @ts-ignore
-      const reconnectMonitor = new SymbolWebSocketMonitor(options);
+      const reconnectMonitor = new SymbolWebSocket(options);
 
       const reconnectCallback = vi.fn();
       reconnectMonitor.onReconnect(reconnectCallback);
@@ -267,7 +267,7 @@ describe('SymbolWebSocketMonitor', () => {
       expect(reconnectCallback).toHaveBeenCalledWith(1);
     });
 
-    it('maxReconnectAttemptsに達したら再接続を停止するべきである / should stop reconnecting after maxReconnectAttempts', () => {
+    it('maxReconnectAttemptsに達したら再接続を停止するべきである', () => {
       const options: SymbolWebSocketOptions = {
         host: 'localhost',
         timeout: 1000,
@@ -277,7 +277,7 @@ describe('SymbolWebSocketMonitor', () => {
         reconnectInterval: 500,
       };
       // @ts-ignore
-      const reconnectMonitor = new SymbolWebSocketMonitor(options);
+      const reconnectMonitor = new SymbolWebSocket(options);
 
       // @ts-ignore
       reconnectMonitor.isManualDisconnect = false;
@@ -301,7 +301,7 @@ describe('SymbolWebSocketMonitor', () => {
       expect(reconnectMonitor.reconnectAttempts).toBe(2);
     });
 
-    it('手動切断時は再接続しないべきである / should not reconnect on manual disconnect', () => {
+    it('手動切断時は再接続しないべきである', () => {
       const options: SymbolWebSocketOptions = {
         host: 'localhost',
         timeout: 1000,
@@ -309,7 +309,7 @@ describe('SymbolWebSocketMonitor', () => {
         autoReconnect: true,
       };
       // @ts-ignore
-      const reconnectMonitor = new SymbolWebSocketMonitor(options);
+      const reconnectMonitor = new SymbolWebSocket(options);
 
       const reconnectCallback = vi.fn();
       reconnectMonitor.onReconnect(reconnectCallback);
@@ -323,7 +323,7 @@ describe('SymbolWebSocketMonitor', () => {
       expect(reconnectCallback).not.toHaveBeenCalled();
     });
 
-    it('再接続成功時にactiveSubscriptionsを復元するべきである / should restore activeSubscriptions on reconnect', () => {
+    it('再接続成功時にactiveSubscriptionsを復元するべきである', () => {
       // @ts-ignore
       monitor._uid = 'initial-uid';
       // @ts-ignore
@@ -352,7 +352,7 @@ describe('SymbolWebSocketMonitor', () => {
   });
 
   describe('Connection callbacks', () => {
-    it('onConnectコールバックが接続時に呼び出されるべきである / should call onConnect callback on connection', () => {
+    it('onConnectコールバックが接続時に呼び出されるべきである', () => {
       const connectCallback = vi.fn();
       monitor.onConnect(connectCallback);
 
@@ -364,7 +364,7 @@ describe('SymbolWebSocketMonitor', () => {
       expect(connectCallback).toHaveBeenCalledWith('test-uid');
     });
 
-    it('既に接続済みの場合、onConnectは即座に呼び出されるべきである / should call onConnect immediately if already connected', () => {
+    it('既に接続済みの場合、onConnectは即座に呼び出されるべきである', () => {
       // @ts-ignore
       monitor._uid = 'existing-uid';
 
@@ -376,7 +376,7 @@ describe('SymbolWebSocketMonitor', () => {
   });
 
   describe('Connection state', () => {
-    it('isConnectedプロパティがOPEN状態を正しく返すべきである / should return correct connection state', () => {
+    it('isConnectedプロパティがOPEN状態を正しく返すべきである', () => {
       // @ts-ignore
       monitor.client.readyState = 1; // OPEN
       expect(monitor.isConnected).toBe(true);
@@ -396,7 +396,7 @@ describe('SymbolWebSocketMonitor', () => {
   });
 
   describe('Address-based subscriptions', () => {
-    it('addressを指定してsubscribeできるべきである / should subscribe with address', () => {
+    it('addressを指定してsubscribeできるべきである', () => {
       // @ts-ignore
       monitor._uid = 'test-uid';
       // @ts-ignore
@@ -411,7 +411,7 @@ describe('SymbolWebSocketMonitor', () => {
       );
     });
 
-    it('addressを指定してunsubscribeできるべきである / should unsubscribe with address', () => {
+    it('addressを指定してunsubscribeできるべきである', () => {
       // @ts-ignore
       monitor._uid = 'test-uid';
       // @ts-ignore
@@ -428,7 +428,7 @@ describe('SymbolWebSocketMonitor', () => {
   });
 
   describe('disconnect cleanup', () => {
-    it('disconnect時にすべてのコールバックをクリーンアップするべきである / should cleanup all callbacks on disconnect', () => {
+    it('disconnect時にすべてのコールバックをクリーンアップするべきである', () => {
       monitor.onError(vi.fn());
       monitor.onConnect(vi.fn());
       monitor.onReconnect(vi.fn());
@@ -449,7 +449,7 @@ describe('SymbolWebSocketMonitor', () => {
       expect(monitor.activeSubscriptions.size).toBe(0);
     });
 
-    it('CONNECTING状態でもdisconnectできるべきである / should disconnect even when CONNECTING', () => {
+    it('CONNECTING状態でもdisconnectできるべきである', () => {
       // @ts-ignore
       monitor.client.readyState = 0; // CONNECTING
       // @ts-ignore
@@ -460,7 +460,7 @@ describe('SymbolWebSocketMonitor', () => {
       expect(monitor.client.close).toHaveBeenCalled();
     });
 
-    it('disconnect後に再接続タイマーをクリアするべきである / should clear reconnect timer on disconnect', () => {
+    it('disconnect後に再接続タイマーをクリアするべきである', () => {
       vi.useFakeTimers();
 
       // @ts-ignore
@@ -476,14 +476,14 @@ describe('SymbolWebSocketMonitor', () => {
   });
 
   describe('Options defaults', () => {
-    it('オプションのデフォルト値が正しく設定されるべきである / should set correct default options', () => {
+    it('オプションのデフォルト値が正しく設定されるべきである', () => {
       const minimalOptions: SymbolWebSocketOptions = {
         host: 'test-host',
         timeout: 1000,
         ssl: false,
       };
       // @ts-ignore
-      const defaultMonitor = new SymbolWebSocketMonitor(minimalOptions);
+      const defaultMonitor = new SymbolWebSocket(minimalOptions);
 
       // @ts-ignore
       expect(defaultMonitor.options.autoReconnect).toBe(true);
@@ -491,6 +491,79 @@ describe('SymbolWebSocketMonitor', () => {
       expect(defaultMonitor.options.maxReconnectAttempts).toBe(Infinity);
       // @ts-ignore
       expect(defaultMonitor.options.reconnectInterval).toBe(3000);
+    });
+  });
+
+  describe('接続タイムアウト', () => {
+    it('timeout指定時にタイマーが設定されるべきである', () => {
+      vi.useFakeTimers();
+      const options: SymbolWebSocketOptions = {
+        host: 'test-host',
+        timeout: 5000,
+        ssl: false,
+      };
+      // @ts-ignore
+      const testMonitor = new SymbolWebSocket(options);
+
+      // @ts-ignore
+      expect(testMonitor.connectionTimeoutTimer).not.toBeNull();
+      vi.useRealTimers();
+    });
+
+    it('timeout未指定時にタイマーが設定されないべきである', () => {
+      const options: SymbolWebSocketOptions = {
+        host: 'test-host',
+        ssl: false,
+      };
+      // @ts-ignore
+      const testMonitor = new SymbolWebSocket(options);
+
+      // @ts-ignore
+      expect(testMonitor.connectionTimeoutTimer).toBeNull();
+    });
+
+    it('接続成功時にタイムアウトタイマーがクリアされるべきである', () => {
+      vi.useFakeTimers();
+      const options: SymbolWebSocketOptions = {
+        host: 'test-host',
+        timeout: 5000,
+        ssl: false,
+      };
+      // @ts-ignore
+      const testMonitor = new SymbolWebSocket(options);
+
+      // 初期状態でタイマーが設定されている
+      // @ts-ignore
+      expect(testMonitor.connectionTimeoutTimer).not.toBeNull();
+
+      // uid受信をシミュレート
+      // @ts-ignore
+      testMonitor._client.onmessage({ data: JSON.stringify({ uid: 'test-uid-123' }) });
+
+      // タイマーがクリアされている
+      // @ts-ignore
+      expect(testMonitor.connectionTimeoutTimer).toBeNull();
+      vi.useRealTimers();
+    });
+
+    it('disconnect時にタイムアウトタイマーがクリアされるべきである', () => {
+      vi.useFakeTimers();
+      const options: SymbolWebSocketOptions = {
+        host: 'test-host',
+        timeout: 5000,
+        ssl: false,
+      };
+      // @ts-ignore
+      const testMonitor = new SymbolWebSocket(options);
+
+      // @ts-ignore
+      expect(testMonitor.connectionTimeoutTimer).not.toBeNull();
+
+      testMonitor.disconnect();
+
+      // @ts-ignore
+      expect(testMonitor.connectionTimeoutTimer).toBeNull();
+      vi.useRealTimers();
     });
   });
 });

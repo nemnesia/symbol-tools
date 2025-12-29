@@ -25,12 +25,12 @@
     "node": ">=20.0.0"
   },
   "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     "import": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.mjs"
+      "default": "./dist/index.js"
     },
     "require": {
       "types": "./dist/index.d.cts",
@@ -40,10 +40,11 @@
   "files": [
     "dist/**/*",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "pnpm run clean && tsup",
     "clean": "rm -rf dist",
     "lint": "eslint \"{src,test,e2e}/**/*.ts\"",
     "format": "prettier --write \"{src,test,e2e}/**/*.ts\"",

@@ -9,9 +9,9 @@ const WS_OPEN = WebSocket.OPEN ?? 1;
 const WS_CONNECTING = WebSocket.CONNECTING ?? 0;
 
 /**
- * Symbolウェブソケットモニタークラス / Symbol WebSocket Monitor Class
+ * Symbolウェブソケットクラス
  */
-export class SymbolWebSocketMonitor {
+export class SymbolWebSocket {
   private _client!: WebSocket;
   private _uid: string | null = null;
   private isFirstMessage = true;
@@ -22,16 +22,17 @@ export class SymbolWebSocketMonitor {
   private connectCallbacks: ((uid: string) => void)[] = [];
   private reconnectCallbacks: ((attemptCount: number) => void)[] = [];
 
-  // 再接続関連のプロパティ / Reconnection related properties
+  // 再接続関連のプロパティ
   private options: SymbolWebSocketOptions;
   private reconnectAttempts = 0;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private connectionTimeoutTimer: ReturnType<typeof setTimeout> | null = null;
   private isManualDisconnect = false;
   private activeSubscriptions: Set<string> = new Set();
 
   /**
-   * コンストラクタ / Constructor
-   * @param options Symbolウェブソケットオプション / Symbol WebSocket Options
+   * コンストラクタ
+   * @param options Symbolウェブソケットオプション
    */
   constructor(options: SymbolWebSocketOptions) {
     this.options = {
@@ -45,7 +46,7 @@ export class SymbolWebSocketMonitor {
   }
 
   /**
-   * WebSocket接続を作成 / Create WebSocket connection
+   * WebSocket接続を作成
    */
   private createConnection(): void {
     const endPointHost = this.options.host;
@@ -54,43 +55,61 @@ export class SymbolWebSocketMonitor {
     const protocol = ssl ? 'wss' : 'ws';
     const endPointPort = ssl ? '3001' : '3000';
 
-    // クライアントを作成 / Create client
+    // クライアントを作成
     this._client = new WebSocket(`${protocol}://${endPointHost}:${endPointPort}/ws`);
 
-    // クライアント接続時の処理 / On client connect
+    // 接続タイムアウトを設定
+    if (this.options.timeout) {
+      this.connectionTimeoutTimer = setTimeout(() => {
+        if (this._client.readyState === WS_CONNECTING || !this._uid) {
+          const timeoutError = new Error(`WebSocket connection timeout after ${this.options.timeout}ms`);
+          const errorEvent = { error: timeoutError, message: timeoutError.message } as WebSocket.ErrorEvent;
+          this.errorCallbacks.forEach((cb) => cb(errorEvent));
+          this._client.close();
+        }
+      }, this.options.timeout);
+    }
+
+    // クライアント接続時の処理
     this._client.onclose = (event: WebSocket.CloseEvent) => {
       this.onCloseCallback(event);
 
-      // 手動切断でない場合は再接続を試みる / Try to reconnect if not manually disconnected
+      // 手動切断でない場合は再接続を試みる
       if (!this.isManualDisconnect && this.options.autoReconnect) {
         this.attemptReconnect();
       }
     };
 
-    // エラー発生時の処理 / On error occurred
+    // エラー発生時の処理
     this._client.onerror = (err: WebSocket.ErrorEvent) => {
       this.errorCallbacks.forEach((cb) => cb(err));
     };
 
-    // メッセージ受信時の処理 / On message received
+    // メッセージ受信時の処理
     this._client.onmessage = (message: WebSocket.MessageEvent) => {
       try {
         const data = JSON.parse(message.data.toString());
         if (this.isFirstMessage) {
           if (data.uid) {
             this._uid = data.uid;
-            // 再接続成功時はカウンターをリセット / Reset counter on successful reconnection
+            // 再接続成功時はカウンターをリセット
             this.reconnectAttempts = 0;
 
-            // 接続コールバックを呼び出す / Call connect callbacks
+            // 接続タイムアウトタイマーをクリア
+            if (this.connectionTimeoutTimer) {
+              clearTimeout(this.connectionTimeoutTimer);
+              this.connectionTimeoutTimer = null;
+            }
+
+            // 接続コールバックを呼び出す
             this.connectCallbacks.forEach((cb) => cb(this._uid!));
 
-            // 再接続時は既存のサブスクリプションを復元 / Restore existing subscriptions on reconnect
+            // 再接続時は既存のサブスクリプションを復元
             this.activeSubscriptions.forEach((subscribePath) => {
               this._client.send(JSON.stringify({ uid: this._uid, subscribe: subscribePath }));
             });
 
-            // pending subscribeをすべて送信 / Send all pending subscribes
+            // pending subscribeをすべて送信
             this.pendingSubscribes.forEach(({ subscribePath }) => {
               this._client.send(JSON.stringify({ uid: this._uid, subscribe: subscribePath }));
               this.activeSubscriptions.add(subscribePath);
@@ -116,7 +135,7 @@ export class SymbolWebSocketMonitor {
   }
 
   /**
-   * 再接続を試みる / Attempt reconnection
+   * 再接続を試みる
    */
   private attemptReconnect(): void {
     const maxAttempts = this.options.maxReconnectAttempts ?? Infinity;
@@ -127,7 +146,7 @@ export class SymbolWebSocketMonitor {
 
     this.reconnectAttempts++;
 
-    // 再接続コールバックを呼び出す / Call reconnect callbacks
+    // 再接続コールバックを呼び出す
     this.reconnectCallbacks.forEach((cb) => cb(this.reconnectAttempts));
 
     const interval = this.options.reconnectInterval ?? 3000;
@@ -139,8 +158,8 @@ export class SymbolWebSocketMonitor {
   }
 
   /**
-   * WebSocket接続完了イベント登録 / Register WebSocket connect event
-   * @param callback 接続時に呼ばれるコールバック / Callback called on connect (receives uid)
+   * WebSocket接続完了イベント登録
+   * @param callback 接続時に呼ばれるコールバック
    */
   public onConnect(callback: (uid: string) => void): void {
     this.connectCallbacks.push(callback);
@@ -151,8 +170,8 @@ export class SymbolWebSocketMonitor {
   }
 
   /**
-   * WebSocket再接続イベント登録 / Register WebSocket reconnect event
-   * @param callback 再接続試行時に呼ばれるコールバック / Callback called on reconnect attempt (receives attempt count)
+   * WebSocket再接続イベント登録
+   * @param callback 再接続試行時に呼ばれるコールバック
    */
   public onReconnect(callback: (attemptCount: number) => void): void {
     this.reconnectCallbacks.push(callback);
@@ -166,46 +185,46 @@ export class SymbolWebSocketMonitor {
   }
 
   /**
-   * クライアントインスタンスを取得 / Get client instance
+   * クライアントインスタンスを取得
    */
   public get client(): WebSocket {
     return this._client;
   }
 
   /**
-   * 接続状態を取得 / Get connection status
+   * 接続状態を取得
    */
   public get isConnected(): boolean {
     return this._client.readyState === WS_OPEN;
   }
 
   /**
-   * WebSocketエラーイベント登録 / Register WebSocket error event
-   * @param callback エラー時に呼ばれるコールバック / Callback called on error
+   * WebSocketエラーイベント登録
+   * @param callback エラー時に呼ばれるコールバック
    */
   public onError(callback: (err: WebSocket.ErrorEvent) => void): void {
     this.errorCallbacks.push(callback);
   }
 
   /**
-   * WebSocketクローズイベント登録 / Register WebSocket close event
-   * @param callback クローズ時に呼ばれるコールバック / Callback called on close
+   * WebSocketクローズイベント登録
+   * @param callback クローズ時に呼ばれるコールバック
    */
   public onClose(callback: (event: WebSocket.CloseEvent) => void): void {
     this.onCloseCallback = callback;
   }
 
   /**
-   * チャネルサブスクメソッド / Channel Subscription Method
-   * @param channel チャネル名 / Channel name
-   * @param callback コールバック関数 / Callback function
+   * チャネルサブスクメソッド
+   * @param channel チャネル名
+   * @param callback コールバック関数
    */
   on(channel: SymbolChannel, callback: (message: WebSocket.MessageEvent) => void): void;
   /**
-   * チャネルサブスクメソッド / Channel Subscription Method
-   * @param channel チャネル名 / Channel name
-   * @param address アドレス / Address
-   * @param callback コールバック関数 / Callback function
+   * チャネルサブスクメソッド
+   * @param channel チャネル名
+   * @param address アドレス
+   * @param callback コールバック関数
    */
   on(channel: SymbolChannel, address: string, callback: (message: WebSocket.MessageEvent) => void): void;
   on(
@@ -213,33 +232,33 @@ export class SymbolWebSocketMonitor {
     addressOrCallback: string | ((message: WebSocket.MessageEvent) => void),
     callback?: (message: WebSocket.MessageEvent) => void
   ): void {
-    // 引数を解析 / Parse arguments
+    // 引数を解析
     const address = typeof addressOrCallback === 'string' ? addressOrCallback : undefined;
     const actualCallback = typeof addressOrCallback === 'function' ? addressOrCallback : callback!;
 
     const channelPath = symbolChannelPaths[channel];
 
-    // サブスクライブパスを決定 / Determine subscribe path
+    // サブスクライブパスを決定
     const subscribePath =
       typeof channelPath.subscribe === 'function' ? channelPath.subscribe(address) : channelPath.subscribe;
     if (!subscribePath) {
       throw new Error(`Subscribe path could not be determined for channel: ${channel}`);
     }
 
-    // コールバック登録 / Register callback
+    // コールバック登録
     if (!this.eventCallbacks[subscribePath]) {
       this.eventCallbacks[subscribePath] = [];
     }
     this.eventCallbacks[subscribePath].push(actualCallback);
 
-    // サブスクライブメッセージ送信 / Send subscribe message
+    // サブスクライブメッセージ送信
     if (!this._uid) {
-      // uid未取得なら保留 / If UID is not obtained, hold
+      // uid未取得なら保留
       this.pendingSubscribes.push({ subscribePath, callback: actualCallback });
       return;
     }
 
-    // サブスクライブを実行 / Execute subscription
+    // サブスクライブを実行
     if (this._client.readyState === WS_OPEN) {
       this._client.send(JSON.stringify({ uid: this._uid, subscribe: subscribePath }));
       this.activeSubscriptions.add(subscribePath);
@@ -247,50 +266,56 @@ export class SymbolWebSocketMonitor {
   }
 
   /**
-   * チャネルアンサブスクメソッド / Channel Unsubscription Method
-   * @param channel チャネル名 / Channel name
+   * チャネルアンサブスクメソッド
+   * @param channel チャネル名
    */
   off(channel: SymbolChannel): void;
   /**
-   * チャネルアンサブスクメソッド / Channel Unsubscription Method
-   * @param channel チャネル名 / Channel name
-   * @param address アドレス / Address
+   * チャネルアンサブスクメソッド
+   * @param channel チャネル名
+   * @param address アドレス
    */
   off(channel: SymbolChannel, address: string): void;
   off(channel: SymbolChannel, address?: string): void {
     const channelPath = symbolChannelPaths[channel];
 
-    // サブスクライブパスを決定 / Determine subscribe path
+    // サブスクライブパスを決定
     const subscribePath =
       typeof channelPath.subscribe === 'function' ? channelPath.subscribe(address) : channelPath.subscribe;
     if (!subscribePath) {
       throw new Error(`Subscribe path could not be determined for channel: ${channel}`);
     }
 
-    // コールバックをクリーンアップ / Cleanup callbacks
+    // コールバックをクリーンアップ
     delete this.eventCallbacks[subscribePath];
     this.activeSubscriptions.delete(subscribePath);
 
-    // アンサブスクライブを実行 / Execute unsubscription
+    // アンサブスクライブを実行
     if (this._uid && this._client.readyState === WS_OPEN) {
       this._client.send(JSON.stringify({ uid: this._uid, unsubscribe: subscribePath }));
     }
   }
 
   /**
-   * WebSocket接続を切断 / Disconnect WebSocket
+   * WebSocket接続を切断
    */
   disconnect(): void {
-    // 手動切断フラグを立てる / Set manual disconnect flag
+    // 手動切断フラグを立てる
     this.isManualDisconnect = true;
 
-    // 再接続タイマーをクリア / Clear reconnect timer
+    // 再接続タイマーをクリア
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
     }
 
-    // すべてのコールバックをクリーンアップ / Cleanup all callbacks
+    // 接続タイムアウトタイマーをクリア
+    if (this.connectionTimeoutTimer) {
+      clearTimeout(this.connectionTimeoutTimer);
+      this.connectionTimeoutTimer = null;
+    }
+
+    // すべてのコールバックをクリーンアップ
     this.eventCallbacks = {};
     this.pendingSubscribes = [];
     this.errorCallbacks = [];
@@ -298,7 +323,7 @@ export class SymbolWebSocketMonitor {
     this.reconnectCallbacks = [];
     this.activeSubscriptions.clear();
 
-    // WebSocketを閉じる / Close WebSocket
+    // WebSocketを閉じる
     if (this._client.readyState === WS_OPEN || this._client.readyState === WS_CONNECTING) {
       this._client.close();
     }

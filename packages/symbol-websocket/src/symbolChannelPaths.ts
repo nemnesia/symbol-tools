@@ -1,14 +1,14 @@
 /**
- * Symbolチャネルタイプ / Symbol Channel types:
- * - block: 生成されたブロックの通知 / Generated Block Notification
- * - finalizedBlock: ファイナライズ通知 / Finalized Block Notification
- * - confirmedAdded: 承認トランザクション通知 / Confirmed Transaction Notification
- * - unconfirmedAdded: 未承認トランザクション通知 / Unconfirmed Transaction Notification
- * - unconfirmedRemoved: 未承認トランザクション削除通知 / Unconfirmed Transaction Removal Notification
- * - partialAdded: パーシャル追加通知 / Partial Transaction Addition Notification
- * - partialRemoved: パーシャル削除通知 / Partial Transaction Removal Notification
- * - cosignature: 連署要求通知 / Cosignature Request Notification
- * - status: ステータス通知 / Status Notification
+ * Symbolチャネルタイプ
+ * - block: 生成されたブロックの通知
+ * - finalizedBlock: ファイナライズ通知
+ * - confirmedAdded: 承認トランザクション通知
+ * - unconfirmedAdded: 未承認トランザクション通知
+ * - unconfirmedRemoved: 未承認トランザクション削除通知
+ * - partialAdded: パーシャル追加通知
+ * - partialRemoved: パーシャル削除通知
+ * - cosignature: 連署要求通知
+ * - status: ステータス通知
  */
 export type SymbolChannel =
   | 'block'
@@ -22,7 +22,7 @@ export type SymbolChannel =
   | 'status';
 
 /**
- * Symbolチャネルパス定義 / Symbol Channel Path Definitions
+ * Symbolチャネルパス定義
  */
 export const symbolChannelPaths: Record<SymbolChannel, { subscribe: (address?: string) => string }> = {
   block: { subscribe: () => 'block' },
