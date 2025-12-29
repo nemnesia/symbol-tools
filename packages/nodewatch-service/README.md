@@ -1,31 +1,31 @@
 # @nemnesia/nodewatch-service
 
-NodeWatch service client with failover support for Symbol and NEM blockchain nodes.
+SymbolおよびNEMブロックチェーンノード向けのフェイルオーバー対応NodeWatchサービスクライアントです。
 
-## Features
+## 特徴
 
-- Failover support for Symbol and NEM blockchain nodes
-- Built on top of [@nemnesia/nodewatch-openapi-typescript-fetch-client](https://www.npmjs.com/package/@nemnesia/nodewatch-openapi-typescript-fetch-client)
-- TypeScript support
+- SymbolおよびNEMノードのフェイルオーバー対応
+- [@nemnesia/nodewatch-openapi-typescript-fetch-client](https://www.npmjs.com/package/@nemnesia/nodewatch-openapi-typescript-fetch-client)の上に構築
+- TypeScript対応
 
-## Installation
+## インストール方法
 
 ```bash
-npm install @nemnesia/nodewatch-service
+npm install @nemnesia/nodewatch-service @nemnesia/nodewatch-openapi-typescript-fetch-client
 ```
 
-## Usage
+## 使い方
 
 ```typescript
-import { createSymbolNodesApi, createNEMNodesApi } from '@nemnesia/nodewatch-service';
+import { createNEMNodeWatchApi, createSymbolNodeWatchApi } from '@nemnesia/nodewatch-service';
 
-// Create Symbol nodes API
-const symbolApi = createSymbolNodesApi();
+// SymbolノードAPIの作成
+const symbolApi = createSymbolNodeWatchApi();
 
-// Create NEM nodes API
-const nemApi = createNEMNodesApi();
+// NEMノードAPIの作成
+const nemApi = createNEMNodeWatchApi();
 ```
 
-## License
+## ライセンス
 
 MIT

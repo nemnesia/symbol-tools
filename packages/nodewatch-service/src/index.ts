@@ -1,1 +1,1 @@
-export { createSymbolNodesApi, createNEMNodesApi } from './FailoverApi.js';
+export { createSymbolNodeWatchApi, createNemNodeWatchApi } from './FailoverApi.js';

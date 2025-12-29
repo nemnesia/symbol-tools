@@ -3,8 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   FailoverApi,
-  createNEMNodesApi,
-  createSymbolNodesApi,
+  createNemNodeWatchApi,
+  createSymbolNodeWatchApi,
   nodewatchMainnetUrls,
   nodewatchTestnetUrls,
 } from '../src/FailoverApi.js';
@@ -140,24 +140,24 @@ describe('FailoverApi', () => {
 
   describe('createSymbolNodesApi', () => {
     it('should create SymbolNodesApi for mainnet', () => {
-      const api = createSymbolNodesApi(true);
+      const api = createSymbolNodeWatchApi(true);
       expect(api).toBeDefined();
     });
 
     it('should create SymbolNodesApi for testnet', () => {
-      const api = createSymbolNodesApi(false);
+      const api = createSymbolNodeWatchApi(false);
       expect(api).toBeDefined();
     });
   });
 
   describe('createNEMNodesApi', () => {
     it('should create NEMNodesApi for mainnet', () => {
-      const api = createNEMNodesApi(true);
+      const api = createNemNodeWatchApi(true);
       expect(api).toBeDefined();
     });
 
     it('should create NEMNodesApi for testnet', () => {
-      const api = createNEMNodesApi(false);
+      const api = createNemNodeWatchApi(false);
       expect(api).toBeDefined();
     });
   });

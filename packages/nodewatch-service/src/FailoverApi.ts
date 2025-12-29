@@ -1,4 +1,8 @@
-import { Configuration, NEMNodesApi, SymbolNodesApi } from '@nemnesia/nodewatch-openapi-typescript-fetch-client';
+import {
+  Configuration,
+  NEMNodesApi as NemNodeWatchApi,
+  SymbolNodesApi as SymbolNodeWatchApi,
+} from '@nemnesia/nodewatch-openapi-typescript-fetch-client';
 
 /** NodeWatch メインネット用URLリスト */
 export const nodewatchMainnetUrls = ['https://sse.nemnesia.com', 'https://sse2.nemnesia.com'];
@@ -96,9 +100,9 @@ export class FailoverApi<T> {
  * @param isMainNet メインネットの場合true、テストネットの場合false
  * @returns SymbolNodesApi互換のフェールオーバー対応APIインスタンス
  */
-export function createSymbolNodesApi(isMainNet: boolean): SymbolNodesApi {
+export function createSymbolNodeWatchApi(isMainNet: boolean): SymbolNodeWatchApi {
   const urls = isMainNet ? nodewatchMainnetUrls : nodewatchTestnetUrls;
-  return new FailoverApi(SymbolNodesApi, urls, true) as unknown as SymbolNodesApi;
+  return new FailoverApi(SymbolNodeWatchApi, urls, true) as unknown as SymbolNodeWatchApi;
 }
 
 /**
@@ -107,7 +111,7 @@ export function createSymbolNodesApi(isMainNet: boolean): SymbolNodesApi {
  * @param isMainNet メインネットの場合true、テストネットの場合false
  * @returns NEMNodesApi互換のフェールオーバー対応APIインスタンス
  */
-export function createNEMNodesApi(isMainNet: boolean): NEMNodesApi {
+export function createNemNodeWatchApi(isMainNet: boolean): NemNodeWatchApi {
   const urls = isMainNet ? nodewatchMainnetUrls : nodewatchTestnetUrls;
-  return new FailoverApi(NEMNodesApi, urls, true) as unknown as NEMNodesApi;
+  return new FailoverApi(NemNodeWatchApi, urls, true) as unknown as NemNodeWatchApi;
 }
