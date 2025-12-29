@@ -29,6 +29,12 @@ Symbol ブロックチェーンのための TypeScript/JavaScript ツールと�
 - **[nem-websocket](./packages/nem-websocket)**  
   NEM WebSocketモニタリングツール。
 
+- **[nodewatch-openapi-provider](./packages/nodewatch-openapi-provider)**  
+  Symbol/NEMノードのフェイルオーバー対応NodeWatchサービスクライアント。
+
+- **[symbol-finalization-proof-viewer](./apps/symbol-finalization-proof-viewer)**  
+  ノードのVoting Key有効期限・投票状況を可視化するWebアプリ。
+
 ## 前提条件
 
 - Node.js 20.19.6 以上 (Volta で管理)
