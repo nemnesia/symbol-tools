@@ -11,7 +11,7 @@ import { SymbolWebSocketMonitor } from '@nemnesia/symbol-websocket';
 import { nemSymbolNodePicker } from 'nem-symbol-node-picker';
 import { useEffect, useRef, useState } from 'react';
 
-import { formatStringNumber } from './utils/numberFormat';
+import { formatStringNumber } from '../utils/numberFormat';
 
 type ChainInfoCardProps = {
   networkName: string;

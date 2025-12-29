@@ -5,7 +5,7 @@ import { deepPurple, purple } from '@mui/material/colors';
 import { useMemo, useState } from 'react';
 
 import './App.css';
-import FinalizationProofViewer from './FinalizationProofViewer';
+import FinalizationProofViewer from './components/FinalizationProofViewer';
 
 function App() {
   // デバイスのテーマを取得
