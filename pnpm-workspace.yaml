@@ -5,6 +5,7 @@ packages:
 ignoredBuiltDependencies:
   - '@nestjs/core'
   - '@openapitools/openapi-generator-cli'
+  - argon2
 
 onlyBuiltDependencies:
   - esbuild
