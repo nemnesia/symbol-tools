@@ -16,6 +16,25 @@ function FinalizationProofViewer() {
   const networkName = urlParams.get('network') || 'testnet';
   const urlFilter = urlParams.get('filter');
 
+  if (networkName !== 'mainnet' && networkName !== 'testnet') {
+    return (
+      <Box sx={{ margin: '0 auto', maxWidth: 1024, width: '100%' }}>
+        <Box sx={{ m: 1, color: 'red' }}>Error: Invalid network parameter. Please use 'mainnet' or 'testnet'.</Box>
+      </Box>
+    );
+  }
+
+  // urlFilterはホスト名に使用される文字のみを許可
+  if (urlFilter && !/^[a-zA-Z0-9.-]*$/.test(urlFilter)) {
+    return (
+      <Box sx={{ margin: '0 auto', maxWidth: 1024, width: '100%' }}>
+        <Box sx={{ m: 1, color: 'red' }}>
+          Error: Invalid filter parameter. Only alphanumeric characters, dots, and hyphens are allowed.
+        </Box>
+      </Box>
+    );
+  }
+
   /**
    * Voting Nodes情報取得
    */
