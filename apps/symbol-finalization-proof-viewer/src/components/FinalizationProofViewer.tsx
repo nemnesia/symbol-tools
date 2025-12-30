@@ -7,14 +7,13 @@ import '../App.css';
 import ChainInfoCard from './ChainInfoCard';
 import VotingNodeList from './VotingNodeList';
 
-const networkName: string = 'testnet';
-
 function FinalizationProofViewer() {
   const [height, setHeight] = useState('0');
   const [votingNodes, setVotingNodes] = useState<Node[]>([]);
 
   // URLからパラメータを取得
   const urlParams = new URLSearchParams(window.location.search);
+  const networkName = urlParams.get('network') || 'testnet';
   const urlFilter = urlParams.get('filter');
 
   /**
@@ -35,7 +34,7 @@ function FinalizationProofViewer() {
   }, []);
 
   return (
-    <>
+    <Box sx={{ margin: '0 auto', maxWidth: 1024, width: '100%' }}>
       <Box sx={{ m: 1 }}>
         <ChainInfoCard networkName={networkName} onHeightChange={setHeight} />
       </Box>
@@ -43,7 +42,7 @@ function FinalizationProofViewer() {
       <Box sx={{ m: 1 }}>
         <VotingNodeList votingNodes={votingNodes} urlFilter={urlFilter} networkName={networkName} />
       </Box>
-    </>
+    </Box>
   );
 }
 

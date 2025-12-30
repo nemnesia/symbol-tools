@@ -1,5 +1,6 @@
 import { Cancel, CheckCircle } from '@mui/icons-material';
 import { Card, CardContent, Grid, LinearProgress, LinearProgressProps, Tooltip, Typography } from '@mui/material';
+import React from 'react';
 
 import { formatStringNumber } from '../utils/numberFormat';
 
@@ -68,6 +69,39 @@ const GridItem = (props: { title: string; value: string }) => {
   );
 };
 
+/**
+ * 文字列を6文字ごとにスペースで区切る（スペースはコピー不可）
+ * @param str 文字列
+ * @returns JSX.Element
+ */
+const formatAddressWithSpaces = (str: string): React.JSX.Element => {
+  const parts = str.match(/.{1,6}/g) ?? [str];
+  return (
+    <>
+      {parts.map((part, idx) => (
+        <React.Fragment key={idx}>
+          {part}
+          {idx !== parts.length - 1 && <span style={{ userSelect: 'none' }}> </span>}
+        </React.Fragment>
+      ))}
+    </>
+  );
+};
+
+const formatPublicKeyWithSpaces = (str: string): React.JSX.Element => {
+  const parts = str.match(/.{1,8}/g) ?? [str];
+  return (
+    <>
+      {parts.map((part, idx) => (
+        <React.Fragment key={idx}>
+          {part}
+          {idx !== parts.length - 1 && <span style={{ userSelect: 'none' }}> </span>}
+        </React.Fragment>
+      ))}
+    </>
+  );
+};
+
 function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage1Height }: VotingNodeCardProps) {
   return (
     <Card variant="outlined" sx={{ minWidth: 275 }} style={{ marginBottom: '10px' }}>
@@ -91,7 +125,7 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
               PublicKey
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.primary' }}>
-              {votingNodeInfo.publicKey}
+              {formatPublicKeyWithSpaces(votingNodeInfo.publicKey)}
             </Typography>
           </Grid>
 
@@ -100,7 +134,7 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
               Address
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.primary' }}>
-              {votingNodeInfo.address}
+              {formatAddressWithSpaces(votingNodeInfo.address)}
             </Typography>
           </Grid>
 
@@ -134,7 +168,12 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
 
                       <Grid container spacing={0.5}>
                         <Grid size={{ xs: 12, sm: 12, md: 12 }}>
-                          <GridItem title="Voting PublicKey" value={val.votingPublicKey!} />
+                          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                            Voting PublicKey
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                            {formatPublicKeyWithSpaces(val.votingPublicKey!)}
+                          </Typography>
                           <Grid size={{ xs: 12, sm: 12, md: 12 }}>
                             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                               Voting Key Period
@@ -158,13 +197,14 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
 
                         {index === 0 ? (
                           <>
+                            {/* 今回 */}
                             <Grid size={{ xs: 12, sm: 6, md: 6 }}>
                               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                                {`Stage0 Bottom Signature (Height: ${stage0Height})`}
+                                {`Stage1 Bottom Signature (Height: ${stage1Height})`}
                               </Typography>
                               <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                                {val.stage0Signature && val.stage0Signature !== '-' ? (
-                                  <Tooltip title={val.stage0Signature} arrow>
+                                {val.stage1Signature && val.stage1Signature !== '-' ? (
+                                  <Tooltip title={val.stage1Signature} arrow>
                                     <CheckCircle color="success" />
                                   </Tooltip>
                                 ) : (
@@ -175,13 +215,14 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
                               </Typography>
                             </Grid>
 
+                            {/* 前回 */}
                             <Grid size={{ xs: 12, sm: 6, md: 6 }}>
                               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                                {`Stage1 Bottom Signature (Height: ${stage1Height})`}
+                                {`Stage0 Bottom Signature (Height: ${stage0Height})`}
                               </Typography>
                               <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                                {val.stage1Signature && val.stage1Signature !== '-' ? (
-                                  <Tooltip title={val.stage1Signature} arrow>
+                                {val.stage0Signature && val.stage0Signature !== '-' ? (
+                                  <Tooltip title={val.stage0Signature} arrow>
                                     <CheckCircle color="success" />
                                   </Tooltip>
                                 ) : (
