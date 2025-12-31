@@ -114,7 +114,17 @@ export class SymbolKeyPair {
     return this.sign(data);
   }
 
-  cosignTransactionHash(transactionHash: Uint8Array, detached = false) {
+  /**
+   * トランザクションハッシュに対する連署名を生成
+   *
+   * @param {Uint8Array} transactionHash トランザクションハッシュ
+   * @param {boolean} detached デタッチフラグ
+   * @returns {{version: bigint, signerPublicKey: string, signature: Uint8Array, parentHash?: Uint8Array}} 連署名オブジェクト
+   */
+  cosignTransactionHash(
+    transactionHash: Uint8Array,
+    detached = false
+  ): { version: bigint; signerPublicKey: string; signature: Uint8Array; parentHash?: Uint8Array } {
     const cosignature: {
       version: bigint;
       signerPublicKey: string;
@@ -135,7 +145,18 @@ export class SymbolKeyPair {
     return cosignature;
   }
 
-  cosignTransaction(txPayload: Uint8Array, networkName: string, detached: boolean = false) {
+  /**
+   * トランザクションペイロードに対する連署名を生成
+   * @param {Uint8Array} txPayload トランザクションペイロード
+   * @param {string} networkName ネットワーク名
+   * @param {boolean} detached デタッチフラグ
+   * @returns {{version: bigint, signerPublicKey: string, signature: Uint8Array, parentHash?: Uint8Array}} 連署名オブジェクト
+   */
+  cosignTransaction(
+    txPayload: Uint8Array,
+    networkName: string,
+    detached: boolean = false
+  ): { version: bigint; signerPublicKey: string; signature: Uint8Array; parentHash?: Uint8Array } {
     const transactionHash = SymbolTransaction.parse(txPayload).hashTransaction(networkName);
     return this.cosignTransactionHash(transactionHash, detached);
   }

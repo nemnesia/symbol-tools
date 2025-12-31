@@ -246,7 +246,7 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1
 
-  packages/symbol-keyring:
+  packages/symbol-key-core:
     dependencies:
       '@noble/ed25519':
         specifier: ^3.0.0
