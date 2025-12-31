@@ -1,5 +1,5 @@
 {
-  "name": "@nemnesia/symbol-keyring",
+  "name": "@nemnesia/symbol-key-core",
   "version": "0.1.0",
   "description": "Symbolブロックチェーン用のed25519鍵生成・署名ライブラリ",
   "author": "harvestasya",
