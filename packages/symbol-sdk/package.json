@@ -1,22 +1,21 @@
 {
-  "name": "@nemnesia/symbol-catbuffer",
-  "version": "0.1.0",
-  "description": "Symbol blockchain catbuffer utilities and type definitions for JavaScript/TypeScript",
+  "name": "@nemnesia/symbol-sdk",
+  "version": "3.3.0-1",
+  "description": "JavaScript SDK for interacting with the Symbol blockchain.",
   "keywords": [
     "symbol",
     "blockchain",
     "catbuffer",
-    "serialization",
-    "nem"
+    "serialization"
   ],
-  "homepage": "https://github.com/nemnesia/symbol-tools/blob/main/packages/symbol-catbuffer/README.md",
+  "homepage": "https://github.com/nemnesia/symbol-tools/blob/main/packages/symbol-sdk/README.md",
   "bugs": {
     "url": "https://github.com/nemnesia/symbol-tools/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nemnesia/symbol-tools.git",
-    "directory": "packages/symbol-catbuffer"
+    "directory": "packages/symbol-sdk"
   },
   "license": "MIT",
   "author": "The Symbol Syndicate",
