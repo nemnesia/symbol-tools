@@ -1,39 +1,41 @@
-# symbol-catbuffer
+# symbol-sdk
 
-このモジュールは [symbol-sdk](https://github.com/symbol/symbol-sdk) 公式リポジトリから一部を抜粋し、MITライセンスで再構成したものです。
+![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-sdk?style=flat-square)
+![license](https://img.shields.io/npm/l/@nemnesia/symbol-sdk?style=flat-square)
 
-## 概要
+Symbolブロックチェーンのcatbuffer仕様に基づくユーティリティ・型定義・モデルを提供するSDKです。
+このパッケージは [symbol-sdk](https://github.com/symbol/symbol/tree/main/sdk) 公式リポジトリからnemの部分を取り除き、Node.js以外の環境（例: ブラウザ）でも動作するように再構成されています。
 
-- Symbolブロックチェーンのcatbuffer関連ユーティリティ・型定義・モデルを提供します。
-- JavaScript/TypeScript対応。
+## 特徴
+
+- Symbolブロックチェーンのcatbuffer仕様に基づくユーティリティ、型定義、モデルを提供
+- nem固有の部分を除外
+- Node.js・ブラウザなど多様なJavaScript/TypeScript環境で動作
+
+## インストール
+
+```sh
+npm install @nemnesia/symbol-sdk
+# または
+pnpm add @nemnesia/symbol-sdk
+```
+
+## サポート環境
+
+- Node.js >= 16
+- モダンブラウザ (ES2020以降)
+
+## ディレクトリ構成
+
+- `src/` … コア実装
+- `types/` … 型定義ファイル
+- `scripts/` … ビルド・生成用スクリプト
 
 ## ライセンス
 
 MIT License
 
-## ディレクトリ構成
-
-- `src/` ... コア実装
-- `types/` ... 型定義ファイル
-- `scripts/` ... ビルド・生成用スクリプト
-
-## インストール
-
-```sh
-pnpm install
-```
-
-## ビルド
-
-```sh
-pnpm run copy:models
-```
-
-## テスト
-
-（テストディレクトリ・手順は必要に応じて追加してください）
-
-## 参考
+## 参考リンク
 
 - [symbol-sdk公式リポジトリ](https://github.com/symbol/symbol/tree/main/sdk)
 - [symbol/catbuffer-parser](https://github.com/symbol/symbol/tree/main/catbuffer)
