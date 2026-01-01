@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import BufferView from '../src/BufferView.js';
+import BufferView from '../src/utils/BufferView.js';
 
 describe('BufferView', () => {
   it('バッファを保持', () => {

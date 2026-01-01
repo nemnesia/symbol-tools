@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import Writer from '../src/Writer.js';
+import Writer from '../src/utils/Writer.js';
 
 describe('Writer', () => {
   it('指定サイズでバッファが作成される', () => {

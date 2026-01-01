@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { hexToUint8, isHexString, uint8ToHex } from '../src/converter.js';
+import { hexToUint8, isHexString, uint8ToHex } from '../src/utils/converter.js';
 
 describe('converter', () => {
   describe('hexToUint8', () => {
