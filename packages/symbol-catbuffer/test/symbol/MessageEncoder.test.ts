@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { PrivateKey } from '../../src/CryptoTypes.js';
+import { PrivateKey, PublicKey } from '../../src/CryptoTypes.js';
+import { utils } from '../../src/index.js';
 import { KeyPair } from '../../src/symbol/KeyPair.js';
 import MessageEncoder from '../../src/symbol/MessageEncoder.js';
 
@@ -198,6 +199,21 @@ describe('MessageEncoder', () => {
       const encoder = new MessageEncoder(keyPair);
 
       expect(encoder.publicKey).toEqual(keyPair.publicKey);
+    });
+  });
+
+  describe('SDK互換性', () => {
+    it('暗号化メッセージをでコードできる', async () => {
+      const privateKey = new PrivateKey('2222222222222222222222222222222222222222222222222222222222222222');
+      const keyPair = new KeyPair(privateKey);
+      const encoder = new MessageEncoder(keyPair);
+      const decodedMessage = await encoder.tryDecode(
+        new PublicKey('D04AB232742BB4AB3A1368BD4615E4E6D0224AB71A016BAF8520A332C9778737'),
+        utils.hexToUint8('01B8FA02BBC0F67160AF8110574C00EC6680BF8091C41A06FA3B5A4A980C343C2263BB93D66C3D9F43B989')
+      );
+      const message = new TextDecoder().decode(decodedMessage.message);
+
+      expect(message).toEqual('Hello, Symbol!');
     });
   });
 });

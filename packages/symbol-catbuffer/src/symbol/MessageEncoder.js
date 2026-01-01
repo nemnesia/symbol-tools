@@ -47,7 +47,7 @@ export default class MessageEncoder {
 	 * Tries to decode encoded message.
 	 * @param {PublicKey} recipientPublicKey Recipient's public key.
 	 * @param {Uint8Array} encodedMessage Encoded message.
-	 * @returns {TryDecodeResult} Tuple containing decoded status and message.
+	 * @returns {Promise<TryDecodeResult>} Tuple containing decoded status and message.
 	 */
 	async tryDecode(recipientPublicKey, encodedMessage) {
 		if (1 === encodedMessage[0]) {
@@ -84,7 +84,7 @@ export default class MessageEncoder {
 	 * Encodes message to recipient using recommended format.
 	 * @param {PublicKey} recipientPublicKey Recipient public key.
 	 * @param {Uint8Array} message Message to encode.
-	 * @returns {Uint8Array} Encrypted and encoded message.
+	 * @returns {Promise<Uint8Array>} Encrypted and encoded message.
 	 */
 	async encode(recipientPublicKey, message) {
 		const { tag, initializationVector, cipherText } = await encodeAesGcm(deriveSharedKey, this._keyPair, recipientPublicKey, message);
@@ -97,7 +97,7 @@ export default class MessageEncoder {
 	 * @param {PublicKey} nodePublicKey Node public key.
 	 * @param {KeyPair} remoteKeyPair Remote key pair.
 	 * @param {KeyPair} vrfKeyPair Vrf key pair.
-	 * @returns {Uint8Array} Encrypted and encoded harvesting delegation request.
+	 * @returns {Promise<Uint8Array>} Encrypted and encoded harvesting delegation request.
 	 */
 	 
 	async encodePersistentHarvestingDelegation(nodePublicKey, remoteKeyPair, vrfKeyPair) {
@@ -114,7 +114,7 @@ export default class MessageEncoder {
 	 *             Please use `tryDecode` in any new code.
 	 * @param {PublicKey} recipientPublicKey Recipient's public key.
 	 * @param {Uint8Array} encodedMessage Encoded message
-	 * @returns {TryDecodeResult} Tuple containing decoded status and message.
+	 * @returns {Promise<TryDecodeResult>} Tuple containing decoded status and message.
 	 */
 	async tryDecodeDeprecated(recipientPublicKey, encodedMessage) {
 		const encodedHexString = new TextDecoder().decode(encodedMessage.subarray(1));
@@ -132,7 +132,7 @@ export default class MessageEncoder {
 	 *             Please use `encode` in any new code.
 	 * @param {PublicKey} recipientPublicKey Recipient public key.
 	 * @param {Uint8Array} message Message to encode.
-	 * @returns {Uint8Array} Encrypted and encoded message.
+	 * @returns {Promise<Uint8Array>} Encrypted and encoded message.
 	 */
 	async encodeDeprecated(recipientPublicKey, message) {
 		// wallet additionally hex encodes

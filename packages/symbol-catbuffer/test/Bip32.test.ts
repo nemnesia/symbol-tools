@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { Bip32, Bip32Node } from '../src/Bip32.js';
 import { PrivateKey } from '../src/CryptoTypes.js';
+import { SymbolAccount, SymbolFacade } from '../src/symbol/index.js';
 
 describe('Bip32Node', () => {
   describe('constructor', () => {
@@ -283,6 +284,28 @@ describe('Bip32', () => {
 
       expect(derivedNode).toBeInstanceOf(Bip32Node);
       expect(derivedNode.privateKey).toBeInstanceOf(PrivateKey);
+    });
+  });
+
+  describe('SDK互換性', () => {
+    it('ニーモニックから復元できる', () => {
+      const bip32 = new Bip32();
+      const mnemonic =
+        'vehicle unfold decline merry control genuine real already erase address unique clerk have rice motor spike human own attack trim gloom inch payment chronic';
+      const facade = new SymbolFacade('mainnet');
+      const bip32Node = bip32.fromMnemonic(mnemonic, '');
+      const bip32Path = facade.bip32Path(0);
+      const childBip32Node = bip32Node.derivePath(bip32Path);
+      const keypair = SymbolFacade.bip32NodeToKeyPair(childBip32Node);
+      const account = new SymbolAccount(facade, keypair);
+
+      expect(account.keyPair.privateKey.toString()).toEqual(
+        'B8821DDC1E7B35D20AE6DC35EC79F644EB7E6843A2CF977AD08DB31BDD1E0678'
+      );
+      expect(account.keyPair.publicKey.toString()).toEqual(
+        'F3EC8A5DAD8AF4566C0CF25C1B092F608D303728A8EAB14481E2824EC7967D05'
+      );
+      expect(account.address.toString()).toEqual('ND6JFGH64RIDEQC3HQUEW2CIO7PGWRJD4KMTARQ');
     });
   });
 });
