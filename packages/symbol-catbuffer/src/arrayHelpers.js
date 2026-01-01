@@ -1,7 +1,6 @@
 import BufferView from './BufferView.js';
-/* eslint-disable no-unused-vars */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Writer from './Writer.js';
-/* eslint-enable no-unused-vars */
 
 /**
  * Deeply compares two array elements.

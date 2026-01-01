@@ -65,5 +65,8 @@
   },
   "dependencies": {
     "@noble/hashes": "^2.0.1"
+  },
+  "devDependencies": {
+    "eslint-plugin-n": "^17.23.1"
   }
 }

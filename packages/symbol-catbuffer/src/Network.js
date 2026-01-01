@@ -1,7 +1,8 @@
-/* eslint-disable no-unused-vars */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PublicKey } from './CryptoTypes.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { NetworkTimestamp, NetworkTimestampDatetimeConverter } from './NetworkTimestamp.js';
-/* eslint-enable no-unused-vars */
+ 
 import { ripemd160 } from '@noble/hashes/legacy.js';
 
 const BASE32_RFC4648_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';

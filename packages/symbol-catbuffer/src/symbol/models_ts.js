@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Address } from './Network.js';
 import * as models from './models.js';

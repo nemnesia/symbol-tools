@@ -9,6 +9,6 @@
       "../src/*.js": ["./types/*.d.ts"]
     }
   },
-  "include": ["test", "types"],
-  "exclude": ["src"]
+  "include": ["src", "test", "types", "*.config.js"],
+  "exclude": []
 }
