@@ -54,7 +54,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:coverage:ui": "vitest --ui --coverage",
-    "prepublishOnly": "npm test",
+    "prepublishOnly": "sh ./scripts/create_types.sh && npm test",
     "publish:dryrun": "npm publish --dry-run",
     "publish:release": "npm publish"
   },
