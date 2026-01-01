@@ -1,7 +1,4 @@
-import { Signature } from '@nemnesia/symbol-catbuffer';
-import { models } from '@nemnesia/symbol-catbuffer/symbol';
-import { ripemd160 } from '@noble/hashes/legacy.js';
-import { sha3_256 } from '@noble/hashes/sha3.js';
+import { utils } from '@nemnesia/symbol-catbuffer';
 
 /**
  * Base32エンコード/デコード用の文字セット
@@ -13,54 +10,6 @@ const BASE32_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
  */
 export class SymbolUtils {
   /**
-   * MainNet生成ハッシュシード
-   */
-  private static readonly MAINNET_GENERATION_HASH_SEED = SymbolUtils.hexToUint8(
-    '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6'
-  );
-  /**
-   * TestNet生成ハッシュシード
-   */
-  private static readonly TESTNET_GENERATION_HASH_SEED = SymbolUtils.hexToUint8(
-    '49D6E1CE276A85B70EAFE52349AACCA389302E7A9754BCF1221E79494FC665A4'
-  );
-
-  /**
-   * 16進文字列をUint8Arrayに変換
-   *
-   * @param {string} hex 16進文字列
-   * @returns {Uint8Array} Uint8Array
-   */
-  static hexToUint8(hex: string): Uint8Array {
-    return new Uint8Array(hex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
-  }
-
-  /**
-   * Uint8Arrayを16進文字列に変換
-   *
-   * @param {Uint8Array} bytes Uint8Array
-   * @returns {string} 16進文字列
-   */
-  static uint8ToHex(bytes: Uint8Array): string {
-    return Array.from(bytes, (b) => b.toString(16).padStart(2, '0'))
-      .join('')
-      .toUpperCase();
-  }
-
-  /**
-   * バイト列をBigIntに変換
-   * @param {Uint8Array} bytes バイト列
-   * @returns {bigint} BigInt値
-   */
-  static bytesToBigInt(bytes: Uint8Array): bigint {
-    let result = 0n;
-    for (let i = 0; i < bytes.length; ++i) {
-      result |= BigInt(bytes[i]) << BigInt(8 * i);
-    }
-    return result;
-  }
-
-  /**
    * HEXアドレスをBase32アドレスに変換
    *
    * @param {string} hexAddress HEXアドレス (16進文字列)
@@ -70,7 +19,7 @@ export class SymbolUtils {
     let bits = 0;
     let value = 0;
     let base32 = '';
-    for (const byte of SymbolUtils.hexToUint8(hexAddress.toUpperCase())) {
+    for (const byte of utils.hexToUint8(hexAddress.toUpperCase())) {
       value = (value << 8) | byte;
       bits += 8;
       while (bits >= 5) {
@@ -105,39 +54,5 @@ export class SymbolUtils {
       }
     }
     return hex.toUpperCase();
-  }
-
-  /**
-   * 公開鍵からアドレスを生成
-   *
-   * @param {string} publicKey 公開鍵 (16進文字列)
-   * @param {number | string} network ネットワークIDまたはネットワーク名
-   * @returns {string} アドレス (Base32形式)
-   */
-  static publicKeyToAddress(publicKey: string, network: number | string): string {
-    let networkId: number;
-    if (typeof network === 'number') {
-      networkId = network;
-    } else {
-      networkId = network === 'mainnet' ? 0x68 : 0x98;
-    }
-
-    const ripemdHash = ripemd160(sha3_256(SymbolUtils.hexToUint8(publicKey)));
-    const versionPrefixed = new Uint8Array([networkId, ...ripemdHash]);
-    const checksum = sha3_256(versionPrefixed).slice(0, 3);
-    return SymbolUtils.hexToBase32Address(SymbolUtils.uint8ToHex(new Uint8Array([...versionPrefixed, ...checksum])));
-  }
-
-  /**
-   * 署名と公開鍵をトランザクションバイト列にアタッチ
-   *
-   * @param {Uint8Array} payload トランザクションバイト列
-   * @param {Uint8Array | string} signature 署名（Uint8Arrayまたは16進文字列）
-   * @returns {string} 署名付きトランザクションペイロードのJSON文字列
-   */
-  static attachSignature(payload: models.Transaction, signature: Signature): string {
-    payload.signature = new models.Signature(signature.bytes);
-    const jsonPayload = `{"payload": "${SymbolUtils.uint8ToHex(payload.serialize())}"}`;
-    return jsonPayload;
   }
 }

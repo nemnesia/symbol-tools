@@ -1,8 +1,10 @@
-import { Hash256, Signature } from '@nemnesia/symbol-catbuffer';
+import { Hash256, Signature, utils } from '@nemnesia/symbol-catbuffer';
 import { Network, models } from '@nemnesia/symbol-catbuffer/symbol';
+import { ripemd160 } from '@noble/hashes/legacy.js';
 import { sha3_256 } from '@noble/hashes/sha3.js';
 
-import { SymbolKeyPair } from './SymbolKeyPair';
+import { SymbolKeyPair, SymbolVerifier } from './SymbolKeyPair';
+import { SymbolUtils } from './SymbolUtils';
 
 /**
  * トランザクションヘッダーサイズとAggregateトランザクションサイズ定数
@@ -67,6 +69,19 @@ export class SymbolNetwork {
   }
 
   /**
+   * 公開鍵からアドレスを生成
+   *
+   * @param {string} publicKey 公開鍵 (16進文字列)
+   * @returns {string} アドレス (Base32形式)
+   */
+  publicKeyToAddress(publicKey: string): string {
+    const ripemdHash = ripemd160(sha3_256(utils.hexToUint8(publicKey)));
+    const versionPrefixed = new Uint8Array([this.network.identifier, ...ripemdHash]);
+    const checksum = sha3_256(versionPrefixed).slice(0, 3);
+    return SymbolUtils.hexToBase32Address(utils.uint8ToHex(new Uint8Array([...versionPrefixed, ...checksum])));
+  }
+
+  /**
    * トランザクションハッシュを計算
    *
    * @param {models.Transaction} payload トランザクションペイロード
@@ -92,22 +107,6 @@ export class SymbolNetwork {
     const transactionType = (txBuffer[transactionTypeOffset + 1] << 8) + txBuffer[transactionTypeOffset];
     const aggregateTypes = [AGGREGATE_BONDED_TYPE, AGGREGATE_COMPLETE_TYPE];
     return aggregateTypes.some((aggregateType) => aggregateType === transactionType);
-  }
-
-  /**
-   * 署名対象データバッファを取得
-   *
-   * @param {Uint8Array} txBuffer トランザクションバイト列
-   * @returns {Uint8Array} 署名対象データバッファ
-   */
-  transactionDataBuffer(txBuffer: Uint8Array): Uint8Array {
-    const dataBufferStart = TRANSACTION_HEADER_SIZE;
-    let dataBufferEnd = txBuffer.length;
-    if (this.isAggregateTransaction(txBuffer)) {
-      const version = txBuffer[TRANSACTION_HEADER_SIZE];
-      dataBufferEnd = TRANSACTION_HEADER_SIZE + (3 <= version ? AGGREGATE_HASHED_SIZE : PRE_V3_AGGREGATE_HASHED_SIZE);
-    }
-    return txBuffer.subarray(dataBufferStart, dataBufferEnd);
   }
 
   /**
@@ -162,18 +161,51 @@ export class SymbolNetwork {
    * Symbolトランザクション署名
    *
    * @param {SymbolKeyPair} keyPair 連署名者のキーペア
-   * @param {models.Transaction} payload トランザクションペイロード
+   * @param {models.Transaction} transaction トランザクション
    * @returns {Signature} 署名
    */
-  signTransaction(keyPair: SymbolKeyPair, payload: models.Transaction): Signature {
-    // 署名対象データを抽出
-    const signingData = this.transactionDataBuffer(payload.serialize());
+  signTransaction(keyPair: SymbolKeyPair, transaction: models.Transaction): Signature {
+    return keyPair.sign(this.extractSigningPayload(transaction));
+  }
 
-    // generationHashSeed + 署名対象データ
-    const data = new Uint8Array(this.network.generationHashSeed.bytes.length + signingData.length);
-    data.set(this.network.generationHashSeed.bytes, 0);
-    data.set(signingData, this.network.generationHashSeed.bytes.length);
+  /**
+   * トランザクション検証
+   *
+   * @param {models.Transaction} transaction トランザクション
+   * @param {Signature} signature 署名データ
+   * @returns 検証結果
+   */
+  verifyTransaction(transaction: models.Transaction, signature: Signature): boolean {
+    const verifyBuffer = new Uint8Array(this.extractSigningPayload(transaction));
+    return new SymbolVerifier(transaction.signerPublicKey).verify(verifyBuffer, signature);
+  }
 
-    return keyPair.sign(data);
+  /**
+   * 署名対象データバッファを取得
+   *
+   * @param {Uint8Array} txBuffer トランザクションバイト列
+   * @returns {Uint8Array} 署名対象データバッファ
+   */
+  private transactionDataBuffer(txBuffer: Uint8Array): Uint8Array {
+    const dataBufferStart = TRANSACTION_HEADER_SIZE;
+    let dataBufferEnd = txBuffer.length;
+    if (this.isAggregateTransaction(txBuffer)) {
+      const version = txBuffer[TRANSACTION_HEADER_SIZE];
+      dataBufferEnd = TRANSACTION_HEADER_SIZE + (3 <= version ? AGGREGATE_HASHED_SIZE : PRE_V3_AGGREGATE_HASHED_SIZE);
+    }
+    return txBuffer.subarray(dataBufferStart, dataBufferEnd);
+  }
+
+  /**
+   * 署名ペイロードの抽出
+   *
+   * @param {models.Transaction} transaction トランザクション
+   * @returns {Uint8Array}
+   */
+  private extractSigningPayload(transaction: models.Transaction): Uint8Array {
+    return new Uint8Array([
+      ...this.network.generationHashSeed.bytes,
+      ...this.transactionDataBuffer(transaction.serialize()),
+    ]);
   }
 }

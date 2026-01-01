@@ -1,5 +1,5 @@
-import { PrivateKey, PublicKey, Signature } from '@nemnesia/symbol-catbuffer';
-import { getPublicKey, hashes, sign } from '@noble/ed25519';
+import { PrivateKey, PublicKey, Signature, deepCompare } from '@nemnesia/symbol-catbuffer';
+import { getPublicKey, hashes, sign, verify } from '@noble/ed25519';
 import { sha512 } from '@noble/hashes/sha2.js';
 
 /**
@@ -23,7 +23,7 @@ export class SymbolKeyPair {
    */
   constructor(privateKey: PrivateKey) {
     this._privateKey = privateKey;
-    this._publicKey = this.getSymbolPublicKey(this._privateKey);
+    this._publicKey = new PublicKey(getPublicKey(this._privateKey.bytes));
   }
 
   /**
@@ -41,17 +41,6 @@ export class SymbolKeyPair {
   }
 
   /**
-   * ed25519秘密鍵から公開鍵を算出
-   *
-   * @param {PrivateKey} privateKey 32バイト秘密鍵
-   * @returns {PublicKey} 32バイト公開鍵
-   */
-  getSymbolPublicKey(privateKey: PrivateKey): PublicKey {
-    const pubKeyBytes = getPublicKey(privateKey.bytes);
-    return new PublicKey(pubKeyBytes);
-  }
-
-  /**
    * メッセージに署名
    *
    * @param {Uint8Array} message 署名対象メッセージ
@@ -59,5 +48,35 @@ export class SymbolKeyPair {
    */
   sign(message: Uint8Array): Signature {
     return new Signature(sign(message, this._privateKey.bytes));
+  }
+}
+
+/**
+ * SymbolVerifierクラス
+ */
+export class SymbolVerifier {
+  /** 公開鍵 */
+  private _publicKey: PublicKey;
+
+  /**
+   * コンストラクタ
+   *
+   * @param publicKey 公開鍵
+   */
+  constructor(publicKey: PublicKey) {
+    if (0 === deepCompare(new Uint8Array(PublicKey.SIZE), publicKey.bytes))
+      throw new Error('public key cannot be zero');
+    this._publicKey = publicKey;
+  }
+
+  /**
+   * 検証
+   *
+   * @param {Uint8Array} message 署名対象メッセージ
+   * @param {Signature} signature 署名データ
+   * @returns {boolean} 検証結果
+   */
+  verify(message: Uint8Array, signature: Signature): boolean {
+    return verify(signature.bytes, message, this._publicKey.bytes);
   }
 }

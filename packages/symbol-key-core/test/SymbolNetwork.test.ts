@@ -1,13 +1,15 @@
 import { Hash256, PrivateKey, PublicKey, Signature } from '@nemnesia/symbol-catbuffer';
-import { descriptors, models } from '@nemnesia/symbol-catbuffer/symbol';
-import { KeyPair, SymbolFacade, SymbolTransactionFactory } from 'symbol-sdk/symbol';
+import { SymbolTransactionFactory, descriptors, models } from '@nemnesia/symbol-catbuffer/symbol';
+import { KeyPair, SymbolFacade } from 'symbol-sdk/symbol';
 import { describe, expect, it } from 'vitest';
 
-import { SymbolKeyPair, SymbolNetwork, SymbolUtils } from '../src/index.js';
+import { SymbolKeyPair, SymbolNetwork } from '../src/index.js';
 
 // TRANSACTION_HEADER_SIZE 定数をテスト用に再定義
 const TRANSACTION_HEADER_SIZE = 108;
 
+// ダミーデータ
+const PUBLIC_KEY = 'B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF846A566FCF6DE0B6A6A2C82A';
 const TEST_PRIVATE_KEY = 'AABBCCDDEEFF00112233445566778899AABBCCDDEEFF00112233445566778899';
 
 // ダミーSymbolKeyPair
@@ -29,6 +31,22 @@ describe('SymbolNetwork', () => {
 
   it('存在しないネットワーク名でエラー', () => {
     expect(() => new SymbolNetwork('unknown')).toThrow();
+  });
+
+  it('公開鍵からアドレスを生成できる', () => {
+    const network = new SymbolNetwork('mainnet');
+    const address = network.publicKeyToAddress(PUBLIC_KEY);
+    expect(typeof address).toBe('string');
+    expect(address.length).toBeGreaterThan(0);
+  });
+
+  it('publicKeyToAddressでnetwork: testnet分岐', () => {
+    const network = new SymbolNetwork('testnet');
+    const address = network.publicKeyToAddress(PUBLIC_KEY);
+    expect(typeof address).toBe('string');
+    expect(address.length).toBeGreaterThan(0);
+    // testnetは先頭がTになる
+    expect(address[0]).toBe('T');
   });
 
   it('トランザクションハッシュ計算できる', () => {
@@ -96,7 +114,7 @@ describe('SymbolNetwork', () => {
     const network = new SymbolNetwork('mainnet');
     const keyPair = new SymbolKeyPair(new PrivateKey(TEST_PRIVATE_KEY));
     const signature = network.signTransaction(keyPair, transferTx);
-    const signedTx = SymbolUtils.attachSignature(transferTx, signature);
+    const signedTx = SymbolTransactionFactory.attachSignature(transferTx, signature);
     // SDKで署名
     const sdkKeyPair = new KeyPair(new PrivateKey(TEST_PRIVATE_KEY));
     const sdkSignature = facade.signTransaction(sdkKeyPair, transferTx);
@@ -121,7 +139,7 @@ describe('SymbolNetwork', () => {
     const network = new SymbolNetwork('mainnet');
     const keyPair = new SymbolKeyPair(new PrivateKey(TEST_PRIVATE_KEY));
     const signature = network.signTransaction(keyPair, aggregateTx);
-    const signedTx = SymbolUtils.attachSignature(aggregateTx, signature);
+    const signedTx = SymbolTransactionFactory.attachSignature(aggregateTx, signature);
     const transactionHash = network.hashTransaction(aggregateTx);
     const cosignature = network.cosignTransaction(keyPair, aggregateTx, false);
     const detachedCosignature = network.cosignTransaction(keyPair, aggregateTx, true) as models.DetachedCosignature;
@@ -145,5 +163,32 @@ describe('SymbolNetwork', () => {
     expect(Array.from(detachedCosignature.parentHash!.bytes)).toEqual(
       Array.from((sdkDetachedCosignature as models.DetachedCosignature).parentHash!.bytes)
     );
+  });
+
+  it('トランザクション署名の検証が成功する', () => {
+    const facade = new SymbolFacade('mainnet');
+    const account = facade.createAccount(new PrivateKey(TEST_PRIVATE_KEY));
+    const transferDescriptor = new descriptors.TransferTransactionV1Descriptor(account.address, [], '\0Hello, Symbol!');
+    const transferTx = facade.createTransactionFromTypedDescriptor(transferDescriptor, account.publicKey, 0, 0);
+    const network = new SymbolNetwork('mainnet');
+    const keyPair = new SymbolKeyPair(new PrivateKey(TEST_PRIVATE_KEY));
+    const signature = network.signTransaction(keyPair, transferTx);
+    const verified = network.verifyTransaction(transferTx, signature);
+    expect(verified).toBe(true);
+  });
+
+  it('トランザクション署名の検証が失敗する（署名不一致）', () => {
+    const facade = new SymbolFacade('mainnet');
+    const account = facade.createAccount(new PrivateKey(TEST_PRIVATE_KEY));
+    const transferDescriptor = new descriptors.TransferTransactionV1Descriptor(account.address, [], '\0Hello, Symbol!');
+    const transferTx = facade.createTransactionFromTypedDescriptor(transferDescriptor, account.publicKey, 0, 0);
+    const network = new SymbolNetwork('mainnet');
+    // 別の秘密鍵で署名
+    const wrongKeyPair = new SymbolKeyPair(
+      new PrivateKey('11223344556677889900AABBCCDDEEFF11223344556677889900AABBCCDDEEFF')
+    );
+    const wrongSignature = network.signTransaction(wrongKeyPair, transferTx);
+    const verified = network.verifyTransaction(transferTx, wrongSignature);
+    expect(verified).toBe(false);
   });
 });
