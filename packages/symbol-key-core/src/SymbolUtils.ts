@@ -1,3 +1,5 @@
+import { Signature } from '@nemnesia/symbol-catbuffer';
+import { models } from '@nemnesia/symbol-catbuffer/symbol';
 import { ripemd160 } from '@noble/hashes/legacy.js';
 import { sha3_256 } from '@noble/hashes/sha3.js';
 
@@ -22,17 +24,6 @@ export class SymbolUtils {
   private static readonly TESTNET_GENERATION_HASH_SEED = SymbolUtils.hexToUint8(
     '49D6E1CE276A85B70EAFE52349AACCA389302E7A9754BCF1221E79494FC665A4'
   );
-
-  /**
-   * ネットワーク名から生成ハッシュシードを取得
-   * @param {string} networkName ネットワーク名 ('mainnet' または 'testnet')
-   * @returns {Uint8Array} 生成ハッシュシード
-   */
-  static getGenerationHashSeed(networkName: string) {
-    return networkName === 'mainnet'
-      ? SymbolUtils.MAINNET_GENERATION_HASH_SEED
-      : SymbolUtils.TESTNET_GENERATION_HASH_SEED;
-  }
 
   /**
    * 16進文字列をUint8Arrayに変換
@@ -140,16 +131,13 @@ export class SymbolUtils {
   /**
    * 署名と公開鍵をトランザクションバイト列にアタッチ
    *
-   * @param {Uint8Array} txPayload トランザクションバイト列
+   * @param {Uint8Array} payload トランザクションバイト列
    * @param {Uint8Array | string} signature 署名（Uint8Arrayまたは16進文字列）
    * @returns {string} 署名付きトランザクションペイロードのJSON文字列
    */
-  static attachSignature(txPayload: Uint8Array, signature: Uint8Array | string): string {
-    const tx = new Uint8Array(txPayload); // コピー
-    // 署名
-    const sigBytes = typeof signature === 'string' ? SymbolUtils.hexToUint8(signature) : signature;
-    tx.set(sigBytes, 8); // 8バイト目から64バイト分
-    const jsonPayload = `{"payload": "${SymbolUtils.uint8ToHex(tx)}"}`;
+  static attachSignature(payload: models.Transaction, signature: Signature): string {
+    payload.signature = new models.Signature(signature.bytes);
+    const jsonPayload = `{"payload": "${SymbolUtils.uint8ToHex(payload.serialize())}"}`;
     return jsonPayload;
   }
 }

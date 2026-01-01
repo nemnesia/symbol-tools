@@ -30,7 +30,7 @@ describe('SymbolBip32', () => {
     const derived = node.derivePath(path);
     const keyPair = derived.toKeyPair();
     expect(keyPair).toBeInstanceOf(SymbolKeyPair);
-    expect(keyPair.privateKey).toMatch(/^[A-F0-9]{64}$/);
+    expect(keyPair.privateKey.toString()).toMatch(/^[A-F0-9]{64}$/);
   });
 
   it('deriveOneで子ノードを派生できる', () => {
@@ -78,8 +78,8 @@ describe('SymbolBip32', () => {
     }
     // 比較
     for (let i = 0; i < maxIndex; i++) {
-      expect(keyPairs[i].privateKey).toBe(sdkKeyPairs[i].privateKey.toString());
-      expect(keyPairs[i].publicKey).toBe(sdkKeyPairs[i].publicKey.toString());
+      expect(keyPairs[i].privateKey.toString()).toBe(sdkKeyPairs[i].privateKey.toString());
+      expect(keyPairs[i].publicKey.toString()).toBe(sdkKeyPairs[i].publicKey.toString());
     }
   });
 
@@ -107,8 +107,8 @@ describe('SymbolBip32', () => {
     }
     // 比較
     for (let i = 0; i < maxIndex; i++) {
-      expect(keyPairs[i].privateKey).toBe(sdkKeyPairs[i].privateKey.toString());
-      expect(keyPairs[i].publicKey).toBe(sdkKeyPairs[i].publicKey.toString());
+      expect(keyPairs[i].privateKey.toString()).toBe(sdkKeyPairs[i].privateKey.toString());
+      expect(keyPairs[i].publicKey.toString()).toBe(sdkKeyPairs[i].publicKey.toString());
     }
   });
 });

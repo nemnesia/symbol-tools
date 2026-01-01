@@ -248,6 +248,9 @@ importers:
 
   packages/symbol-key-core:
     dependencies:
+      '@nemnesia/symbol-catbuffer':
+        specifier: workspace:*
+        version: link:../symbol-catbuffer
       '@noble/ed25519':
         specifier: ^3.0.0
         version: 3.0.0

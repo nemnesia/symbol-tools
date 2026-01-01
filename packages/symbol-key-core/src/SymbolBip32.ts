@@ -1,3 +1,4 @@
+import { PrivateKey } from '@nemnesia/symbol-catbuffer';
 import { hmac } from '@noble/hashes/hmac.js';
 import { sha512 } from '@noble/hashes/sha2.js';
 import { generateMnemonic, mnemonicToSeedSync } from '@scure/bip39';
@@ -12,7 +13,6 @@ import { wordlist as simplifiedChinese } from '@scure/bip39/wordlists/simplified
 import { wordlist as spanish } from '@scure/bip39/wordlists/spanish.js';
 
 import { SymbolKeyPair } from './SymbolKeyPair.js';
-import { SymbolUtils } from './SymbolUtils.js';
 
 /**
  * 秘密鍵サイズ（バイト数）
@@ -50,10 +50,7 @@ export class SymbolBip32 {
    * @param {string} curveName 曲線名 [デフォルト: ed25519]
    * @param {MnemonicLanguage} mnemonicLanguage ニーモニック言語 [デフォルト: english]
    */
-  constructor(
-    curveName: string = 'ed25519',
-    mnemonicLanguage: MnemonicLanguage = 'english'
-  ) {
+  constructor(curveName: string = 'ed25519', mnemonicLanguage: MnemonicLanguage = 'english') {
     this._rootHmacKey = new TextEncoder().encode(`${curveName} seed`);
     this._mnemonicLanguage = mnemonicLanguage;
   }
@@ -87,7 +84,7 @@ export class SymbolBip32 {
    * @returns {string} ニーモニック
    */
   random(seedLength: number = 32): string {
-    const wordlist = WORDLISTS[this._mnemonicLanguage] || english;
+    const wordlist = WORDLISTS[this._mnemonicLanguage];
     return generateMnemonic(wordlist, seedLength * 8);
   }
 }
@@ -97,7 +94,7 @@ export class SymbolBip32 {
  */
 export class SymbolBip32Node {
   /** 秘密鍵 */
-  private _privateKey: Uint8Array;
+  private _privateKey: PrivateKey;
   /** チェーンコード */
   private _chainCode: Uint8Array;
 
@@ -109,7 +106,7 @@ export class SymbolBip32Node {
    */
   constructor(hmacKey: Uint8Array, data: Uint8Array) {
     const I = hmac(sha512, hmacKey, data);
-    this._privateKey = I.slice(0, PRIVATE_KEY_SIZE);
+    this._privateKey = new PrivateKey(I.slice(0, PRIVATE_KEY_SIZE));
     this._chainCode = I.slice(PRIVATE_KEY_SIZE);
   }
 
@@ -134,7 +131,7 @@ export class SymbolBip32Node {
     const hardenedIdx = 0x80000000 | identifier;
     const data = new Uint8Array(1 + PRIVATE_KEY_SIZE + 4);
     data[0] = 0;
-    data.set(this._privateKey, 1);
+    data.set(this._privateKey.bytes, 1);
     data[1 + PRIVATE_KEY_SIZE] = (hardenedIdx >>> 24) & 0xff;
     data[1 + PRIVATE_KEY_SIZE + 1] = (hardenedIdx >>> 16) & 0xff;
     data[1 + PRIVATE_KEY_SIZE + 2] = (hardenedIdx >>> 8) & 0xff;
@@ -162,8 +159,6 @@ export class SymbolBip32Node {
    * @returns {SymbolKeyPair} SymbolKeyPairキーペア
    */
   toKeyPair(): SymbolKeyPair {
-    return new SymbolKeyPair(
-      SymbolUtils.uint8ToHex(this._privateKey).toUpperCase()
-    );
+    return new SymbolKeyPair(this._privateKey);
   }
 }
