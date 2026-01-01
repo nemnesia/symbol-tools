@@ -16,7 +16,6 @@ MIT License
 - `src/` ... コア実装
 - `types/` ... 型定義ファイル
 - `scripts/` ... ビルド・生成用スクリプト
-- `_symbol/` ... 公式リポジトリからの抜粋（catparser等）
 
 ## インストール
 
