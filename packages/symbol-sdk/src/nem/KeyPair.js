@@ -2,7 +2,7 @@ import { PrivateKey, PublicKey, Signature } from '../CryptoTypes.js';
 import ed25519 from '../impl/ed25519.js';
 import { deepCompare } from '../utils/arrayHelpers.js';
 
-const HASH_MODE = 'Sha2_512';
+const HASH_MODE = 'Keccak';
 
 /**
  * Represents an ED25519 private and public key.
@@ -18,10 +18,13 @@ export class KeyPair {
 		 */
 		this._privateKey = privateKey;
 
+		const reversedPrivateKeyBytes = new Uint8Array([...privateKey.bytes]);
+		reversedPrivateKeyBytes.reverse();
+
 		/**
 		 * @private
 		 */
-		this._keyPair = ed25519.get().keyPairFromSeed(HASH_MODE, this._privateKey.bytes);
+		this._keyPair = ed25519.get().keyPairFromSeed(HASH_MODE, reversedPrivateKeyBytes);
 	}
 
 	/**

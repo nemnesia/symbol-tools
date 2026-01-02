@@ -1,15 +1,15 @@
-# symbol-sdk
+# Symbol-SDK
 
 ![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-sdk?style=flat-square)
 ![license](https://img.shields.io/npm/l/@nemnesia/symbol-sdk?style=flat-square)
 
-Symbolブロックチェーンのcatbuffer仕様に基づくユーティリティ・型定義・モデルを提供するSDKです。
-このパッケージは [symbol-sdk](https://github.com/symbol/symbol/tree/main/sdk) 公式リポジトリからnemの部分を取り除き、Node.js以外の環境（例: ブラウザ）でも動作するように再構成されています。
+SymbolおよびNEMブロックチェーンのcatbuffer仕様に基づくユーティリティ・型定義・モデルを提供するSDKです。
+このパッケージは [symbol-sdk](https://github.com/symbol/symbol/tree/main/sdk) 公式リポジトリをベースに、NEMにも対応し、Node.js以外の環境（例: ブラウザ）でも動作するように再構成されています。
 
 ## 特徴
 
-- Symbolブロックチェーンのcatbuffer仕様に基づくユーティリティ、型定義、モデルを提供
-- nem固有の部分を除外
+- SymbolおよびNEMブロックチェーンのcatbuffer仕様に基づくユーティリティ、型定義、モデルを提供
+- NEM機能にも対応
 - Node.js・ブラウザなど多様なJavaScript/TypeScript環境で動作
 
 ## インストール

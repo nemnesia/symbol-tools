@@ -9,3 +9,4 @@ mkdir -p ./types
 
 npx tsc --allowJs --declaration --emitDeclarationOnly --outDir ./types ./src/index.js
 npx tsc --allowJs --declaration --emitDeclarationOnly --outDir ./types ./src/symbol/index.js
+npx tsc --allowJs --declaration --emitDeclarationOnly --outDir ./types ./src/nem/index.js

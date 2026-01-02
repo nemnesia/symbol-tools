@@ -341,13 +341,6 @@ describe('TransactionFactory', () => {
     });
   });
 
-  describe('_symbolTypeConverter', () => {
-    // _symbolTypeConverter はプライベートメソッドのためテストをスキップ
-    it.skip('プライベートメソッドのため直接テスト不可', () => {
-      // このテストはスキップされます
-    });
-  });
-
   describe('integration', () => {
     it('トランザクションの作成、シリアライズ、デシリアライズができる', () => {
       const network = createNetwork();

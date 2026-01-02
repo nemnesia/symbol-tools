@@ -1,7 +1,7 @@
 {
   "name": "@nemnesia/symbol-sdk",
   "version": "3.3.0-1",
-  "description": "JavaScript SDK for interacting with the Symbol blockchain.",
+  "description": "JavaScript SDK for interacting with the Symbol and NEM blockchains.",
   "keywords": [
     "symbol",
     "blockchain",
@@ -49,6 +49,7 @@
   "scripts": {
     "copy:models": "bash ./scripts/copy_models.sh",
     "lint": "eslint src",
+    "format": "prettier --write \"test/**/*.ts\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -67,7 +68,6 @@
     "node": "20.19.6"
   },
   "dependencies": {
-    "@noble/ed25519": "^3.0.0",
     "@noble/hashes": "^2.0.1",
     "@scure/bip39": "^2.0.1"
   },
