@@ -20,25 +20,25 @@ export default class MessageEncoder {
      * Tries to decode encoded message.
      * @param {PublicKey} recipientPublicKey Recipient public key.
      * @param {Message} encodedMessage Encoded message.
-     * @returns {TryDecodeResult} Tuple containing decoded status and message.
+     * @returns {Promise<TryDecodeResult>} Tuple containing decoded status and message.
      */
-    tryDecode(recipientPublicKey: PublicKey, encodedMessage: Message): TryDecodeResult;
+    tryDecode(recipientPublicKey: PublicKey, encodedMessage: Message): Promise<TryDecodeResult>;
     /**
      * Encodes message to recipient using recommended format.
      * @param {PublicKey} recipientPublicKey Recipient public key.
      * @param {Uint8Array} message Message to encode.
-     * @returns {Message} Encrypted and encoded message.
+     * @returns {Promise<Message>} Encrypted and encoded message.
      */
-    encode(recipientPublicKey: PublicKey, message: Uint8Array): Message;
+    encode(recipientPublicKey: PublicKey, message: Uint8Array): Promise<Message>;
     /**
      * Encodes message to recipient using recommended format.
      * @deprecated This function is only provided for compatability with older NEM messages.
      *             Please use `encode` in any new code.
      * @param {PublicKey} recipientPublicKey Recipient public key.
      * @param {Uint8Array} message Message to encode.
-     * @returns {Message} Encrypted and encoded message.
+     * @returns {Promise<Message>} Encrypted and encoded message.
      */
-    encodeDeprecated(recipientPublicKey: PublicKey, message: Uint8Array): Message;
+    encodeDeprecated(recipientPublicKey: PublicKey, message: Uint8Array): Promise<Message>;
 }
 /**
  * Result of a try decode operation.
