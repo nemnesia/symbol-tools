@@ -6,7 +6,6 @@ Symbol ブロックチェーンのための TypeScript/JavaScript ツールと�
 
 このモノレポには以下のパッケージが含まれています:
 
-
 ### Packages
 
 - **[symbol-sdk](./packages/symbol-sdk)**  
@@ -35,6 +34,8 @@ Symbol ブロックチェーンのための TypeScript/JavaScript ツールと�
 
 - **[nodewatch-openapi-typescript-fetch-client](./packages/nodewatch-openapi-typescript-fetch-client)**  
   NodeWatch REST APIのTypeScriptクライアント（OpenAPI自動生成）。
+
+### apps
 
 - **[symbol-finalization-proof-viewer](./apps/symbol-finalization-proof-viewer)**  
   ノードのVoting Key有効期限・投票状況を可視化するWebアプリ。
