@@ -45,6 +45,9 @@ importers:
       globals:
         specifier: ^16.5.0
         version: 16.5.0
+      npm-check-updates:
+        specifier: ^19.2.0
+        version: 19.2.0
       prettier:
         specifier: ^3.7.4
         version: 3.7.4
@@ -99,12 +102,12 @@ importers:
       '@nemnesia/nodewatch-openapi-typescript-fetch-client':
         specifier: workspace:*
         version: link:../../packages/nodewatch-openapi-typescript-fetch-client
-      '@nemnesia/symbol-catbuffer':
-        specifier: workspace:*
-        version: link:../../packages/symbol-catbuffer
       '@nemnesia/symbol-openapi-typescript-fetch-client':
         specifier: workspace:*
         version: link:../../packages/symbol-openapi-typescript-fetch-client
+      '@nemnesia/symbol-sdk':
+        specifier: workspace:*
+        version: link:../../packages/symbol-sdk
       '@nemnesia/symbol-websocket':
         specifier: workspace:*
         version: link:../../packages/symbol-websocket
@@ -239,37 +242,6 @@ importers:
       '@nemnesia/symbol-websocket':
         specifier: ^0.1.0
         version: 0.1.0
-
-  packages/symbol-catbuffer:
-    dependencies:
-      '@noble/ed25519':
-        specifier: ^3.0.0
-        version: 3.0.0
-      '@noble/hashes':
-        specifier: ^2.0.1
-        version: 2.0.1
-      '@scure/bip39':
-        specifier: ^2.0.1
-        version: 2.0.1
-    devDependencies:
-      eslint-plugin-n:
-        specifier: ^17.23.1
-        version: 17.23.1(eslint@9.39.2)(typescript@5.9.3)
-
-  packages/symbol-key-core:
-    dependencies:
-      '@nemnesia/symbol-catbuffer':
-        specifier: workspace:*
-        version: link:../symbol-catbuffer
-      '@noble/ed25519':
-        specifier: ^3.0.0
-        version: 3.0.0
-      '@noble/hashes':
-        specifier: ^2.0.1
-        version: 2.0.1
-      '@scure/bip39':
-        specifier: ^2.0.1
-        version: 2.0.1
 
   packages/symbol-openapi-typescript-fetch-client: {}
 
@@ -897,9 +869,6 @@ packages:
   '@noble/ciphers@1.3.0':
     resolution: {integrity: sha512-2I0gnIVPtfnMw9ee9h1dJG7tp81+8Ob3OJb3Mv37rx5L40/b0i7djjCVvGOVqc9AEIQyvyu1i6ypKdFw8R8gQw==}
     engines: {node: ^14.21.3 || >=16}
-
-  '@noble/ed25519@3.0.0':
-    resolution: {integrity: sha512-QyteqMNm0GLqfa5SoYbSC3+Pvykwpn95Zgth4MFVSMKBB75ELl9tX1LAVsN4c3HXOrakHsF2gL4zWDAYCcsnzg==}
 
   '@noble/hashes@1.8.0':
     resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
@@ -2263,6 +2232,11 @@ packages:
   node-releases@2.0.27:
     resolution: {integrity: sha512-nmh3lCkYZ3grZvqcCH+fjmQ7X+H0OeZgP40OierEaAptX4XofMh5kwNbWh7lBduUzCcV/8kZ+NDLCwm2iorIlA==}
 
+  npm-check-updates@19.2.0:
+    resolution: {integrity: sha512-XSIuL0FNgzXPDZa4lje7+OwHjiyEt84qQm6QMsQRbixNY5EHEM9nhgOjxjlK9jIbN+ysvSqOV8DKNS0zydwbdg==}
+    engines: {node: '>=20.0.0', npm: '>=8.12.1'}
+    hasBin: true
+
   object-assign@4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
     engines: {node: '>=0.10.0'}
@@ -3577,8 +3551,6 @@ snapshots:
       uid: 2.0.2
 
   '@noble/ciphers@1.3.0': {}
-
-  '@noble/ed25519@3.0.0': {}
 
   '@noble/hashes@1.8.0': {}
 
@@ -5029,6 +5001,8 @@ snapshots:
     optional: true
 
   node-releases@2.0.27: {}
+
+  npm-check-updates@19.2.0: {}
 
   object-assign@4.1.1: {}
 
