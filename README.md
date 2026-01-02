@@ -6,31 +6,35 @@ Symbol ブロックチェーンのための TypeScript/JavaScript ツールと�
 
 このモノレポには以下のパッケージが含まれています:
 
+
 ### Packages
 
+- **[symbol-sdk](./packages/symbol-sdk)**  
+  Node.js/ブラウザ両対応のSymbol公式SDK移植版。
+
+- **[simple-password-crypto](./packages/simple-password-crypto)**  
+  Argon2id + AES-256-GCMによるパスワード暗号化ライブラリ。
+
 - **[symbol-openapi-typescript-fetch-client](./packages/symbol-openapi-typescript-fetch-client)**  
-  Symbol REST API の TypeScript クライアント。OpenAPI仕様から自動生成。
-
-- **[nodewatch-openapi-typescript-fetch-client](./packages/nodewatch-openapi-typescript-fetch-client)**  
-  NodeWatch REST API の TypeScript クライアント。OpenAPI仕様から自動生成。
-
-- **[symbol-catbuffer](./packages/symbol-catbuffer)**  
-  Symbolプロトコルのバイナリシリアライゼーションライブラリ。
+  Symbol REST APIのTypeScriptクライアント（OpenAPI自動生成）。
 
 - **[symbol-websocket](./packages/symbol-websocket)**  
-  Symbol WebSocket接続のモニタリングライブラリ。
+  SymbolブロックチェーンのWebSocketリアルタイム監視ライブラリ。
 
 - **[symbol-announcer](./packages/symbol-announcer)**  
-  Symbolトランザクションのアナウンスツール。WebSocket監視機能もあり。
+  Symbolトランザクションのアナウンス＆WebSocket監視ツール。
 
 - **[nem-symbol-node-picker](./packages/nem-symbol-node-picker)**  
-  NEM/Symbolノード選択ユーティリティ。NodeWatch APIからランダムノード取得。
+  NodeWatch APIからNEM/Symbolノードをランダム取得するユーティリティ。
 
 - **[nem-websocket](./packages/nem-websocket)**  
-  NEM WebSocketモニタリングツール。
+  NEMブロックチェーンのWebSocketリアルタイム監視ライブラリ。
 
 - **[nodewatch-openapi-provider](./packages/nodewatch-openapi-provider)**  
   Symbol/NEMノードのフェイルオーバー対応NodeWatchサービスクライアント。
+
+- **[nodewatch-openapi-typescript-fetch-client](./packages/nodewatch-openapi-typescript-fetch-client)**  
+  NodeWatch REST APIのTypeScriptクライアント（OpenAPI自動生成）。
 
 - **[symbol-finalization-proof-viewer](./apps/symbol-finalization-proof-viewer)**  
   ノードのVoting Key有効期限・投票状況を可視化するWebアプリ。
