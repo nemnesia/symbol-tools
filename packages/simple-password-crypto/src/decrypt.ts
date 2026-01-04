@@ -3,7 +3,6 @@ import { argon2id } from '@noble/hashes/argon2';
 import { utf8ToBytes } from '@noble/hashes/utils';
 
 import type { EncryptedData } from './types.js';
-import { CURRENT_VERSION } from './version.js';
 
 /**
  * Argon2id KDFでパスワードから鍵を導出する
@@ -37,18 +36,7 @@ async function deriveKey(
  * @note エラーメッセージは情報漏洩を防ぐため意図的に一般的な内容にしています
  */
 export async function decrypt(data: EncryptedData, password: string): Promise<Uint8Array> {
-  // バージョンの検証
-  if (data.version !== CURRENT_VERSION) {
-    throw new Error('Decryption failed: unsupported format version');
-  }
-
-  // アルゴリズムの検証
-  if (data.kdf !== 'argon2id') {
-    throw new Error('Decryption failed: unsupported KDF');
-  }
-  if (data.cipher !== 'aes-256-gcm') {
-    throw new Error('Decryption failed: unsupported cipher');
-  }
+  // 新形式: salt, ciphertextのみ
 
   try {
     const fromBase64 = (base64: string): Uint8Array => {
@@ -65,20 +53,28 @@ export async function decrypt(data: EncryptedData, password: string): Promise<Ui
 
     // base64データをデコード
     const salt = fromBase64(data.salt);
-    const nonce = fromBase64(data.nonce);
-    const ciphertext = fromBase64(data.ciphertext);
-    const tag = fromBase64(data.tag);
+    const combined = fromBase64(data.ciphertext);
 
-    const key = await deriveKey(password, salt, data.kdfParams);
+    // 分割: [nonce(12)][tag(16)][ciphertext]
+    const nonceLength = 12;
+    const tagLength = 16;
+    if (combined.length < nonceLength + tagLength) {
+      throw new Error('Decryption failed: invalid data');
+    }
+    const nonce = combined.slice(0, nonceLength);
+    const tag = combined.slice(nonceLength, nonceLength + tagLength);
+    const ciphertext = combined.slice(nonceLength + tagLength);
 
-    // タグと暗号文を結合
-    const combined = new Uint8Array(ciphertext.length + tag.length);
-    combined.set(ciphertext);
-    combined.set(tag, ciphertext.length);
+    // 鍵導出パラメータは固定値
+    const key = await deriveKey(password, salt, { memoryCost: 32768, timeCost: 2, parallelism: 1 });
+
+    // タグと暗号文を結合（GCMのdecryptはciphertext+tag）
+    const ciphertextWithTag = new Uint8Array(ciphertext.length + tag.length);
+    ciphertextWithTag.set(ciphertext);
+    ciphertextWithTag.set(tag, ciphertext.length);
 
     const aes = gcm(key, nonce);
-    const decrypted = aes.decrypt(combined);
-
+    const decrypted = aes.decrypt(ciphertextWithTag);
     return decrypted;
   } catch {
     // 情報漏洩を防ぐため一般的なエラーメッセージを返す

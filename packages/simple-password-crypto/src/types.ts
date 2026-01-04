@@ -18,16 +18,11 @@ export interface Argon2idParams {
 }
 
 /**
- * 暗号化データフォーマット
- * 復号に必要なすべての情報を含む
+ * シンプルな暗号化データフォーマット
+ * nonce(12byte) + tag(16byte) + ciphertext を base64連結し ciphertext に格納
+ * salt はKDF用。ciphertextとsaltのみで復号可能。
  */
 export interface EncryptedData {
-  version: 1;
-  kdf: KdfType;
-  kdfParams: Argon2idParams;
-  cipher: CipherType;
-  salt: string; // base64
-  nonce: string; // base64
-  ciphertext: string; // base64
-  tag: string; // base64
+  salt: string; // base64 (KDF用)
+  ciphertext: string; // base64 (nonce+tag+ciphertext 連結)
 }

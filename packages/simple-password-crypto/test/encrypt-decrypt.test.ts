@@ -16,18 +16,17 @@ describe('encrypt/decrypt', () => {
   it('暗号化データが正しいフォーマットを持つ', async () => {
     const encrypted = await encrypt(plaintext, password);
 
-    expect(encrypted.version).toBe(1);
-    expect(encrypted.kdf).toBe('argon2id');
-    expect(encrypted.cipher).toBe('aes-256-gcm');
-    expect(encrypted.kdfParams).toEqual({
-      memoryCost: 32768,
-      timeCost: 2,
-      parallelism: 1,
-    });
+    // 新形式: saltとciphertextのみ
     expect(typeof encrypted.salt).toBe('string');
-    expect(typeof encrypted.nonce).toBe('string');
     expect(typeof encrypted.ciphertext).toBe('string');
-    expect(typeof encrypted.tag).toBe('string');
+    
+    // saltは16バイト（base64エンコード後）
+    const saltBytes = Buffer.from(encrypted.salt, 'base64');
+    expect(saltBytes.length).toBe(16);
+    
+    // ciphertextはnonce(12) + tag(16) + 暗号文を含む
+    const ciphertextBytes = Buffer.from(encrypted.ciphertext, 'base64');
+    expect(ciphertextBytes.length).toBeGreaterThanOrEqual(28); // 最小でもnonce+tag
   });
 
   it('異なるパスワードで復号に失敗する', async () => {
@@ -40,10 +39,9 @@ describe('encrypt/decrypt', () => {
     const encrypted1 = await encrypt(plaintext, password);
     const encrypted2 = await encrypt(plaintext, password);
 
+    // saltとciphertextが毎回異なる（nonceとtagも含まれている）
     expect(encrypted1.salt).not.toBe(encrypted2.salt);
-    expect(encrypted1.nonce).not.toBe(encrypted2.nonce);
     expect(encrypted1.ciphertext).not.toBe(encrypted2.ciphertext);
-    expect(encrypted1.tag).not.toBe(encrypted2.tag);
   });
 
   it('空のデータを暗号化・復号できる', async () => {

@@ -4,7 +4,6 @@ import { argon2id } from '@noble/hashes/argon2';
 import { utf8ToBytes } from '@noble/hashes/utils';
 
 import type { EncryptedData } from './types.js';
-import { CURRENT_VERSION } from './version.js';
 
 /**
  * Argon2id パラメータ（固定値）
@@ -49,11 +48,14 @@ export async function encrypt(plaintext: Uint8Array, password: string): Promise<
   const nonce = randomBytes(AES_NONCE_LENGTH);
 
   const aes = gcm(key, nonce);
-  const ciphertext = aes.encrypt(plaintext);
-
+  const ciphertextWithTag = aes.encrypt(plaintext); // ciphertext + tag (GCM)
   const tagLength = 16;
-  const encrypted = ciphertext.slice(0, -tagLength);
-  const tag = ciphertext.slice(-tagLength);
+  // ciphertextWithTag = ciphertext + tag
+  // 連結形式: [nonce(12)][tag(16)][ciphertext]
+  const combined = new Uint8Array(nonce.length + tagLength + (ciphertextWithTag.length - tagLength));
+  combined.set(nonce, 0);
+  combined.set(ciphertextWithTag.slice(-tagLength), nonce.length); // tag
+  combined.set(ciphertextWithTag.slice(0, -tagLength), nonce.length + tagLength); // ciphertext
 
   const toBase64 = (bytes: Uint8Array): string => {
     if (typeof Buffer !== 'undefined') {
@@ -64,17 +66,7 @@ export async function encrypt(plaintext: Uint8Array, password: string): Promise<
   };
 
   return {
-    version: CURRENT_VERSION,
-    kdf: 'argon2id',
-    kdfParams: {
-      memoryCost: ARGON2_PARAMS.m,
-      timeCost: ARGON2_PARAMS.t,
-      parallelism: ARGON2_PARAMS.p,
-    },
-    cipher: 'aes-256-gcm',
     salt: toBase64(salt),
-    nonce: toBase64(nonce),
-    ciphertext: toBase64(encrypted),
-    tag: toBase64(tag),
+    ciphertext: toBase64(combined),
   };
 }
