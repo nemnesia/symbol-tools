@@ -1,5 +1,8 @@
 # simple-password-crypto
 
+[![npm version](https://badge.fury.io/js/@nemnesia%2Fsimple-password-crypto.svg)](https://www.npmjs.com/package/@nemnesia/simple-password-crypto)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 パスワードベースで安全にデータを暗号化・復号するライブラリ
 
 ## ✨ 特徴
@@ -7,17 +10,24 @@
 - 🔐 **現代的な暗号化**: Argon2id + AES-256-GCM
 - 🎯 **シンプルなAPI**: encrypt/decrypt の2つの関数のみ
 - 🛡️ **セキュリティ重視**: ベストプラクティスに従った実装
-- 🌐 **マルチプラットフォーム対応**: 環境に応じて最適な実装を自動選択
-  - Node.js: ネイティブ`argon2`ライブラリ（高速）
-  - ブラウザ/React Native: `@noble/hashes`（純粋JS実装）
+- 🌐 **マルチプラットフォーム対応**: Node.js、ブラウザ、React Nativeで動作
 - 💻 **TPM不要**: ソフトウェアベースの暗号化
+- ⚡ **依存関係が少ない**: @noble/ciphers と @noble/hashes のみ
 
 ## 📥 インストール
 
 ```bash
 npm install @nemnesia/simple-password-crypto
-# or
+```
+
+または
+
+```bash
 pnpm add @nemnesia/simple-password-crypto
+```
+
+```bash
+yarn add @nemnesia/simple-password-crypto
 ```
 
 ## 🚀 使い方
@@ -59,12 +69,10 @@ const decrypted2 = await decrypt(restored, password);
 ### KDF (Key Derivation Function)
 
 - **Argon2id**: メモリハード関数、サイドチャネル攻撃に強い
-  - Memory: 32MB
-  - Time: 2回
+  - Memory: 64MB (65536 KB)
+  - Time: 3回
   - Parallelism: 1
-  - 実装:
-    - Node.js: ネイティブ`argon2`ライブラリ（C++バインディング）
-    - ブラウザ: `@noble/hashes/argon2`（純粋JS実装）
+  - 実装: `@noble/hashes/argon2`（全環境で純粋JS実装を使用）
 
 ### Cipher
 
@@ -106,7 +114,7 @@ interface EncryptedData {
 ✅ Nonce再利用の防止（毎回ランダム生成）  
 ✅ 認証付き暗号（改ざん検出）  
 ✅ タイミング攻撃対策（エラーメッセージの統一）  
-✅ 適切なパラメータ設定（64MB、3回反復）
+✅ 適切なパラメータ設定（Memory: 64MB、Time: 3回、Parallelism: 1）
 
 ## ❌ セキュリティ保証外
 
@@ -116,28 +124,21 @@ interface EncryptedData {
 
 ## 📊 パフォーマンス
 
-### Node.js環境（ネイティブargon2）
-
-| 操作   | 時間 (目安) |
-| ------ | ----------- |
-| 暗号化 | ~150-250ms  |
-| 復号   | ~150-250ms  |
-
-### ブラウザ/React Native環境（@noble/hashes）
+### 全環境（@noble/hashes）
 
 | 操作   | 時間 (目安) |
 | ------ | ----------- |
 | 暗号化 | ~2-3秒      |
 | 復号   | ~2-3秒      |
 
-⚠️ **ブラウザ/React Native環境での注意**:  
-ブラウザおよびReact Nativeでは純粋JavaScriptで実装された`@noble/hashes`を使用するため、ネイティブ実装に比べて10倍程度遅くなります。これはArgon2idのメモリハード特性により意図的なものです（ブルートフォース攻撃対策）。
+⚠️ **パフォーマンスに関する注意**:  
+このライブラリは純粋JavaScriptで実装された`@noble/hashes`を使用します。Argon2idのメモリハード特性により、処理に数秒かかります。これはブルートフォース攻撃対策として意図的な設計です。
 
 💡 **推奨**:
 
 - UIブロックを避けるため、暗号化/復号処理中はローディング表示を実装
 - ブラウザ: Web Workerでの実行を検討
-- React Native: バックグラウンドスレッドでの実行を検討（`react-native-workers`等）
+- React Native: バックグラウンドスレッドでの実行を検討
 
 ## 🧪 テスト
 
