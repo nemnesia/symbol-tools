@@ -3,13 +3,13 @@
 [![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-sdk?style=flat-square)](https://www.npmjs.com/package/@nemnesia/symbol-sdk)
 [![license](https://img.shields.io/npm/l/@nemnesia/symbol-sdk?style=flat-square)](./LICENSE)
 
-> Node.js・ブラウザ両対応のSymbol公式SDK移植版（[symbol-sdk公式](https://github.com/symbol/symbol/tree/main/sdk) ベース、ES2020+対応）
+> Node.js・ブラウザ・React Native対応のSymbol公式SDK移植版（[symbol-sdk公式](https://github.com/symbol/symbol/tree/main/sdk) ベース、ES2020+対応）
 
 ---
 
 ## 概要
 
-このパッケージは [symbol-sdk](https://github.com/symbol/symbol/tree/main/sdk) 公式リポジトリをベースに、Node.js だけでなくモダンブラウザ（ES2020以降）でも動作するよう再構成した TypeScript/JavaScript SDK です。
+このパッケージは [symbol-sdk](https://github.com/symbol/symbol/tree/main/sdk) 公式リポジトリをベースに、Node.js だけでなくモダンブラウザ（ES2020以降）、さらに React Native でも動作するよう再構成した TypeScript/JavaScript SDK です。
 
 ### 主な変更点
 
@@ -24,6 +24,8 @@
 - **`Buffer`完全排除**
 
 ## インストール
+
+Node.js、ブラウザ、React Native いずれの環境でも利用可能です。
 
 ```sh
 # npm
