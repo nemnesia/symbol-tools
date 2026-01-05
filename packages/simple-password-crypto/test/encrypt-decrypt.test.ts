@@ -19,11 +19,11 @@ describe('encrypt/decrypt', () => {
     // 新形式: saltとciphertextのみ
     expect(typeof encrypted.salt).toBe('string');
     expect(typeof encrypted.ciphertext).toBe('string');
-    
+
     // saltは16バイト（base64エンコード後）
     const saltBytes = Buffer.from(encrypted.salt, 'base64');
     expect(saltBytes.length).toBe(16);
-    
+
     // ciphertextはnonce(12) + tag(16) + 暗号文を含む
     const ciphertextBytes = Buffer.from(encrypted.ciphertext, 'base64');
     expect(ciphertextBytes.length).toBeGreaterThanOrEqual(28); // 最小でもnonce+tag

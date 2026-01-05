@@ -25,7 +25,7 @@
     "test:coverage": "vitest run --coverage",
     "test:coverage:ui": "vitest --ui --coverage",
     "prepublishOnly": "pnpm run lint && pnpm run format && pnpm run build && pnpm test",
-    "publish:dryrun": "pnpm run publish --dry-run",
+    "publish:dryrun": "pnpm publish --dry-run",
     "publish:release": "pnpm run build && pnpm publish"
   },
   "keywords": [

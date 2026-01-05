@@ -26,6 +26,8 @@ npm install @nemnesia/simple-password-crypto
 pnpm add @nemnesia/simple-password-crypto
 ```
 
+または
+
 ```bash
 yarn add @nemnesia/simple-password-crypto
 ```
@@ -44,14 +46,8 @@ const password = 'my-strong-password';
 const encrypted = await encrypt(plaintext, password);
 console.log(encrypted);
 // {
-//   version: 1,
-//   kdf: 'argon2id',
-//   kdfParams: { memoryCost: 65536, timeCost: 3, parallelism: 1 },
-//   cipher: 'aes-256-gcm',
-//   salt: '...',
-//   nonce: '...',
-//   ciphertext: '...',
-//   tag: '...'
+//   salt: '...', // Base64エンコード (KDF用)
+//   ciphertext: '...' // Base64エンコード (nonce+tag+暗号文の連結)
 // }
 
 // データを復号
@@ -86,21 +82,17 @@ const decrypted2 = await decrypt(restored, password);
 
 ```typescript
 interface EncryptedData {
-  version: 1; // フォーマットバージョン
-  kdf: 'argon2id'; // KDF種類
-  kdfParams: {
-    // KDFパラメータ
-    memoryCost: number;
-    timeCost: number;
-    parallelism: number;
-  };
-  cipher: 'aes-256-gcm'; // 暗号アルゴリズム
-  salt: string; // Base64エンコード
-  nonce: string; // Base64エンコード
-  ciphertext: string; // Base64エンコード
-  tag: string; // Base64エンコード
+  salt: string; // Base64エンコード (KDF用、16バイト)
+  ciphertext: string; // Base64エンコード (nonce[12バイト] + tag[16バイト] + 暗号文 の連結)
 }
 ```
+
+**シンプルで効率的なフォーマット:**
+- `salt`: Argon2idによる鍵導出に使用するソルト（毎回ランダム生成）
+- `ciphertext`: AES-GCMのnonce、tag、暗号文を連結したデータ
+  - nonce (12バイト): 暗号化ごとにランダム生成
+  - tag (16バイト): GCMの認証タグ（改ざん検出）
+  - 暗号文: AES-256-GCMで暗号化されたデータ
 
 ## 🎯 用途
 

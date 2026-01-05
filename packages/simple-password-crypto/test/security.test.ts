@@ -68,11 +68,11 @@ describe('セキュリティ特性', () => {
     // ciphertext = nonce(12) + tag(16) + 暗号文
     // 最小でも28バイト（空の平文の場合）
     expect(ciphertextBytes.length).toBeGreaterThanOrEqual(28);
-    
+
     // nonce部分は最初の12バイト
     const nonceBytes = ciphertextBytes.slice(0, 12);
     expect(nonceBytes.length).toBe(12);
-    
+
     // tag部分は次の16バイト
     const tagBytes = ciphertextBytes.slice(12, 28);
     expect(tagBytes.length).toBe(16);
