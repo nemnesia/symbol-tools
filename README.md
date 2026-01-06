@@ -8,31 +8,40 @@ Symbol ブロックチェーンのための TypeScript/JavaScript ツールと�
 
 ### Packages
 
-- **[symbol-sdk](./packages/symbol-sdk)**  
-  Node.js/ブラウザ両対応のSymbol公式SDK移植版。
+- **[symbol-sdk](./packages/symbol-sdk)**
+  [![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-sdk?style=flat-square)](https://www.npmjs.com/package/@nemnesia/symbol-sdk)  
+   Node.js/ブラウザ両対応のSymbol公式SDK移植版。
 
-- **[simple-password-crypto](./packages/simple-password-crypto)**  
+- **[simple-password-crypto](./packages/simple-password-crypto)**
+  [![npm version](https://img.shields.io/npm/v/@nemnesia/simple-password-crypto?style=flat-square)](https://www.npmjs.com/package/@nemnesia/simple-password-crypto)  
   Argon2id + AES-256-GCMによるパスワード暗号化ライブラリ。
 
-- **[symbol-openapi-typescript-fetch-client](./packages/symbol-openapi-typescript-fetch-client)**  
+- **[symbol-openapi-typescript-fetch-client](./packages/symbol-openapi-typescript-fetch-client)**
+  [![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-openapi-typescript-fetch-client?style=flat-square)](https://www.npmjs.com/package/@nemnesia/symbol-openapi-typescript-fetch-client)  
   Symbol REST APIのTypeScriptクライアント（OpenAPI自動生成）。
 
-- **[symbol-websocket](./packages/symbol-websocket)**  
+- **[symbol-websocket](./packages/symbol-websocket)**
+  [![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-websocket?style=flat-square)](https://www.npmjs.com/package/@nemnesia/symbol-websocket)  
   SymbolブロックチェーンのWebSocketリアルタイム監視ライブラリ。
 
-- **[symbol-announcer](./packages/symbol-announcer)**  
+- **[symbol-announcer](./packages/symbol-announcer)**
+  [![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-announcer?style=flat-square)](https://www.npmjs.com/package/@nemnesia/symbol-announcer)  
   Symbolトランザクションのアナウンス＆WebSocket監視ツール。
 
-- **[nem-symbol-node-picker](./packages/nem-symbol-node-picker)**  
+- **[nem-symbol-node-picker](./packages/nem-symbol-node-picker)**
+  [![npm version](https://img.shields.io/npm/v/nem-symbol-node-picker?style=flat-square)](https://www.npmjs.com/package/nem-symbol-node-picker)  
   NodeWatch APIからNEM/Symbolノードをランダム取得するユーティリティ。
 
-- **[nem-websocket](./packages/nem-websocket)**  
+- **[nem-websocket](./packages/nem-websocket)**
+  [![npm version](https://img.shields.io/npm/v/@nemnesia/nem-websocket?style=flat-square)](https://www.npmjs.com/package/@nemnesia/nem-websocket)  
   NEMブロックチェーンのWebSocketリアルタイム監視ライブラリ。
 
-- **[nodewatch-openapi-provider](./packages/nodewatch-openapi-provider)**  
+- **[nodewatch-openapi-provider](./packages/nodewatch-openapi-provider)**
+  [![npm version](https://img.shields.io/npm/v/@nemnesia/nodewatch-openapi-provider?style=flat-square)](https://www.npmjs.com/package/@nemnesia/nodewatch-openapi-provider)  
   Symbol/NEMノードのフェイルオーバー対応NodeWatchサービスクライアント。
 
-- **[nodewatch-openapi-typescript-fetch-client](./packages/nodewatch-openapi-typescript-fetch-client)**  
+- **[nodewatch-openapi-typescript-fetch-client](./packages/nodewatch-openapi-typescript-fetch-client)**
+  [![npm version](https://img.shields.io/npm/v/@nemnesia/nodewatch-openapi-typescript-fetch-client?style=flat-square)](https://www.npmjs.com/package/@nemnesia/nodewatch-openapi-typescript-fetch-client)  
   NodeWatch REST APIのTypeScriptクライアント（OpenAPI自動生成）。
 
 ### apps
