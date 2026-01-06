@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-sdk?style=flat-square)](https://www.npmjs.com/package/@nemnesia/symbol-sdk)
 [![license](https://img.shields.io/npm/l/@nemnesia/symbol-sdk?style=flat-square)](./LICENSE)
 
-> Node.js・ブラウザ・React Native対応のSymbol公式SDK移植版（[symbol-sdk公式](https://github.com/symbol/symbol/tree/main/sdk) ベース、ES2020+対応）
+> Node.js・ブラウザ・React Native対応のSymbol公式SDK移植版（[symbol-sdk公式](https://github.com/symbol/symbol/tree/main/sdk) ベース）
 
 ---
 
@@ -13,12 +13,13 @@
 
 ### 主な変更点
 
-- **暗号処理の依存先をNode.js組込から@noble系へ移行**
-  - `crypto.randomBytes` → `@noble/hashes/utils.js` の `randomBytes`
-  - `crypto.createHmac` → `@noble/hashes/hmac.js` の `hmac`
-  - `ripemd160` → `@noble/hashes/legacy.js` の `ripemd160`
-- **BIP32/BIP39**
-  - `bitcore-mnemonic` → `@scure/bip39`
+**暗号処理の依存先をNode.js組込から@noble系へ移行**
+
+- 乱数生成: Node.js標準の`crypto.randomBytes`から、`@noble/hashes/utils.js`の`randomBytes`へ変更
+- HMAC生成: Node.js標準の`crypto.createHmac`から、`@noble/hashes/hmac.js`の`hmac`へ変更
+- RIPEMD160: Node.js標準の`ripemd160`から、`@noble/hashes/legacy.js`の`ripemd160`へ変更
+  **BIP32/BIP39関連**
+- ニーモニック生成: 従来の`bitcore-mnemonic`から、`@scure/bip39`へ変更
 - **MessageEncoder**
   - `encode`/`tryDecode` など暗号化部分を非同期メソッド化
 - **`Buffer`完全排除**
