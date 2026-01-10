@@ -1,6 +1,6 @@
-import { gcm } from '@noble/ciphers/aes';
-import { argon2id } from '@noble/hashes/argon2';
-import { utf8ToBytes } from '@noble/hashes/utils';
+import { gcm } from '@noble/ciphers/aes.js';
+import { argon2id } from '@noble/hashes/argon2.js';
+import { utf8ToBytes } from '@noble/hashes/utils.js';
 
 import type { EncryptedData } from './types.js';
 
