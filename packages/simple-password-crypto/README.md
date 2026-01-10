@@ -1,4 +1,4 @@
-# simple-password-crypto
+# @nemnesia/simple-password-crypto
 
 [![npm version](https://img.shields.io/npm/v/@nemnesia/simple-password-crypto.svg)](https://www.npmjs.com/package/@nemnesia/simple-password-crypto)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
