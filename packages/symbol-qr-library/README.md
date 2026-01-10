@@ -1,191 +1,155 @@
 # Symbol QR Library
 
-[![npm version](https://badge.fury.io/js/symbol-qr-library.svg)](https://badge.fury.io/js/symbol-qr-library)
-[![Build Status](https://travis-ci.com/symbol/symbol-qr-library.svg?branch=main)](https://travis-ci.com/symbol/symbol-qr-library.svg?branch=main)
-[![Discord](https://img.shields.io/badge/chat-on%20discord-green.svg)](https://discord.com/invite/xymcity)
+Symbolブロックチェーン用のQRコードデータ(JSON)を生成・管理するためのTypeScriptライブラリです。
 
+## 特徴
 
-Library to generate QR codes for Symbol.
+- 🔐 **セキュア**: パスワードベースの暗号化をサポート（Argon2id + AES-256-GCM）
+- 📦 **モジュラー**: Core/SDK層に分離された柔軟なアーキテクチャ
+- 🎯 **型安全**: TypeScriptによる完全な型定義
+- ✅ **テスト済み**: 95%以上のコードカバレッジ
+- 🔄 **互換性**: 公式symbol-sdk、nemnesia版symbol-sdkの両方に対応
 
-**NOTE**: The author of this package cannot be held responsible for any loss of money or any malintentioned usage forms of this package. Please use this package with caution.
+## インストール
 
-## Features
+```bash
+npm install @nemnesia/symbol-qr-library
+```
 
-The software allows you to create the following QR types:
+### symbol-sdkのインストール
 
-* **TransactionRequest**: QR to prepare transactions ready to be signed.
-* **Address**: QR to share the account address with others.
-* **Contact**: QR to share the account address and public key with others.
-* **Mnemonic**: QR to generate account mnemonic backups (encrypted | plain).
-* **Account**: QR to generate account private key backups (encrypted | plain).
-* **Object**: QR to export  a custom object.
+本ライブラリは `symbol-sdk` に依存していますが、公式版・nemnesia版のどちらでも利用可能です。
 
-## Requirements
+#### 公式 symbol-sdk
 
-- Node.js 12 LTS
+```bash
+npm install symbol-sdk
+```
 
-## Installation
+#### nemnesia 版 symbol-sdk
 
-`npm install symbol-qr-library`
+```bash
+npm install symbol-sdk@npm:@nemnesia/symbol-sdk
+```
 
+## 使い方
 
-## Usage
-
-### Generate QRCode for a Transaction Request
+### Core層の使用（symbol-sdkなし）
 
 ```typescript
-import { QRCodeGenerator, TransactionQR } from 'symbol-qr-library';
-import { Address, Deadline, Mosaic, NamespaceId, NetworkType, PlainMessage, TransferTransaction, UInt64 } from "symbol-sdk";
+import { QRCodeType, SymbolQRLibCore } from '@nemnesia/symbol-qr-library/core';
 
-// (Optional) create transfer transaction (or read from network)
-const transfer = TransferTransaction.create(
-  Deadline.create(),
-  Address.createFromPublicKey(
-    'C5C55181284607954E56CD46DE85F4F3EF4CC713CC2B95000FA741998558D268',
-    Network.TESTNET
-  ),
-  [new Mosaic(new NamespaceId('symbol.xym'), UInt64.fromUint(10000000))],
-  PlainMessage.create('Welcome to Symbol!'),
-  Network.TESTNET
+const core = new SymbolQRLibCore(152, '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6');
+
+// 連絡先QRコードの生成
+const contactQR = core.createContactQRJson('Alice', 'A'.repeat(64));
+
+// アカウントエクスポートQRコードの生成
+const accountQR = core.createExportAccountJson('B'.repeat(64));
+
+// 暗号化されたアカウントエクスポート
+const encryptedQR = await core.createEncryptedExportAccountJson('B'.repeat(64), 'password123');
+
+// 復号化
+const decryptedQR = await SymbolQRLibCore.tryDecryptExportAccountJson(encryptedQR, 'password123');
+```
+
+### SDK層の使用（symbol-sdkと連携）
+
+```typescript
+import { SymbolQRLibSdk } from '@nemnesia/symbol-qr-library/sdk';
+import { PrivateKey, PublicKey } from 'symbol-sdk';
+import { Network } from 'symbol-sdk/symbol';
+
+const network = new Network(
+  'testnet',
+  0x98,
+  new Date('2021-03-16T00:06:25Z'),
+  '49D6E1CE276A85B70EAFE52349AACCA389302E7A9754BCF1221E79494FC665A4'
 );
+const sdk = new SymbolQRLibSdk(network);
 
-// generation hash of the connected network
-const generationHash = 'ACECD90E7B248E012803228ADB4424F0D966D24149B72E58987D2BF2F2AF03C4'
+// 連絡先QRコード
+const publicKey = new PublicKey('87DA603E7BE5656C45692D5FC7F6D0EF8F24BB7A5C10ED5FDA8C5CFBC49FCBC8');
+const contactQR = sdk.createContactQRJson('Bob', publicKey);
 
-// create QR Code base64
-const qrCode: TransactionQR = QRCodeGenerator.createTransactionRequest(transfer, Network.TESTNET, generationHash);
+// アカウントエクスポートQRコード
+const privateKey = new PrivateKey('B4F12E7C9F6946091E2CB8B6D3A12B50D17CCBBF646386EA27CE2946A7423DCF');
+const accountQR = sdk.createExportAccountQRJson(privateKey);
 
-// get base64 notation for <img> HTML attribute
-const base64 = qrCode.toBase64();
+// トランザクションリクエストQRコード
+const requestQR = sdk.createRequestTransactionQRJson(transaction);
+
+// 署名済みトランザクションQRコード
+const signedQR = sdk.createSignedTransactionQRJson(signedTransaction);
 ```
 
-### Generate AddressQR code
+## サポートされるQRコードタイプ
 
-```typescript
-import { QRCodeGenerator, AddressQR } from 'symbol-qr-library';
-import { NetworkType } from 'symbol-sdk';
+| タイプ                           | 説明                         | 暗号化対応 |
+| -------------------------------- | ---------------------------- | ---------- |
+| AddContact (1)                   | 連絡先追加                   | ❌         |
+| ExportAccount (2)                | アカウントエクスポート       | ✅         |
+| RequestTransaction (3)           | トランザクション署名要求     | ❌         |
+| RequestCosignature (4)           | 連署要求                     | ❌         |
+| ExportMnemonic (5)               | ニーモニックエクスポート     | ✅         |
+| ExportObject (6)                 | 任意オブジェクトエクスポート | ❌         |
+| ExportAddress (7)                | アドレスエクスポート         | ❌         |
+| SignedTransaction (8)            | 署名済みトランザクション     | ❌         |
+| CosignatureSignedTransaction (9) | 連署済みトランザクション     | ❌         |
 
-const name = 'test-address-1';
-const contactAddress = 'TA6QZTYPOIYQYR5NRY4WQ2WRQUX2FN5UK2DO6DI'
+## API リファレンス
 
-// generation hash of the connected network
-const generationHash = 'ACECD90E7B248E012803228ADB4424F0D966D24149B72E58987D2BF2F2AF03C4'
+### SymbolQRLibCore
 
-// create QR Code base64
-const qrCode: AddressQR = QRCodeGenerator.createExportAddress(name, contactAddress, Network.TESTNET, generationHash);
+- `createContactQRJson(name, publicKey)` - 連絡先QRコード生成
+- `createExportAccountJson(privateKey)` - アカウントエクスポートQRコード生成
+- `createEncryptedExportAccountJson(privateKey, password)` - 暗号化アカウントエクスポート
+- `tryDecryptExportAccountJson(json, password)` - アカウントエクスポート復号化
+- `createRequestTransactionQRJson(payload)` - トランザクションリクエスト生成
+- `createRequestCosignatureQRJson(payload)` - 連署要求生成
+- `createExportMnemonicQRJson(mnemonic)` - ニーモニックエクスポート生成
+- `createEncryptedExportMnemonicQRJson(mnemonic, password)` - 暗号化ニーモニックエクスポート
+- `tryDecryptExportMnemonicJson(json, password)` - ニーモニックエクスポート復号化
+- `createExportObjectQRJson(object)` - オブジェクトエクスポート生成
+- `createExportAddressQRJson(name, address)` - アドレスエクスポート生成
+- `createSignedTransactionQRJson(...)` - 署名済みトランザクション生成
+- `createCosignatureSignedTransactionQRJson(...)` - 連署済みトランザクション生成
 
-// get base64 notation for <img> HTML attribute
-const base64 = qrCode.toBase64();
+### SymbolQRLibSdk
+
+Core層のメソッドに加え、symbol-sdk型（Transaction、PrivateKey、PublicKeyなど）を直接受け取るラッパーメソッドを提供します。
+
+## 開発
+
+```bash
+# 依存関係のインストール
+pnpm install
+
+# ビルド
+pnpm build
+
+# テスト
+pnpm test
+
+# カバレッジ付きテスト
+pnpm test:coverage
+
+# リント
+pnpm lint
+
+# フォーマット
+pnpm format
 ```
 
-### Generate ContactQR code
+## ライセンス
 
-```typescript
-import { QRCodeGenerator, ContactQR } from 'symbol-qr-library';
-import { NetworkType } from 'symbol-sdk';
+MIT
 
-const name = 'test-contact-1';
-const accountPublicKey = 'C5C55181284607954E56CD46DE85F4F3EF4CC713CC2B95000FA741998558D268'
+## 作者
 
-// generation hash of the connected network
-const generationHash = 'ACECD90E7B248E012803228ADB4424F0D966D24149B72E58987D2BF2F2AF03C4'
+ccHarvestasya
 
-// create QR Code base64
-const qrCode: ContactQR = QRCodeGenerator.createAddContact(name, accountPublicKey, Network.TESTNET, generationHash);
+## リポジトリ
 
-// get base64 notation for <img> HTML attribute
-const base64 = qrCode.toBase64();
-
-```
-
-### Generate QRCode for a Mnemonic data
-
-```typescript
-import { QRCodeGenerator, MnemonicQR } from 'symbol-qr-library';
-import { NetworkType } from 'symbol-sdk';
-import { MnemonicPassPhrase } from 'symbol-hd-wallets';
-
-// create a mnemonic and password.
-const mnemonic = MnemonicPassPhrase.createRandom();
-
-// generation hash of the connected network
-const generationHash = 'ACECD90E7B248E012803228ADB4424F0D966D24149B72E58987D2BF2F2AF03C4'
-
-// create QR Code base64
-const encryptedMnemonicQR: MnemonicQR = new MnemonicQR(mnemonic.plain, Network.TESTNET, generationHash, 'password');
-// or
-const plainMnemonicQR: MnemonicQR = new MnemonicQR(mnemonic.plain, Network.TESTNET, generationHash); // no password
-
-// get base64 notation for <img> HTML attribute
-const base64 = encryptedMnemonicQR.toBase64();
-
-```
-
-The produced Base64 encoded payload can be used to display the QR Code. An example of display can be done easily with HTML, as follows:
-
-```html
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Transfer Transaction QR code" />
-```
-
-### Generate QRCode for an Account Private Key
-
-```typescript
-import { QRCodeGenerator, AccountQR } from 'symbol-qr-library';
-import { NetworkType } from 'symbol-sdk';
-
-const accountPrivateKey = 'F97AE23C2A28ECEDE6F8D6C447C0A10B55C92DDE9316CCD36C3177B073906978'
-
-// generation hash of the connected network
-const generationHash = 'ACECD90E7B248E012803228ADB4424F0D966D24149B72E58987D2BF2F2AF03C4'
-
-// create QR Code base64
-const encryptedAccountQR: AccountQR = QRCodeGenerator.createExportAccount(accountPrivateKey, Network.TESTNET, generationHash, 'password')
-const plainAccountQR: AccountQR = QRCodeGenerator.createExportAccount(accountPrivateKey, Network.TESTNET, generationHash) // no password
-
-// get base64 notation for <img> HTML attribute
-const base64 = encryptedAccountQR.toBase64();
-```
-
-
-### Generate QRCode for a custom object
-
-```typescript
-import { QRCodeGenerator, ObjectQR } from 'symbol-qr-library';
-import { NetworkType } from 'symbol-sdk';
-
-// define custom object to suit your application use case.
-const object = {"obj": "test"};
-
-// generation hash of the connected network
-const generationHash = 'ACECD90E7B248E012803228ADB4424F0D966D24149B72E58987D2BF2F2AF03C4'
-
-// create QR Code base64
-const qrCode: ObjectQR = QRCodeGenerator.createExportObject(object, Network.TESTNET, generationHash);
-
-// get base64 notation for <img> HTML attribute
-const base64 = qrCode.toBase64();
-```
-
-## Getting help
-
-Use the following available resources to get help:
-
-- [Symbol Documentation][docs]
-- Join the community [discord][discord] 
-- If you found a bug, [open a new issue][issues]
-
-## Contributing
-
-Contributions are welcome and appreciated. 
-Check [CONTRIBUTING](CONTRIBUTING.md) for information on how to contribute.
-
-## License
-
-(C) Symbol Contributors 2022
-
-Licensed under the [Apache License 2.0](LICENSE)
-
-[self]: https://github.com/symbol/symbol-qr-library
-[docs]: https://docs.symbolplatform.com/
-[issues]: https://github.com/symbol/symbol-qr-library/issues
-[discord]: https://discord.com/invite/xymcity
+https://github.com/nemnesia/symbol-tools/tree/main/packages/symbol-qr-library

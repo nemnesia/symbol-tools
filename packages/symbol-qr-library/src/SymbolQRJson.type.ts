@@ -1,6 +1,5 @@
 /**
  * QRコードタイプ列挙型
- * / QR Code Type Enumeration
  */
 export enum QRCodeType {
   AddContact = 1,
@@ -16,7 +15,6 @@ export enum QRCodeType {
 
 /**
  * QRコードのSymbolJSONベースインターフェース
- * / Symbol QR Code JSON Base Interface
  */
 export interface SymbolQRJsonBase {
   v: number;
@@ -26,9 +24,16 @@ export interface SymbolQRJsonBase {
 }
 
 /**
+ * 暗号化データインターフェース
+ */
+export interface EncryptedData {
+  v: number;
+  ciphertext: string;
+  salt: string;
+}
+
+/**
  * 連絡先QRコードJSONインターフェース
- * / Contact QR Code JSON Interface
- *
  * QRCodeType: 1
  */
 export interface AddContactJson extends SymbolQRJsonBase {
@@ -40,25 +45,18 @@ export interface AddContactJson extends SymbolQRJsonBase {
 
 /**
  * アカウントエクスポートQRコードJSONインターフェース
- * / Account Export QR Code JSON Interface
- *
  * QRCodeType: 2
  */
 export interface ExportAccountJson extends SymbolQRJsonBase {
   data:
-    | {
-        ciphertext: string;
-        salt: string;
-      }
+    | EncryptedData
     | {
         privateKey: string;
       };
 }
 
 /**
- * リクエスト取引QRコードJSONインターフェース
- * / Request Transaction QR Code JSON Interface
- *
+ * 署名要求QRコードJSONインターフェース
  * QRCodeType: 3
  */
 export interface RequestTransactionJson extends SymbolQRJsonBase {
@@ -68,25 +66,18 @@ export interface RequestTransactionJson extends SymbolQRJsonBase {
 }
 
 /**
- * 共同署名用QRコードのJSONインターフェースをリクエスト
- * / Request Cosignature QR Code JSON Interface
- *
+ * 署名要求QRコードのJSONインターフェース
  * QRCodeType: 4
  */
 export interface RequestCosignatureJson extends RequestTransactionJson {}
 
 /**
  * エクスポートニーモニックQRコードJSONインターフェース
- * / Export Mnemonic QR Code JSON Interface
- *
  * QRCodeType: 5
  */
 export interface ExportMnemonicJson extends SymbolQRJsonBase {
   data:
-    | {
-        ciphertext: string;
-        salt: string;
-      }
+    | EncryptedData
     | {
         plainMnemonic: string;
       };
@@ -94,8 +85,6 @@ export interface ExportMnemonicJson extends SymbolQRJsonBase {
 
 /**
  * エクスポートオブジェクトQRコードJSONインターフェース
- * / Export Object QR Code JSON Interface
- *
  * QRCodeType: 6
  */
 export interface ExportObjectJson extends SymbolQRJsonBase {
@@ -104,8 +93,6 @@ export interface ExportObjectJson extends SymbolQRJsonBase {
 
 /**
  * エクスポートアドレスQRコードJSONインターフェース
- * / Export Address QR Code JSON Interface
- *
  * QRCodeType: 7
  */
 export interface ExportAddressJson extends SymbolQRJsonBase {
@@ -117,8 +104,6 @@ export interface ExportAddressJson extends SymbolQRJsonBase {
 
 /**
  * 署名済みトランザクションQRコードJSONインターフェース
- * / Signed Transaction QR Code JSON Interface
- *
  * QRCodeType: 8
  */
 export interface SignedTransactionJson extends SymbolQRJsonBase {
@@ -135,8 +120,6 @@ export interface SignedTransactionJson extends SymbolQRJsonBase {
 
 /**
  * 共同署名付き署名済みトランザクション QRコード JSONインターフェース
- * / Cosignature Signed Transaction QR Code JSON Interface
- *
  * QRCodeType: 9
  */
 export interface CosignatureSignedTransactionJson extends SymbolQRJsonBase {

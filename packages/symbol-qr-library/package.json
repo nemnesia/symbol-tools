@@ -1,40 +1,68 @@
 {
-  "name": "symbol-qr-library",
-  "version": "0.14.3",
+  "name": "@nemnesia/symbol-qr-library",
+  "version": "0.1.0",
   "description": "Symbol library to handle QR Codes",
-  "author": "Grégory Saive from Using Blockchain Ltd <greg@ubc.digital>",
-  "license": "Apache-2.0",
+  "author": "ccHarvestasya",
+  "license": "MIT",
   "type": "module",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./core": {
+      "import": "./dist/core/index.js",
+      "types": "./dist/core/index.d.ts"
+    },
+    "./sdk": {
+      "import": "./dist/sdk/index.js",
+      "types": "./dist/sdk/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "clean": "rm -rf dist",
     "build": "pnpm run clean && tsup",
     "lint": "eslint \"{src,test,e2e,examples}/**/*.ts\" --fix",
     "format": "prettier --write \"{src,test,e2e,examples}/**/*.ts\"",
-    "test": "vitest run --no-ui test/**/*.test.ts",
-    "test:watch": "vitest --watch test/**/*.test.ts",
-    "test:coverage": "vitest run --no-ui --coverage test/**/*.test.ts",
-    "test:e2e": "vitest run --no-ui e2e",
-    "test:e2e:watch": "vitest --watch e2e",
-    "test:all": "vitest run test/**/*.test.ts && vitest run e2e",
-    "publish:dryrun": "npm publish --dry-run",
-    "publish:release": "npm run build && npm publish",
+    "test": "vitest run test",
+    "test:watch": "vitest --watch test",
+    "test:coverage": "vitest run --coverage test",
+    "prepublishOnly": "pnpm run lint && pnpm run format && pnpm run build && pnpm test",
+    "publish:dryrun": "pnpm publish --dry-run",
+    "publish:release": "pnpm run build && pnpm publish",
     "doc": "typedoc --entryPointStrategy expand --out \"ts-docs/$(npm run version --silent)\" src",
     "create-index": "cti create ./src -b -n -e commands",
     "server": "npx http-server . -l 8080"
   },
+  "keywords": [
+    "symbol",
+    "qr",
+    "qrcode",
+    "blockchain",
+    "nem",
+    "crypto",
+    "wallet",
+    "transaction",
+    "encryption"
+  ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nemtech/symbol-qr-library.git"
+    "url": "https://github.com/nemnesia/symbol-tools.git",
+    "directory": "packages/symbol-qr-library"
   },
   "bugs": {
-    "url": "https://github.com/nemtech/symbol-qr-library/issues"
+    "url": "https://github.com/nemnesia/symbol-tools/issues"
   },
-  "homepage": "https://github.com/nemtech/symbol-qr-library#readme",
+  "homepage": "https://github.com/nemnesia/symbol-tools/tree/main/packages/symbol-qr-library#readme",
   "dependencies": {
-    "@noble/ciphers": "^2.0.1",
-    "@noble/hashes": "^2.0.1"
+    "@noble/ciphers": "^2.1.1",
+    "@noble/hashes": "^2.0.1",
+    "@nemnesia/simple-password-crypto": "workspace:^0.1.0"
   },
   "peerDependencies": {
     "symbol-sdk": "^3.3.0"
