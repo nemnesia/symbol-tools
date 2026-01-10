@@ -25,26 +25,15 @@ export class SymbolAnnouncer extends EventEmitter {
   private monitor: SymbolWebSocket;
   /** ノードURL */
   private nodeUrl: string;
-  /** 署名者アドレス */
-  private signerAddress: string;
-  /** トランザクションデータ(JSON文字列) */
-  private transaction: string;
-  /** トランザクションハッシュ */
-  private transactionHash: string;
 
   /**
    * コンストラクタ
+   * 
    * @param nodeUrl ノードのURL
-   * @param signerAddress 署名者のアドレス
-   * @param transaction トランザクションデータ(JSON文字列)
-   * @param transactionHash トランザクションハッシュ
    */
-  constructor(nodeUrl: string, signerAddress: string, transaction: string, transactionHash: string) {
+  constructor(nodeUrl: string ) {
     super();
     this.nodeUrl = nodeUrl;
-    this.signerAddress = signerAddress;
-    this.transaction = transaction;
-    this.transactionHash = transactionHash;
 
     const url = new URL(nodeUrl);
     this.monitor = new SymbolWebSocket({
@@ -56,19 +45,23 @@ export class SymbolAnnouncer extends EventEmitter {
 
   /**
    * トランザクションをノードへアナウンスし、WebSocketで承認・ステータスを監視する
+   * 
+   * @param signerAddress 署名者のアドレス
+   * @param transaction トランザクションペイロードデータ
+   * @param transactionHash トランザクションハッシュ
    */
-  public announce(): void {
+  public announce(signerAddress: string, transaction: string, transactionHash: string): void {
     this.monitor.onConnect(async () => {
       this.emit('connected');
 
       // チャネルにサブスクライブ
-      this.monitor.on('confirmedAdded', this.signerAddress, (message) => {
-        if ((message.data as any).meta.hash === this.transactionHash) {
+      this.monitor.on('confirmedAdded', signerAddress, (message) => {
+        if ((message.data as any).meta.hash === transactionHash) {
           this.emit('confirmedAdded', message);
         }
       });
-      this.monitor.on('status', this.signerAddress, (message) => {
-        if ((message.data as any).hash === this.transactionHash) {
+      this.monitor.on('status', signerAddress, (message) => {
+        if ((message.data as any).hash === transactionHash) {
           this.emit('status', message);
         }
       });
@@ -78,7 +71,7 @@ export class SymbolAnnouncer extends EventEmitter {
         const response = await fetch(new URL('/transactions', this.nodeUrl).toString(), {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: this.transaction,
+          body: transaction,
         });
         const data = await response.json();
         this.emit('announced', data);
