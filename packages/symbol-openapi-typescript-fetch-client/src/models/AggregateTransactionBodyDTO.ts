@@ -41,7 +41,7 @@ export interface AggregateTransactionBodyDTO {
    * @type {Array<CosignatureDTO>}
    * @memberof AggregateTransactionBodyDTO
    */
-  cosignatures: Array<CosignatureDTO>;
+  cosignatures?: Array<CosignatureDTO>;
 }
 
 /**
@@ -49,7 +49,6 @@ export interface AggregateTransactionBodyDTO {
  */
 export function instanceOfAggregateTransactionBodyDTO(value: object): value is AggregateTransactionBodyDTO {
   if (!('transactionsHash' in value) || value['transactionsHash'] === undefined) return false;
-  if (!('cosignatures' in value) || value['cosignatures'] === undefined) return false;
   return true;
 }
 
@@ -66,7 +65,8 @@ export function AggregateTransactionBodyDTOFromJSONTyped(
   }
   return {
     transactionsHash: json['transactionsHash'],
-    cosignatures: (json['cosignatures'] as Array<any>).map(CosignatureDTOFromJSON),
+    cosignatures:
+      json['cosignatures'] == null ? undefined : (json['cosignatures'] as Array<any>).map(CosignatureDTOFromJSON),
   };
 }
 
@@ -84,6 +84,7 @@ export function AggregateTransactionBodyDTOToJSONTyped(
 
   return {
     transactionsHash: value['transactionsHash'],
-    cosignatures: (value['cosignatures'] as Array<any>).map(CosignatureDTOToJSON),
+    cosignatures:
+      value['cosignatures'] == null ? undefined : (value['cosignatures'] as Array<any>).map(CosignatureDTOToJSON),
   };
 }

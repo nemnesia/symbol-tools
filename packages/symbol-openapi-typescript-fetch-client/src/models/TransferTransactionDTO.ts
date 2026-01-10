@@ -100,7 +100,7 @@ export interface TransferTransactionDTO {
    * @type {Array<UnresolvedMosaic>}
    * @memberof TransferTransactionDTO
    */
-  mosaics: Array<UnresolvedMosaic>;
+  mosaics?: Array<UnresolvedMosaic>;
   /**
    * Transfer transaction message
    * @type {string}
@@ -122,7 +122,6 @@ export function instanceOfTransferTransactionDTO(value: object): value is Transf
   if (!('maxFee' in value) || value['maxFee'] === undefined) return false;
   if (!('deadline' in value) || value['deadline'] === undefined) return false;
   if (!('recipientAddress' in value) || value['recipientAddress'] === undefined) return false;
-  if (!('mosaics' in value) || value['mosaics'] === undefined) return false;
   return true;
 }
 
@@ -144,7 +143,7 @@ export function TransferTransactionDTOFromJSONTyped(json: any, ignoreDiscriminat
     maxFee: json['maxFee'],
     deadline: json['deadline'],
     recipientAddress: json['recipientAddress'],
-    mosaics: (json['mosaics'] as Array<any>).map(UnresolvedMosaicFromJSON),
+    mosaics: json['mosaics'] == null ? undefined : (json['mosaics'] as Array<any>).map(UnresolvedMosaicFromJSON),
     message: json['message'] == null ? undefined : json['message'],
   };
 }
@@ -171,7 +170,7 @@ export function TransferTransactionDTOToJSONTyped(
     maxFee: value['maxFee'],
     deadline: value['deadline'],
     recipientAddress: value['recipientAddress'],
-    mosaics: (value['mosaics'] as Array<any>).map(UnresolvedMosaicToJSON),
+    mosaics: value['mosaics'] == null ? undefined : (value['mosaics'] as Array<any>).map(UnresolvedMosaicToJSON),
     message: value['message'],
   };
 }

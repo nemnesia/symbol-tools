@@ -1,17 +1,42 @@
 # @nemnesia/symbol-openapi-fetch-client
 
-This project is for generating a Symbol REST client using the Symbol OpenAPI.  
-このプロジェクトは、Symbol OpenAPI を利用して Symbol REST クライアントを生成するためのものです。
+![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-openapi-typescript-fetch-client?color=blue)
+![types](https://img.shields.io/npm/types/@nemnesia/symbol-openapi-typescript-fetch-client)
+![ESM only](https://img.shields.io/badge/ESM-only-blueviolet)
 
-## Features / 特徴
+## 特徴
 
-- Code automatically generated based on the OpenAPI specification / OpenAPI 仕様に基づいて自動生成されたコード
+- OpenAPI 仕様に基づいて自動生成されたコード
 
-## OpenAPI / Swagger
+## Swagger
 
 - https://docs.symboltest.net/en/devbook/reference/rest/symbol/
 
-## License / ライセンス
+## 使い方
 
-This project is licensed under the [Apache License 2.0](./LICENSE).  
+### インストール
+
+```sh
+npm i @nemnesia/symbol-openapi-typescript-fetch-client
+```
+
+### サンプルコード
+
+```ts
+import { AccountRoutesApi, Configuration } from '@nemnesia/symbol-openapi-typescript-fetch-client';
+
+const client = new AccountRoutesApi(new Configuration({ basePath: 'https://symbol-node.example.com:3001' }));
+
+async function main() {
+  const response = await client.getAccountInfo({
+    accountId: 'TCEUGLPCMO5Y72EEISSNUKGTMCN5RO4PVYMK5FI',
+  });
+  console.log(response);
+}
+
+main();
+```
+
+## ライセンス
+
 このプロジェクトは [Apache License 2.0](./LICENSE) の下でライセンスされています。

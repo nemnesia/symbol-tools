@@ -45,7 +45,7 @@ export interface TransferTransactionBodyDTO {
    * @type {Array<UnresolvedMosaic>}
    * @memberof TransferTransactionBodyDTO
    */
-  mosaics: Array<UnresolvedMosaic>;
+  mosaics?: Array<UnresolvedMosaic>;
   /**
    * Transfer transaction message
    * @type {string}
@@ -59,7 +59,6 @@ export interface TransferTransactionBodyDTO {
  */
 export function instanceOfTransferTransactionBodyDTO(value: object): value is TransferTransactionBodyDTO {
   if (!('recipientAddress' in value) || value['recipientAddress'] === undefined) return false;
-  if (!('mosaics' in value) || value['mosaics'] === undefined) return false;
   return true;
 }
 
@@ -76,7 +75,7 @@ export function TransferTransactionBodyDTOFromJSONTyped(
   }
   return {
     recipientAddress: json['recipientAddress'],
-    mosaics: (json['mosaics'] as Array<any>).map(UnresolvedMosaicFromJSON),
+    mosaics: json['mosaics'] == null ? undefined : (json['mosaics'] as Array<any>).map(UnresolvedMosaicFromJSON),
     message: json['message'] == null ? undefined : json['message'],
   };
 }
@@ -95,7 +94,7 @@ export function TransferTransactionBodyDTOToJSONTyped(
 
   return {
     recipientAddress: value['recipientAddress'],
-    mosaics: (value['mosaics'] as Array<any>).map(UnresolvedMosaicToJSON),
+    mosaics: value['mosaics'] == null ? undefined : (value['mosaics'] as Array<any>).map(UnresolvedMosaicToJSON),
     message: value['message'],
   };
 }

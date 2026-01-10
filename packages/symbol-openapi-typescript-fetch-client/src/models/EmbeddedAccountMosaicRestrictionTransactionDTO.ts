@@ -72,13 +72,13 @@ export interface EmbeddedAccountMosaicRestrictionTransactionDTO {
    * @type {Array<string>}
    * @memberof EmbeddedAccountMosaicRestrictionTransactionDTO
    */
-  restrictionAdditions: Array<string>;
+  restrictionAdditions?: Array<string>;
   /**
    * Account restriction deletions.
    * @type {Array<string>}
    * @memberof EmbeddedAccountMosaicRestrictionTransactionDTO
    */
-  restrictionDeletions: Array<string>;
+  restrictionDeletions?: Array<string>;
 }
 
 /**
@@ -92,8 +92,6 @@ export function instanceOfEmbeddedAccountMosaicRestrictionTransactionDTO(
   if (!('network' in value) || value['network'] === undefined) return false;
   if (!('type' in value) || value['type'] === undefined) return false;
   if (!('restrictionFlags' in value) || value['restrictionFlags'] === undefined) return false;
-  if (!('restrictionAdditions' in value) || value['restrictionAdditions'] === undefined) return false;
-  if (!('restrictionDeletions' in value) || value['restrictionDeletions'] === undefined) return false;
   return true;
 }
 
@@ -116,8 +114,8 @@ export function EmbeddedAccountMosaicRestrictionTransactionDTOFromJSONTyped(
     network: NetworkTypeEnumFromJSON(json['network']),
     type: json['type'],
     restrictionFlags: AccountRestrictionFlagsEnumFromJSON(json['restrictionFlags']),
-    restrictionAdditions: json['restrictionAdditions'],
-    restrictionDeletions: json['restrictionDeletions'],
+    restrictionAdditions: json['restrictionAdditions'] == null ? undefined : json['restrictionAdditions'],
+    restrictionDeletions: json['restrictionDeletions'] == null ? undefined : json['restrictionDeletions'],
   };
 }
 

@@ -531,13 +531,13 @@ export interface EmbeddedTransactionInfoDTOTransaction {
    * @type {Array<TransactionTypeEnum>}
    * @memberof EmbeddedTransactionInfoDTOTransaction
    */
-  restrictionAdditions: Array<TransactionTypeEnum>;
+  restrictionAdditions?: Array<TransactionTypeEnum>;
   /**
    * Account restriction deletions.
    * @type {Array<TransactionTypeEnum>}
    * @memberof EmbeddedTransactionInfoDTOTransaction
    */
-  restrictionDeletions: Array<TransactionTypeEnum>;
+  restrictionDeletions?: Array<TransactionTypeEnum>;
   /**
    * Mosaic identifier. If the most significant bit of byte 0 is set, a namespaceId (alias)
    * is used instead of the real mosaic identifier.
@@ -582,7 +582,7 @@ export interface EmbeddedTransactionInfoDTOTransaction {
    * @type {Array<UnresolvedMosaic>}
    * @memberof EmbeddedTransactionInfoDTOTransaction
    */
-  mosaics: Array<UnresolvedMosaic>;
+  mosaics?: Array<UnresolvedMosaic>;
   /**
    * Transfer transaction message
    * @type {string}
@@ -636,15 +636,12 @@ export function instanceOfEmbeddedTransactionInfoDTOTransaction(
   if (!('addressAdditions' in value) || value['addressAdditions'] === undefined) return false;
   if (!('addressDeletions' in value) || value['addressDeletions'] === undefined) return false;
   if (!('restrictionFlags' in value) || value['restrictionFlags'] === undefined) return false;
-  if (!('restrictionAdditions' in value) || value['restrictionAdditions'] === undefined) return false;
-  if (!('restrictionDeletions' in value) || value['restrictionDeletions'] === undefined) return false;
   if (!('referenceMosaicId' in value) || value['referenceMosaicId'] === undefined) return false;
   if (!('restrictionKey' in value) || value['restrictionKey'] === undefined) return false;
   if (!('previousRestrictionValue' in value) || value['previousRestrictionValue'] === undefined) return false;
   if (!('newRestrictionValue' in value) || value['newRestrictionValue'] === undefined) return false;
   if (!('previousRestrictionType' in value) || value['previousRestrictionType'] === undefined) return false;
   if (!('newRestrictionType' in value) || value['newRestrictionType'] === undefined) return false;
-  if (!('mosaics' in value) || value['mosaics'] === undefined) return false;
   return true;
 }
 
@@ -701,15 +698,21 @@ export function EmbeddedTransactionInfoDTOTransactionFromJSONTyped(
     addressAdditions: json['addressAdditions'],
     addressDeletions: json['addressDeletions'],
     restrictionFlags: AccountRestrictionFlagsEnumFromJSON(json['restrictionFlags']),
-    restrictionAdditions: (json['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumFromJSON),
-    restrictionDeletions: (json['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumFromJSON),
+    restrictionAdditions:
+      json['restrictionAdditions'] == null
+        ? undefined
+        : (json['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumFromJSON),
+    restrictionDeletions:
+      json['restrictionDeletions'] == null
+        ? undefined
+        : (json['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumFromJSON),
     referenceMosaicId: json['referenceMosaicId'],
     restrictionKey: json['restrictionKey'],
     previousRestrictionValue: json['previousRestrictionValue'],
     newRestrictionValue: json['newRestrictionValue'],
     previousRestrictionType: MosaicRestrictionTypeEnumFromJSON(json['previousRestrictionType']),
     newRestrictionType: MosaicRestrictionTypeEnumFromJSON(json['newRestrictionType']),
-    mosaics: (json['mosaics'] as Array<any>).map(UnresolvedMosaicFromJSON),
+    mosaics: json['mosaics'] == null ? undefined : (json['mosaics'] as Array<any>).map(UnresolvedMosaicFromJSON),
     message: json['message'] == null ? undefined : json['message'],
   };
 }
@@ -768,15 +771,21 @@ export function EmbeddedTransactionInfoDTOTransactionToJSONTyped(
     addressAdditions: value['addressAdditions'],
     addressDeletions: value['addressDeletions'],
     restrictionFlags: AccountRestrictionFlagsEnumToJSON(value['restrictionFlags']),
-    restrictionAdditions: (value['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumToJSON),
-    restrictionDeletions: (value['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumToJSON),
+    restrictionAdditions:
+      value['restrictionAdditions'] == null
+        ? undefined
+        : (value['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumToJSON),
+    restrictionDeletions:
+      value['restrictionDeletions'] == null
+        ? undefined
+        : (value['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumToJSON),
     referenceMosaicId: value['referenceMosaicId'],
     restrictionKey: value['restrictionKey'],
     previousRestrictionValue: value['previousRestrictionValue'],
     newRestrictionValue: value['newRestrictionValue'],
     previousRestrictionType: MosaicRestrictionTypeEnumToJSON(value['previousRestrictionType']),
     newRestrictionType: MosaicRestrictionTypeEnumToJSON(value['newRestrictionType']),
-    mosaics: (value['mosaics'] as Array<any>).map(UnresolvedMosaicToJSON),
+    mosaics: value['mosaics'] == null ? undefined : (value['mosaics'] as Array<any>).map(UnresolvedMosaicToJSON),
     message: value['message'],
   };
 }

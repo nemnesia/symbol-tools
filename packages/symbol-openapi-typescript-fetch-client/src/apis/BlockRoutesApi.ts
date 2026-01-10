@@ -61,6 +61,8 @@ export interface SearchBlocksRequest {
   offset?: string;
   order?: Order;
   orderBy?: BlockOrderByEnum;
+  fromTimestamp?: string;
+  toTimestamp?: string;
 }
 
 /**
@@ -260,6 +262,14 @@ export class BlockRoutesApi extends runtime.BaseAPI {
 
     if (requestParameters['orderBy'] != null) {
       queryParameters['orderBy'] = requestParameters['orderBy'];
+    }
+
+    if (requestParameters['fromTimestamp'] != null) {
+      queryParameters['fromTimestamp'] = requestParameters['fromTimestamp'];
+    }
+
+    if (requestParameters['toTimestamp'] != null) {
+      queryParameters['toTimestamp'] = requestParameters['toTimestamp'];
     }
 
     const headerParameters: runtime.HTTPHeaders = {};

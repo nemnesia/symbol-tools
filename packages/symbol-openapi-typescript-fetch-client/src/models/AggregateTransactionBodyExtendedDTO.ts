@@ -48,13 +48,13 @@ export interface AggregateTransactionBodyExtendedDTO {
    * @type {Array<CosignatureDTO>}
    * @memberof AggregateTransactionBodyExtendedDTO
    */
-  cosignatures: Array<CosignatureDTO>;
+  cosignatures?: Array<CosignatureDTO>;
   /**
    * Array of transactions initiated by different accounts.
    * @type {Array<EmbeddedTransactionInfoDTO>}
    * @memberof AggregateTransactionBodyExtendedDTO
    */
-  transactions: Array<EmbeddedTransactionInfoDTO>;
+  transactions?: Array<EmbeddedTransactionInfoDTO>;
 }
 
 /**
@@ -64,8 +64,6 @@ export function instanceOfAggregateTransactionBodyExtendedDTO(
   value: object
 ): value is AggregateTransactionBodyExtendedDTO {
   if (!('transactionsHash' in value) || value['transactionsHash'] === undefined) return false;
-  if (!('cosignatures' in value) || value['cosignatures'] === undefined) return false;
-  if (!('transactions' in value) || value['transactions'] === undefined) return false;
   return true;
 }
 
@@ -82,8 +80,12 @@ export function AggregateTransactionBodyExtendedDTOFromJSONTyped(
   }
   return {
     transactionsHash: json['transactionsHash'],
-    cosignatures: (json['cosignatures'] as Array<any>).map(CosignatureDTOFromJSON),
-    transactions: (json['transactions'] as Array<any>).map(EmbeddedTransactionInfoDTOFromJSON),
+    cosignatures:
+      json['cosignatures'] == null ? undefined : (json['cosignatures'] as Array<any>).map(CosignatureDTOFromJSON),
+    transactions:
+      json['transactions'] == null
+        ? undefined
+        : (json['transactions'] as Array<any>).map(EmbeddedTransactionInfoDTOFromJSON),
   };
 }
 
@@ -101,7 +103,11 @@ export function AggregateTransactionBodyExtendedDTOToJSONTyped(
 
   return {
     transactionsHash: value['transactionsHash'],
-    cosignatures: (value['cosignatures'] as Array<any>).map(CosignatureDTOToJSON),
-    transactions: (value['transactions'] as Array<any>).map(EmbeddedTransactionInfoDTOToJSON),
+    cosignatures:
+      value['cosignatures'] == null ? undefined : (value['cosignatures'] as Array<any>).map(CosignatureDTOToJSON),
+    transactions:
+      value['transactions'] == null
+        ? undefined
+        : (value['transactions'] as Array<any>).map(EmbeddedTransactionInfoDTOToJSON),
   };
 }

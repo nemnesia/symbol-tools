@@ -96,7 +96,7 @@ export interface AggregateTransactionDTO {
    * @type {Array<CosignatureDTO>}
    * @memberof AggregateTransactionDTO
    */
-  cosignatures: Array<CosignatureDTO>;
+  cosignatures?: Array<CosignatureDTO>;
 }
 
 /**
@@ -112,7 +112,6 @@ export function instanceOfAggregateTransactionDTO(value: object): value is Aggre
   if (!('maxFee' in value) || value['maxFee'] === undefined) return false;
   if (!('deadline' in value) || value['deadline'] === undefined) return false;
   if (!('transactionsHash' in value) || value['transactionsHash'] === undefined) return false;
-  if (!('cosignatures' in value) || value['cosignatures'] === undefined) return false;
   return true;
 }
 
@@ -134,7 +133,8 @@ export function AggregateTransactionDTOFromJSONTyped(json: any, ignoreDiscrimina
     maxFee: json['maxFee'],
     deadline: json['deadline'],
     transactionsHash: json['transactionsHash'],
-    cosignatures: (json['cosignatures'] as Array<any>).map(CosignatureDTOFromJSON),
+    cosignatures:
+      json['cosignatures'] == null ? undefined : (json['cosignatures'] as Array<any>).map(CosignatureDTOFromJSON),
   };
 }
 
@@ -160,6 +160,7 @@ export function AggregateTransactionDTOToJSONTyped(
     maxFee: value['maxFee'],
     deadline: value['deadline'],
     transactionsHash: value['transactionsHash'],
-    cosignatures: (value['cosignatures'] as Array<any>).map(CosignatureDTOToJSON),
+    cosignatures:
+      value['cosignatures'] == null ? undefined : (value['cosignatures'] as Array<any>).map(CosignatureDTOToJSON),
   };
 }

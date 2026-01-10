@@ -103,13 +103,13 @@ export interface AccountOperationRestrictionTransactionDTO {
    * @type {Array<TransactionTypeEnum>}
    * @memberof AccountOperationRestrictionTransactionDTO
    */
-  restrictionAdditions: Array<TransactionTypeEnum>;
+  restrictionAdditions?: Array<TransactionTypeEnum>;
   /**
    * Account restriction deletions.
    * @type {Array<TransactionTypeEnum>}
    * @memberof AccountOperationRestrictionTransactionDTO
    */
-  restrictionDeletions: Array<TransactionTypeEnum>;
+  restrictionDeletions?: Array<TransactionTypeEnum>;
 }
 
 /**
@@ -127,8 +127,6 @@ export function instanceOfAccountOperationRestrictionTransactionDTO(
   if (!('maxFee' in value) || value['maxFee'] === undefined) return false;
   if (!('deadline' in value) || value['deadline'] === undefined) return false;
   if (!('restrictionFlags' in value) || value['restrictionFlags'] === undefined) return false;
-  if (!('restrictionAdditions' in value) || value['restrictionAdditions'] === undefined) return false;
-  if (!('restrictionDeletions' in value) || value['restrictionDeletions'] === undefined) return false;
   return true;
 }
 
@@ -155,8 +153,14 @@ export function AccountOperationRestrictionTransactionDTOFromJSONTyped(
     maxFee: json['maxFee'],
     deadline: json['deadline'],
     restrictionFlags: AccountRestrictionFlagsEnumFromJSON(json['restrictionFlags']),
-    restrictionAdditions: (json['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumFromJSON),
-    restrictionDeletions: (json['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumFromJSON),
+    restrictionAdditions:
+      json['restrictionAdditions'] == null
+        ? undefined
+        : (json['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumFromJSON),
+    restrictionDeletions:
+      json['restrictionDeletions'] == null
+        ? undefined
+        : (json['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumFromJSON),
   };
 }
 
@@ -182,7 +186,13 @@ export function AccountOperationRestrictionTransactionDTOToJSONTyped(
     maxFee: value['maxFee'],
     deadline: value['deadline'],
     restrictionFlags: AccountRestrictionFlagsEnumToJSON(value['restrictionFlags']),
-    restrictionAdditions: (value['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumToJSON),
-    restrictionDeletions: (value['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumToJSON),
+    restrictionAdditions:
+      value['restrictionAdditions'] == null
+        ? undefined
+        : (value['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumToJSON),
+    restrictionDeletions:
+      value['restrictionDeletions'] == null
+        ? undefined
+        : (value['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumToJSON),
   };
 }

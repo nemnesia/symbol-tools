@@ -124,6 +124,8 @@ paths:
         - $ref: '#/components/parameters/offsetQuery'
         - $ref: '#/components/parameters/orderQuery'
         - $ref: '#/components/parameters/orderByBlockQuery'
+        - $ref: '#/components/parameters/fromTimestampQuery'
+        - $ref: '#/components/parameters/toTimestampQuery'
       responses:
         '200':
           description: success
@@ -1613,6 +1615,12 @@ components:
       description: Only blocks with height greater or equal than this one are returned.
       schema:
         $ref: '#/components/schemas/Height'
+    fromTimestampQuery:
+      name: fromTimestamp
+      in: query
+      description: Network timestamp indicating the start of the target period.
+      schema:
+        $ref: '#/components/schemas/Timestamp'
     fromTransferAmountQuery:
       name: fromTransferAmount
       in: query
@@ -1778,6 +1786,12 @@ components:
       description: Only blocks with height smaller or equal than this one are returned.
       schema:
         $ref: '#/components/schemas/Height'
+    toTimestampQuery:
+      name: toTimestamp
+      in: query
+      description: Network timestamp indicating the end of the target period.
+      schema:
+        $ref: '#/components/schemas/Timestamp'
     toTransferAmountQuery:
       name: toTransferAmount
       in: query
@@ -3521,8 +3535,6 @@ components:
           type: string
     EmbeddedTransactionBodyDTO:
       type: object
-      required:
-        - transactions
       properties:
         transactions:
           type: array
@@ -3811,7 +3823,6 @@ components:
       type: object
       required:
         - transactionsHash
-        - cosignatures
       properties:
         transactionsHash:
           $ref: '#/components/schemas/Hash256'
@@ -5205,8 +5216,6 @@ components:
       type: object
       required:
         - restrictionFlags
-        - restrictionAdditions
-        - restrictionDeletions
       properties:
         restrictionFlags:
           $ref: '#/components/schemas/AccountRestrictionFlagsEnum'
@@ -5230,8 +5239,6 @@ components:
       type: object
       required:
         - restrictionFlags
-        - restrictionAdditions
-        - restrictionDeletions
       properties:
         restrictionFlags:
           $ref: '#/components/schemas/AccountRestrictionFlagsEnum'
@@ -5255,8 +5262,6 @@ components:
       type: object
       required:
         - restrictionFlags
-        - restrictionAdditions
-        - restrictionDeletions
       properties:
         restrictionFlags:
           $ref: '#/components/schemas/AccountRestrictionFlagsEnum'
@@ -5587,7 +5592,6 @@ components:
       type: object
       required:
         - recipientAddress
-        - mosaics
       properties:
         recipientAddress:
           $ref: '#/components/schemas/UnresolvedAddress'

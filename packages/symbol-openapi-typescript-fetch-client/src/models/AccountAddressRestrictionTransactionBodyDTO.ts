@@ -41,13 +41,13 @@ export interface AccountAddressRestrictionTransactionBodyDTO {
    * @type {Array<string>}
    * @memberof AccountAddressRestrictionTransactionBodyDTO
    */
-  restrictionAdditions: Array<string>;
+  restrictionAdditions?: Array<string>;
   /**
    * Account restriction deletions.
    * @type {Array<string>}
    * @memberof AccountAddressRestrictionTransactionBodyDTO
    */
-  restrictionDeletions: Array<string>;
+  restrictionDeletions?: Array<string>;
 }
 
 /**
@@ -57,8 +57,6 @@ export function instanceOfAccountAddressRestrictionTransactionBodyDTO(
   value: object
 ): value is AccountAddressRestrictionTransactionBodyDTO {
   if (!('restrictionFlags' in value) || value['restrictionFlags'] === undefined) return false;
-  if (!('restrictionAdditions' in value) || value['restrictionAdditions'] === undefined) return false;
-  if (!('restrictionDeletions' in value) || value['restrictionDeletions'] === undefined) return false;
   return true;
 }
 
@@ -77,8 +75,8 @@ export function AccountAddressRestrictionTransactionBodyDTOFromJSONTyped(
   }
   return {
     restrictionFlags: AccountRestrictionFlagsEnumFromJSON(json['restrictionFlags']),
-    restrictionAdditions: json['restrictionAdditions'],
-    restrictionDeletions: json['restrictionDeletions'],
+    restrictionAdditions: json['restrictionAdditions'] == null ? undefined : json['restrictionAdditions'],
+    restrictionDeletions: json['restrictionDeletions'] == null ? undefined : json['restrictionDeletions'],
   };
 }
 

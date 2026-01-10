@@ -35,14 +35,13 @@ export interface EmbeddedTransactionBodyDTO {
    * @type {Array<EmbeddedTransactionInfoDTO>}
    * @memberof EmbeddedTransactionBodyDTO
    */
-  transactions: Array<EmbeddedTransactionInfoDTO>;
+  transactions?: Array<EmbeddedTransactionInfoDTO>;
 }
 
 /**
  * Check if a given object implements the EmbeddedTransactionBodyDTO interface.
  */
 export function instanceOfEmbeddedTransactionBodyDTO(value: object): value is EmbeddedTransactionBodyDTO {
-  if (!('transactions' in value) || value['transactions'] === undefined) return false;
   return true;
 }
 
@@ -58,7 +57,10 @@ export function EmbeddedTransactionBodyDTOFromJSONTyped(
     return json;
   }
   return {
-    transactions: (json['transactions'] as Array<any>).map(EmbeddedTransactionInfoDTOFromJSON),
+    transactions:
+      json['transactions'] == null
+        ? undefined
+        : (json['transactions'] as Array<any>).map(EmbeddedTransactionInfoDTOFromJSON),
   };
 }
 
@@ -75,6 +77,9 @@ export function EmbeddedTransactionBodyDTOToJSONTyped(
   }
 
   return {
-    transactions: (value['transactions'] as Array<any>).map(EmbeddedTransactionInfoDTOToJSON),
+    transactions:
+      value['transactions'] == null
+        ? undefined
+        : (value['transactions'] as Array<any>).map(EmbeddedTransactionInfoDTOToJSON),
   };
 }

@@ -76,7 +76,7 @@ export interface EmbeddedTransferTransactionDTO {
    * @type {Array<UnresolvedMosaic>}
    * @memberof EmbeddedTransferTransactionDTO
    */
-  mosaics: Array<UnresolvedMosaic>;
+  mosaics?: Array<UnresolvedMosaic>;
   /**
    * Transfer transaction message
    * @type {string}
@@ -94,7 +94,6 @@ export function instanceOfEmbeddedTransferTransactionDTO(value: object): value i
   if (!('network' in value) || value['network'] === undefined) return false;
   if (!('type' in value) || value['type'] === undefined) return false;
   if (!('recipientAddress' in value) || value['recipientAddress'] === undefined) return false;
-  if (!('mosaics' in value) || value['mosaics'] === undefined) return false;
   return true;
 }
 
@@ -115,7 +114,7 @@ export function EmbeddedTransferTransactionDTOFromJSONTyped(
     network: NetworkTypeEnumFromJSON(json['network']),
     type: json['type'],
     recipientAddress: json['recipientAddress'],
-    mosaics: (json['mosaics'] as Array<any>).map(UnresolvedMosaicFromJSON),
+    mosaics: json['mosaics'] == null ? undefined : (json['mosaics'] as Array<any>).map(UnresolvedMosaicFromJSON),
     message: json['message'] == null ? undefined : json['message'],
   };
 }
@@ -138,7 +137,7 @@ export function EmbeddedTransferTransactionDTOToJSONTyped(
     network: NetworkTypeEnumToJSON(value['network']),
     type: value['type'],
     recipientAddress: value['recipientAddress'],
-    mosaics: (value['mosaics'] as Array<any>).map(UnresolvedMosaicToJSON),
+    mosaics: value['mosaics'] == null ? undefined : (value['mosaics'] as Array<any>).map(UnresolvedMosaicToJSON),
     message: value['message'],
   };
 }

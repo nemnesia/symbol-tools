@@ -226,7 +226,7 @@ No authorization required
 
 ## searchBlocks
 
-> BlockPage searchBlocks(signerPublicKey, beneficiaryAddress, pageSize, pageNumber, offset, order, orderBy)
+> BlockPage searchBlocks(signerPublicKey, beneficiaryAddress, pageSize, pageNumber, offset, order, orderBy, fromTimestamp, toTimestamp)
 
 Search blocks
 
@@ -260,6 +260,10 @@ async function example() {
     order: ...,
     // BlockOrderByEnum | Sort responses by the property set.  (optional)
     orderBy: ...,
+    // string | Network timestamp indicating the start of the target period. (optional)
+    fromTimestamp: fromTimestamp_example,
+    // string | Network timestamp indicating the end of the target period. (optional)
+    toTimestamp: toTimestamp_example,
   } satisfies SearchBlocksRequest;
 
   try {
@@ -286,6 +290,8 @@ example().catch(console.error);
 | **offset** | `string` | Entry id at which to start pagination. If the ordering parameter is set to -id, the elements returned precede the identifier. Otherwise, newer elements with respect to the id are returned.  | [Optional] [Defaults to `undefined`] |
 | **order** | `Order` | Sort responses in ascending or descending order based on the collection property set on the param &#x60;&#x60;orderBy&#x60;&#x60;. If the request does not specify &#x60;&#x60;orderBy&#x60;&#x60;, REST returns the collection ordered by id.  | [Optional] [Defaults to `undefined`] [Enum: asc, desc] |
 | **orderBy** | `BlockOrderByEnum` | Sort responses by the property set.  | [Optional] [Defaults to `undefined`] [Enum: id, height] |
+| **fromTimestamp** | `string` | Network timestamp indicating the start of the target period. | [Optional] [Defaults to `undefined`] |
+| **toTimestamp** | `string` | Network timestamp indicating the end of the target period. | [Optional] [Defaults to `undefined`] |
 
 ### Return type
 

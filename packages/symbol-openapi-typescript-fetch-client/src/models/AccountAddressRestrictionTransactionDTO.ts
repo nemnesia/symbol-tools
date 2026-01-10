@@ -96,13 +96,13 @@ export interface AccountAddressRestrictionTransactionDTO {
    * @type {Array<string>}
    * @memberof AccountAddressRestrictionTransactionDTO
    */
-  restrictionAdditions: Array<string>;
+  restrictionAdditions?: Array<string>;
   /**
    * Account restriction deletions.
    * @type {Array<string>}
    * @memberof AccountAddressRestrictionTransactionDTO
    */
-  restrictionDeletions: Array<string>;
+  restrictionDeletions?: Array<string>;
 }
 
 /**
@@ -120,8 +120,6 @@ export function instanceOfAccountAddressRestrictionTransactionDTO(
   if (!('maxFee' in value) || value['maxFee'] === undefined) return false;
   if (!('deadline' in value) || value['deadline'] === undefined) return false;
   if (!('restrictionFlags' in value) || value['restrictionFlags'] === undefined) return false;
-  if (!('restrictionAdditions' in value) || value['restrictionAdditions'] === undefined) return false;
-  if (!('restrictionDeletions' in value) || value['restrictionDeletions'] === undefined) return false;
   return true;
 }
 
@@ -146,8 +144,8 @@ export function AccountAddressRestrictionTransactionDTOFromJSONTyped(
     maxFee: json['maxFee'],
     deadline: json['deadline'],
     restrictionFlags: AccountRestrictionFlagsEnumFromJSON(json['restrictionFlags']),
-    restrictionAdditions: json['restrictionAdditions'],
-    restrictionDeletions: json['restrictionDeletions'],
+    restrictionAdditions: json['restrictionAdditions'] == null ? undefined : json['restrictionAdditions'],
+    restrictionDeletions: json['restrictionDeletions'] == null ? undefined : json['restrictionDeletions'],
   };
 }
 

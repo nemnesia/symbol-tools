@@ -79,13 +79,13 @@ export interface EmbeddedAccountOperationRestrictionTransactionDTO {
    * @type {Array<TransactionTypeEnum>}
    * @memberof EmbeddedAccountOperationRestrictionTransactionDTO
    */
-  restrictionAdditions: Array<TransactionTypeEnum>;
+  restrictionAdditions?: Array<TransactionTypeEnum>;
   /**
    * Account restriction deletions.
    * @type {Array<TransactionTypeEnum>}
    * @memberof EmbeddedAccountOperationRestrictionTransactionDTO
    */
-  restrictionDeletions: Array<TransactionTypeEnum>;
+  restrictionDeletions?: Array<TransactionTypeEnum>;
 }
 
 /**
@@ -99,8 +99,6 @@ export function instanceOfEmbeddedAccountOperationRestrictionTransactionDTO(
   if (!('network' in value) || value['network'] === undefined) return false;
   if (!('type' in value) || value['type'] === undefined) return false;
   if (!('restrictionFlags' in value) || value['restrictionFlags'] === undefined) return false;
-  if (!('restrictionAdditions' in value) || value['restrictionAdditions'] === undefined) return false;
-  if (!('restrictionDeletions' in value) || value['restrictionDeletions'] === undefined) return false;
   return true;
 }
 
@@ -123,8 +121,14 @@ export function EmbeddedAccountOperationRestrictionTransactionDTOFromJSONTyped(
     network: NetworkTypeEnumFromJSON(json['network']),
     type: json['type'],
     restrictionFlags: AccountRestrictionFlagsEnumFromJSON(json['restrictionFlags']),
-    restrictionAdditions: (json['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumFromJSON),
-    restrictionDeletions: (json['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumFromJSON),
+    restrictionAdditions:
+      json['restrictionAdditions'] == null
+        ? undefined
+        : (json['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumFromJSON),
+    restrictionDeletions:
+      json['restrictionDeletions'] == null
+        ? undefined
+        : (json['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumFromJSON),
   };
 }
 
@@ -148,7 +152,13 @@ export function EmbeddedAccountOperationRestrictionTransactionDTOToJSONTyped(
     network: NetworkTypeEnumToJSON(value['network']),
     type: value['type'],
     restrictionFlags: AccountRestrictionFlagsEnumToJSON(value['restrictionFlags']),
-    restrictionAdditions: (value['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumToJSON),
-    restrictionDeletions: (value['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumToJSON),
+    restrictionAdditions:
+      value['restrictionAdditions'] == null
+        ? undefined
+        : (value['restrictionAdditions'] as Array<any>).map(TransactionTypeEnumToJSON),
+    restrictionDeletions:
+      value['restrictionDeletions'] == null
+        ? undefined
+        : (value['restrictionDeletions'] as Array<any>).map(TransactionTypeEnumToJSON),
   };
 }
