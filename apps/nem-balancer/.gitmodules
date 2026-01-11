@@ -1,0 +1,9 @@
+[submodule "nem-balancer/symbol-service"]
+	path = nem-balancer/symbol-service
+	url = https://github.com/nemnesia/symbol-service.git
+[submodule "metal-on-symbol"]
+	path = metal-on-symbol
+	url = https://github.com/nemnesia/metal-on-symbol.git
+[submodule "symbol-service"]
+	path = symbol-service
+	url = https://github.com/nemnesia/symbol-service.git

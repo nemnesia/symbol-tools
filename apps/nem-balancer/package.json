@@ -1,0 +1,33 @@
+{
+  "name": "nem-balancer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc -b && vite build",
+    "test": "vitest run test",
+    "lint": "eslint --fix \"{src,test,e2e}/**/*.{ts,tsx}\"",
+    "format": "prettier --write \"{src,test,e2e}/**/*.{ts,tsx}\"",
+    "preview": "vite preview",
+    "forge": "NODE_URL=https://t.sakia.harvestasya.com:3001 node ../metal-on-symbol/dist/cli/main.js forge ./dist/index.html --seal 2"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@fontsource/roboto": "^5.2.9",
+    "@mui/icons-material": "^7.3.7",
+    "@mui/material": "^7.3.7",
+    "nem-symbol-node-picker": "^1.2.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-router-dom": "^7.12.0",
+    "symbol-sdk": "npm:@nemnesia/symbol-sdk@3.3.0-pure.1"
+  },
+  "volta": {
+    "node": "24.11.1"
+  },
+  "devDependencies": {
+    "vite-plugin-singlefile-compression": "^2.0.5"
+  }
+}

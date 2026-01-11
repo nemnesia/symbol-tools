@@ -1,0 +1,38 @@
+/* グローバルリセット */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* MUIのIconButtonのフォーカスアウトラインを全体的に無効化 */
+.MuiIconButton-root:focus,
+.MuiIconButton-root:focus-visible {
+  outline: none !important;
+}
+
+/* AppBarのIconButtonにホバー・アクティブ効果を追加 */
+.MuiAppBar-root .MuiIconButton-root {
+  transition: background-color 0.2s ease-in-out;
+}
+
+.MuiAppBar-root .MuiIconButton-root:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.MuiAppBar-root .MuiIconButton-root:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
