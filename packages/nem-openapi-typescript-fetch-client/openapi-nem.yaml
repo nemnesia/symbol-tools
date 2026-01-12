@@ -1,0 +1,1400 @@
+openapi: 3.0.0
+info:
+  title: NEM NIS API
+  description: |-
+    Version 1.19
+
+    19:27, March 20, 2017
+
+    [https://nemproject.github.io/](https://nemproject.github.io/)
+  version: 1.0.0
+servers:
+  - url: https://t.nis1.rerena.nemnesia.com:7891
+    description: Testnet Node
+  - url: https://sakia.nis1.harvestasya.com:7891
+    description: Mainnet Node
+  - url: http://127.0.0.1:7890
+    description: Localhost Node
+tags:
+  - name: heartbeat
+  - name: status
+  - name: account
+  - name: chain
+  - name: block
+  - name: node
+  - name: namespace
+  - name: transaction
+  - name: local
+  - name: debug
+paths:
+  /heartbeat:
+    get:
+      tags:
+        - heartbeat
+      summary: Heart beat
+      description: Determines if NIS is up and responsive.
+      operationId: getHeartbeat
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HeartbeatDTO'
+  /status:
+    get:
+      tags:
+        - status
+      summary: Status
+      description: Determines the status of NIS.
+      operationId: getStatus
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusDTO'
+  /account/generate:
+    get:
+      tags:
+        - account
+      summary: Retrieving account data
+      description: Generates a KeyPairViewModel.
+      operationId: generate
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyPairDTO'
+  /account/get:
+    get:
+      tags:
+        - account
+      summary: Requesting the account data
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          description: The address of the account.
+          example: TB7PINA6CP6RZT6N3ETEZRJZRPMSAJ3FHAPB4NI7
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMetaDataPairDTO'
+  /account/get/from-public-key:
+    get:
+      tags:
+        - account
+      summary: Requesting the account data (public key)
+      parameters:
+        - name: publicKey
+          in: query
+          schema:
+            type: string
+          description: The public key of the account as hex string.
+          example: 46ad1ec1647d7455493f51b1a11d9e61838fef43dbd50bfe7c68bb1bea7c1436
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMetaDataPairDTO'
+  /account/get/forwarded:
+    get:
+      tags:
+        - account
+      summary: Requesting the original account data for a delegate account
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          description: The address of the delegate account.
+          example: TBAVMVQZ53M3T2LCXPYKVJO3MH7OERIKEG45LUH4
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMetaDataPairDTO'
+  /account/get/forwarded/from-public-key:
+    get:
+      tags:
+        - account
+      summary: Requesting the original account data for a delegate account (Public key)
+      parameters:
+        - name: publicKey
+          in: query
+          schema:
+            type: string
+          description: The public key of the account as hex string.
+          example: bb0e019d28df2d5241790c47a3ff99f39a1fc56017a1d291fb74fe6762d66aea
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMetaDataPairDTO'
+  /account/status:
+    get:
+      tags:
+        - account
+      summary: Requesting the account status
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          description: The address of the account.
+          example: TB7PINA6CP6RZT6N3ETEZRJZRPMSAJ3FHAPB4NI7
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMetaDataDTO'
+  /account/transfers/incoming:
+    get:
+      tags:
+        - account
+      summary: Requesting transaction data for an account (Incoming)
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          description: The address of the account.
+          example: TB7PINA6CP6RZT6N3ETEZRJZRPMSAJ3FHAPB4NI7
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionListDTO'
+  /account/transfers/outgoing:
+    get:
+      tags:
+        - account
+      summary: Requesting transaction data for an account (Outgoing)
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          description: The address of the account.
+          example: TB7PINA6CP6RZT6N3ETEZRJZRPMSAJ3FHAPB4NI7
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionListDTO'
+  /account/transfers/all:
+    get:
+      tags:
+        - account
+      summary: Requesting transaction data for an account (All)
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          description: The address of the account.
+          example: TB7PINA6CP6RZT6N3ETEZRJZRPMSAJ3FHAPB4NI7
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionListDTO'
+  /account/unconfirmedTransactions:
+    get:
+      tags:
+        - account
+      summary: Unconfirmed transactions
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          description: The address of the account.
+          example: TALICELCD3XPH4FFI5STGGNSNSWPOTG5E4DS2TOS
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnconfirmedTransactionListDTO'
+  /account/harvests:
+    get:
+      tags:
+        - account
+      summary: Requesting harvest info data for an account
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          example: TALICELCD3XPH4FFI5STGGNSNSWPOTG5E4DS2TOS
+        - name: hash
+          in: query
+          schema:
+            type: string
+          example: 81d52a7df4abba8bb1613bcc42b6b93cf3114524939035d88ae8e864cd2c34c8
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HarvestInfoListDTO'
+  /account/importances:
+    get:
+      tags:
+        - account
+      summary: Retrieving account importances for accounts
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountImportanceListDTO'
+  /account/namespace/page:
+    get:
+      tags:
+        - account
+      summary: Retrieving namespaces that an account owns
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          example: TD3RXTHBLK6J3UD2BH2PXSOFLPWZOTR34WCG4HXH
+        - name: parent
+          in: query
+          schema:
+            type: string
+          example: makoto.metal
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NamespaceListDTO'
+  /account/mosaic/definition/page:
+    get:
+      tags:
+        - account
+      summary: Retrieving mosaic definitions that an account has created
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          example: TD3RXTHBLK6J3UD2BH2PXSOFLPWZOTR34WCG4HXH
+        - name: parent
+          in: query
+          schema:
+            type: string
+          example: makoto.metal.coins
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MosaicDefinitionListDTO'
+  /account/mosaic/owned:
+    get:
+      tags:
+        - account
+      summary: Retrieving mosaics that an account owns
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          example: TD3RXTHBLK6J3UD2BH2PXSOFLPWZOTR34WCG4HXH
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MosaicListDTO'
+  /chain/height:
+    get:
+      tags:
+        - chain
+      summary: Block chain height
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockHeightDTO'
+  /chain/score:
+    get:
+      tags:
+        - chain
+      summary: Block chain score
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockChainScoreDTO'
+  /chain/last-block:
+    get:
+      tags:
+        - chain
+      summary: Last block of the block chain score
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockDTO'
+  /block/get:
+    get:
+      tags:
+        - block
+      summary: Getting a block with a given hash
+      parameters:
+        - name: blockHash
+          in: query
+          schema:
+            type: string
+          example: 58efa578aea719b644e8d7c731852bb26d8505257e03a897c8102e8c894a99d6
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockDTO'
+  /node/info:
+    get:
+      tags:
+        - node
+      summary: Basic node information
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeDTO'
+  /node/extended-info:
+    get:
+      tags:
+        - node
+      summary: Extended node information
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedNodeInfoDTO'
+  /node/peer-list/all:
+    get:
+      tags:
+        - node
+      summary: Complete neighborhood
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeListDTO'
+  /node/peer-list/reachable:
+    get:
+      tags:
+        - node
+      summary: Reachable neighborhood
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeListDTO'
+  /node/peer-list/active:
+    get:
+      tags:
+        - node
+      summary: Active neighborhood
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeListDTO'
+  /node/active-peers/max-chain-height:
+    get:
+      tags:
+        - node
+      summary: Maximum chain height in the active neighborhood
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockHeightDTO'
+  /node/experiences:
+    get:
+      tags:
+        - node
+      summary: Requesting node experiences
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /namespace/roots:
+    get:
+      tags:
+        - namespace
+      summary: Retrieving root namespaces
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+          example: '26754'
+        - name: pageSize;
+          in: query
+          schema:
+            type: integer
+          example: '35'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NamespaceListDTO'
+  /namespace:
+    get:
+      tags:
+        - namespace
+      summary: Retrieving a specific namespace
+      parameters:
+        - name: namespace
+          in: query
+          schema:
+            type: string
+          example: makoto.metal.coins
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /namespace/mosaic/definition/page:
+    get:
+      tags:
+        - namespace
+      summary: Retrieving mosaic definitions
+      parameters:
+        - name: namespace
+          in: query
+          schema:
+            type: string
+          example: makoto.metal.coins
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MosaicDefinitionListDTO'
+  /debug/time-synchronization:
+    get:
+      tags:
+        - debug
+      summary: Monitoring the network time
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeSynchronizationListDTO'
+  /debug/connections/incoming:
+    get:
+      tags:
+        - debug
+      summary: Monitoring incoming calls
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /debug/connections/outgoing:
+    get:
+      tags:
+        - debug
+      summary: Monitoring outgoing calls
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /debug/timers:
+    get:
+      tags:
+        - debug
+      summary: Monitoring timers
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /account/historical/get:
+    get:
+      tags:
+        - account
+      summary: Retrieving historical account data
+      parameters:
+        - name: address
+          in: query
+          schema:
+            type: string
+          example: NALICELGU3IVY4DPJKHYLSSVYFFWYS5QPLYEZDJJ
+        - name: startHeight
+          in: query
+          schema:
+            type: integer
+          example: '17592'
+        - name: endHeight
+          in: query
+          schema:
+            type: integer
+          example: '17592'
+        - name: increment
+          in: query
+          schema:
+            type: integer
+          example: '1'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /local/account/transfers/incoming:
+    post:
+      tags:
+        - local
+      summary: Incoming transactions with decoded messages
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /local/account/transfers/outgoing:
+    post:
+      tags:
+        - local
+      summary: Outgoing transactions with decoded messages
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /local/account/transfers/all:
+    post:
+      tags:
+        - local
+      summary: All transactions with decoded messages
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /account/unlock:
+    post:
+      tags:
+        - account
+      summary: Unlocking the account (enables harvesting)
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                privateKey:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /account/lock:
+    post:
+      tags:
+        - account
+      summary: Locking the account (stops harvesting)
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                privateKey:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /account/unlocked/info:
+    post:
+      tags:
+        - account
+      summary: Retrieving the unlock info
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /block/at/public:
+    post:
+      tags:
+        - block
+      summary: Getting a block with a given height
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                'blockHeight ':
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /local/chain/blocks-after:
+    post:
+      tags:
+        - local
+      summary: Getting part of a chain
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                blockHeight:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /node/boot:
+    post:
+      tags:
+        - node
+      summary: Booting the local node
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                bootNodeRequest:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /transaction/prepare-announce:
+    post:
+      tags:
+        - transaction
+      summary: Initiating a transaction
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                requestPrepareAnnounce:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /transaction/announce:
+    post:
+      tags:
+        - transaction
+      summary: Sending the data to NIS
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                requestAnnounce:
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+components:
+  schemas:
+    HeartbeatDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: |
+            The meaning of the code is dependent on the type. For type 1 (validation result) only 0 and 1 mean there was no failure. For a complete list of validation results see Appendix B: NIS Errors The following codes are the most frequent ones occurring:
+            0:Neutral result. A typical example would be that a node validates an incoming transaction and realizes that it already knows about the transaction. In this case it is neither a success (meaning the node has a new transaction) nor a failure (because the transaction itself is valid).
+
+            1:Success result. A typical example would be that a node validates a new valid transaction.
+
+            2:Unknown failure. The validation failed for unknown reasons.
+
+            3:The entity that was validated has already past its deadline.
+
+            4:The entity used a deadline which lies too far in the future.
+
+            5:There was an account involved which had an insufficient balance to perform the operation.
+
+            6:The message supplied with the transaction is too large.
+
+            7:The hash of the entity which got validated is already in the database.
+
+            8:The signature of the entity could not be validated.
+
+            9:The entity used a timestamp that lies too far in the past.
+
+            10:The entity used a timestamp that lies in the future which is not acceptable.
+
+            11:The entity is unusable.
+
+            12:The score of the remote block chain is inferior (although a superior score was promised).
+
+            13:The remote block chain failed validation.
+
+            14:There was a conflicting importance transfer detected.
+
+            15:There were too many transaction in the supplied block.
+
+            16:The block contains a transaction that was signed by the harvester.
+
+            17:A previous importance transaction conflicts with a new transaction.
+
+            18:An importance transfer activation was attempted while previous one is active.
+
+            19:An importance transfer deactivation was attempted but is not active.
+
+            For type 2 the following codes are supported:
+
+            1:Successful heart beat detected.
+
+            For type 3 the following codes are supported:
+
+            0:Unknown status.
+
+            1:NIS is stopped.
+
+            2:NIS is starting.
+
+            3:NIS is running.
+
+            4:NIS is booting the local node (implies NIS is running).
+
+            5:The local node is booted (implies NIS is running).
+
+            6:The local node is synchronized (implies NIS is running and the local node is booted).
+
+            7:There is no remote node available (implies NIS is running and the local node is booted).
+
+            8:NIS is currently loading the block chain.
+          example: 1
+        type:
+          type: integer
+          description: |
+            The type is dependent on the request which was answered.
+
+            The interpretation of the code field depends on the type. Currently the following types are supported:
+            
+            1: The result is a validation result.
+
+            2: The result is a heart beat result.
+
+            4: The result indicates a status.
+          example: 2
+        message:
+          type: string
+          description: Status message
+          example: "ok"
+    StatusDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: |
+            The meaning of the code is dependent on the type. For type 1 (validation result) only 0 and 1 mean there was no failure. For a complete list of validation results see Appendix B: NIS Errors The following codes are the most frequent ones occurring:
+            0:Neutral result. A typical example would be that a node validates an incoming transaction and realizes that it already knows about the transaction. In this case it is neither a success (meaning the node has a new transaction) nor a failure (because the transaction itself is valid).
+
+            1:Success result. A typical example would be that a node validates a new valid transaction.
+
+            2:Unknown failure. The validation failed for unknown reasons.
+
+            3:The entity that was validated has already past its deadline.
+
+            4:The entity used a deadline which lies too far in the future.
+
+            5:There was an account involved which had an insufficient balance to perform the operation.
+
+            6:The message supplied with the transaction is too large.
+
+            7:The hash of the entity which got validated is already in the database.
+
+            8:The signature of the entity could not be validated.
+
+            9:The entity used a timestamp that lies too far in the past.
+
+            10:The entity used a timestamp that lies in the future which is not acceptable.
+
+            11:The entity is unusable.
+
+            12:The score of the remote block chain is inferior (although a superior score was promised).
+
+            13:The remote block chain failed validation.
+
+            14:There was a conflicting importance transfer detected.
+
+            15:There were too many transaction in the supplied block.
+
+            16:The block contains a transaction that was signed by the harvester.
+
+            17:A previous importance transaction conflicts with a new transaction.
+
+            18:An importance transfer activation was attempted while previous one is active.
+
+            19:An importance transfer deactivation was attempted but is not active.
+
+            For type 2 the following codes are supported:
+
+            1:Successful heart beat detected.
+
+            For type 3 the following codes are supported:
+
+            0:Unknown status.
+
+            1:NIS is stopped.
+
+            2:NIS is starting.
+
+            3:NIS is running.
+
+            4:NIS is booting the local node (implies NIS is running).
+
+            5:The local node is booted (implies NIS is running).
+
+            6:The local node is synchronized (implies NIS is running and the local node is booted).
+
+            7:There is no remote node available (implies NIS is running and the local node is booted).
+
+            8:NIS is currently loading the block chain.
+          example: 6
+        type:
+          type: integer
+          description: |
+            The type is dependent on the request which was answered.
+
+            The interpretation of the code field depends on the type. Currently the following types are supported:
+            
+            1: The result is a validation result.
+
+            2: The result is a heart beat result.
+
+            4: The result indicates a status.
+          example: 4
+        message:
+          type: string
+          description: Status message
+          example: "status"
+    KeyPairDTO:
+      type: object
+      properties:
+        privateKey:
+          type: string
+          description: The private key as hex string.
+          example: 0962c6505d02123c40e858ff8ef21e2b7b5466be12c4770e3bf557aae828390f
+        address:
+          type: string
+          description: The address of the account.
+          example: NCKMNCU3STBWBR7E3XD2LR7WSIXF5IVJIDBHBZQT
+        publicKey:
+          type: string
+          description: The public key as hex string.
+          example: c2e19751291d01140e62ece9ee3923120766c6302e1099b04014fe1009bc89d3
+    AccountMetaDataDTO:
+      type: object
+      properties:
+        cosignatories:
+          type: array
+          items:
+            type: string
+          description: Array of cosignatory account addresses
+        cosignatoryOf:
+          type: array
+          items:
+            type: string
+          description: Array of accounts this account is a cosignatory of
+        status:
+          type: string
+          description: Account status (LOCKED/UNLOCKED)
+          example: LOCKED
+        remoteStatus:
+          type: string
+          description: Remote harvesting status (INACTIVE/ACTIVE)
+          example: ACTIVE
+    AccountDTO:
+      type: object
+      properties:
+        address:
+          type: string
+          description: The address of the account
+          example: TB7PINA6CP6RZT6N3ETEZRJZRPMSAJ3FHAPB4NI7
+        harvestedBlocks:
+          type: integer
+          description: Number of blocks harvested by this account
+          example: 0
+        balance:
+          type: integer
+          format: int64
+          description: Account balance in micro XEM
+          example: 9993550000
+        importance:
+          type: number
+          format: double
+          description: Importance of the account
+          example: 0.0
+        vestedBalance:
+          type: integer
+          format: int64
+          description: Vested balance in micro XEM
+          example: 9993550000
+        publicKey:
+          type: string
+          description: Public key of the account
+          example: 46ad1ec1647d7455493f51b1a11d9e61838fef43dbd50bfe7c68bb1bea7c1436
+        label:
+          type: string
+          nullable: true
+          description: Label of the account
+        multisigInfo:
+          type: object
+          description: Multisig information
+    AccountMetaDataPairDTO:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/AccountMetaDataDTO'
+        account:
+          $ref: '#/components/schemas/AccountDTO'
+    BlockHeightDTO:
+      type: object
+      properties:
+        height:
+          type: integer
+          description: The current height of the blockchain
+          example: 438873
+    BlockChainScoreDTO:
+      type: object
+      properties:
+        score:
+          type: string
+          description: The blockchain score as a hexadecimal string
+          example: 0127b09c71bddecdae
+    HashDTO:
+      type: object
+      properties:
+        data:
+          type: string
+          description: Hash data as a hexadecimal string
+    BlockDTO:
+      type: object
+      properties:
+        timeStamp:
+          type: integer
+          description: Block timestamp
+          example: 340587654
+        signature:
+          type: string
+          description: Block signature
+        prevBlockHash:
+          $ref: '#/components/schemas/HashDTO'
+        type:
+          type: integer
+          description: Block type
+          example: 1
+        transactions:
+          type: array
+          items:
+            type: object
+          description: Array of transactions in the block
+        version:
+          type: integer
+          description: Block version
+          example: -1744830463
+        signer:
+          type: string
+          description: Public key of the block signer
+        height:
+          type: integer
+          description: Block height
+          example: 438874
+    NodeMetaDataDTO:
+      type: object
+      properties:
+        features:
+          type: integer
+          description: Node features
+          example: 1
+        application:
+          type: string
+          nullable: true
+          description: Application name
+        networkId:
+          type: integer
+          description: Network ID
+          example: -104
+        version:
+          type: string
+          description: Node version
+          example: 0.6.102
+        platform:
+          type: string
+          description: Platform information
+          example: Ubuntu (11.0.28) on Linux
+    EndpointDTO:
+      type: object
+      properties:
+        protocol:
+          type: string
+          description: Protocol (http/https)
+          example: http
+        port:
+          type: integer
+          description: Port number
+          example: 7890
+        host:
+          type: string
+          description: Host name
+          example: t.nis1.rerena.nemnesia.com
+    IdentityDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Node name
+          example: testnet/rerena/.
+        public-key:
+          type: string
+          description: Node public key
+          example: bb0e019d28df2d5241790c47a3ff99f39a1fc56017a1d291fb74fe6762d66aea
+    NodeDTO:
+      type: object
+      properties:
+        metaData:
+          $ref: '#/components/schemas/NodeMetaDataDTO'
+        endpoint:
+          $ref: '#/components/schemas/EndpointDTO'
+        identity:
+          $ref: '#/components/schemas/IdentityDTO'
+    TransactionMetaDTO:
+      type: object
+      properties:
+        innerHash:
+          type: object
+          description: Inner transaction hash (for multisig transactions)
+        id:
+          type: integer
+          description: Transaction database ID
+        hash:
+          $ref: '#/components/schemas/HashDTO'
+        height:
+          type: integer
+          description: Block height of the transaction
+    MessageDTO:
+      type: object
+      properties:
+        payload:
+          type: string
+          description: Message payload (hex encoded)
+        type:
+          type: integer
+          description: Message type (1 for plain, 2 for encrypted)
+    TransactionDTO:
+      type: object
+      properties:
+        timeStamp:
+          type: integer
+          description: Transaction timestamp
+        amount:
+          type: integer
+          format: int64
+          description: Transaction amount in micro XEM
+        signature:
+          type: string
+          description: Transaction signature
+        fee:
+          type: integer
+          format: int64
+          description: Transaction fee in micro XEM
+        recipient:
+          type: string
+          description: Recipient address
+        type:
+          type: integer
+          description: Transaction type
+        deadline:
+          type: integer
+          description: Transaction deadline
+        message:
+          $ref: '#/components/schemas/MessageDTO'
+        version:
+          type: integer
+          description: Transaction version
+        signer:
+          type: string
+          description: Public key of the transaction signer
+    TransactionMetaDataPairDTO:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/TransactionMetaDTO'
+        transaction:
+          $ref: '#/components/schemas/TransactionDTO'
+    TransactionListDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionMetaDataPairDTO'
+          description: Array of transaction metadata pairs
+    UnconfirmedTransactionListDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          description: Array of unconfirmed transactions
+    HarvestInfoListDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          description: Array of harvest information
+    ImportanceDTO:
+      type: object
+      properties:
+        isSet:
+          type: integer
+          description: Whether importance is set (0 or 1)
+        score:
+          type: number
+          format: double
+          description: Importance score
+        ev:
+          type: number
+          format: double
+          description: Expected value
+        height:
+          type: integer
+          description: Block height when importance was calculated
+    AccountImportanceDTO:
+      type: object
+      properties:
+        address:
+          type: string
+          description: Account address
+        importance:
+          $ref: '#/components/schemas/ImportanceDTO'
+    AccountImportanceListDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountImportanceDTO'
+          description: Array of account importance data
+    NamespaceListDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          description: Array of namespaces
+    MosaicIdDTO:
+      type: object
+      properties:
+        namespaceId:
+          type: string
+          description: Namespace ID of the mosaic
+        name:
+          type: string
+          description: Name of the mosaic
+    MosaicDTO:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          format: int64
+          description: Quantity of the mosaic
+        mosaicId:
+          $ref: '#/components/schemas/MosaicIdDTO'
+    MosaicListDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MosaicDTO'
+          description: Array of mosaics
+    MosaicDefinitionListDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          description: Array of mosaic definitions
+    NodeListDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodeDTO'
+          description: Array of nodes
+    NisInfoDTO:
+      type: object
+      properties:
+        currentTime:
+          type: integer
+          description: Current NIS time
+        application:
+          type: string
+          description: Application name
+        startTime:
+          type: integer
+          description: NIS start time
+        version:
+          type: string
+          description: NIS version
+        signer:
+          type: string
+          nullable: true
+          description: Signer public key
+    ExtendedNodeInfoDTO:
+      type: object
+      properties:
+        node:
+          $ref: '#/components/schemas/NodeDTO'
+        nisInfo:
+          $ref: '#/components/schemas/NisInfoDTO'
+    TimeSynchronizationDTO:
+      type: object
+      properties:
+        dateTime:
+          type: string
+          description: Date and time
+        currentTimeOffset:
+          type: integer
+          description: Current time offset
+        change:
+          type: integer
+          description: Change in time offset
+    TimeSynchronizationListDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSynchronizationDTO'
+          description: Array of time synchronization data   
