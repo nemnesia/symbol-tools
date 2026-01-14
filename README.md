@@ -26,7 +26,7 @@ Symbol ブロックチェーンのための TypeScript/JavaScript ツールと�
 
 - **[symbol-event-stream](./packages/symbol-event-stream)**
   [![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-event-stream?style=flat-square)](https://www.npmjs.com/package/@nemnesia/symbol-event-stream)  
-  自動重複排除機能付きマルチ接続シンボルブロックチェーンWebSocketイベントストリーム。
+  自動重複排除機能付きマルチ接続SymbolブロックチェーンWebSocketイベントストリーム。
 
 - **[symbol-announcer](./packages/symbol-announcer)**
   [![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-announcer?style=flat-square)](https://www.npmjs.com/package/@nemnesia/symbol-announcer)  
