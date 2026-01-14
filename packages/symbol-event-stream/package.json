@@ -1,0 +1,65 @@
+{
+  "name": "@nemnesia/symbol-event-stream",
+  "version": "0.1.0",
+  "description": "自動重複排除機能付きマルチ接続シンボルブロックチェーンWebSocketイベントストリーム",
+  "keywords": [
+    "symbol",
+    "blockchain",
+    "websocket",
+    "event-stream",
+    "real-time",
+    "deduplication"
+  ],
+  "author": "ccHarvestasya",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nemnesia/symbol-tools.git",
+    "directory": "packages/symbol-event-stream"
+  },
+  "bugs": {
+    "url": "https://github.com/nemnesia/symbol-tools/issues"
+  },
+  "homepage": "https://github.com/nemnesia/symbol-tools/tree/main/packages/symbol-event-stream#readme",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "pnpm run clean && tsup",
+    "lint": "eslint \"{src,test,e2e}/**/*.ts\"",
+    "format": "prettier --write \"{src,test,e2e}/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui --coverage",
+    "prepublishOnly": "npm run lint && npm run format && npm run build && npm test",
+    "publish:dryrun": "npm publish --dry-run",
+    "publish:release": "npm run build && npm publish"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "dependencies": {
+    "@nemnesia/symbol-websocket": "^0.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "volta": {
+    "node": "20.19.6"
+  }
+}
