@@ -280,7 +280,7 @@ describe('SymbolEventStream', () => {
       const wsCallback = mockInstances[0].on.mock.calls[0][1];
 
       // 同じhashのメッセージを2回送信
-      const message = { meta: { hash: 'test-hash-123' }, data: 'test' };
+      const message = { data: { meta: { hash: 'test-hash-123' } }, topic: 'block' };
       wsCallback(message);
       wsCallback(message);
 
@@ -294,8 +294,8 @@ describe('SymbolEventStream', () => {
 
       const wsCallback = mockInstances[0].on.mock.calls[0][1];
 
-      wsCallback({ meta: { hash: 'hash-1' }, data: 'test1' });
-      wsCallback({ meta: { hash: 'hash-2' }, data: 'test2' });
+      wsCallback({ data: { meta: { hash: 'hash-1' } }, topic: 'block' });
+      wsCallback({ data: { meta: { hash: 'hash-2' } }, topic: 'block' });
 
       expect(callback).toHaveBeenCalledTimes(2);
     });
@@ -306,7 +306,7 @@ describe('SymbolEventStream', () => {
 
       const wsCallback = mockInstances[0].on.mock.calls[0][1];
 
-      const message = { meta: { hash: 'test-hash-123' }, data: 'test' };
+      const message = { data: { meta: { hash: 'test-hash-123' } }, topic: 'block' };
 
       wsCallback(message);
       expect(callback).toHaveBeenCalledTimes(1);
@@ -326,13 +326,13 @@ describe('SymbolEventStream', () => {
 
       // maxCacheSize + 1 個のメッセージを送信
       for (let i = 0; i < 6; i++) {
-        wsCallback({ meta: { hash: `hash-${i}` }, data: `test${i}` });
+        wsCallback({ data: { meta: { hash: `hash-${i}` } }, topic: 'block' });
       }
 
       expect(callback).toHaveBeenCalledTimes(6);
 
       // 最初のhashは削除されているはずなので、再送信されるべき
-      wsCallback({ meta: { hash: 'hash-0' }, data: 'test0' });
+      wsCallback({ data: { meta: { hash: 'hash-0' } }, topic: 'block' });
       expect(callback).toHaveBeenCalledTimes(7);
     });
 
@@ -356,15 +356,15 @@ describe('SymbolEventStream', () => {
 
       const wsCallback = mockInstances[0].on.mock.calls[0][1];
 
-      // meta.hashがない場合、hashを使用
-      wsCallback({ hash: 'direct-hash', data: 'test1' });
-      wsCallback({ hash: 'direct-hash', data: 'test1' });
+      // data.hashを使用
+      wsCallback({ data: { hash: 'direct-hash' }, topic: 'block' });
+      wsCallback({ data: { hash: 'direct-hash' }, topic: 'block' });
 
       expect(callback).toHaveBeenCalledTimes(1);
 
-      // hashもない場合、uidを使用
-      wsCallback({ uid: 'unique-id', data: 'test2' });
-      wsCallback({ uid: 'unique-id', data: 'test2' });
+      // data.uidを使用
+      wsCallback({ data: { uid: 'unique-id' }, topic: 'block' });
+      wsCallback({ data: { uid: 'unique-id' }, topic: 'block' });
 
       expect(callback).toHaveBeenCalledTimes(2);
     });
@@ -376,21 +376,21 @@ describe('SymbolEventStream', () => {
       const wsCallback = mockInstances[0].on.mock.calls[0][1];
 
       // いくつかのメッセージを送信
-      wsCallback({ meta: { hash: 'hash-1' }, data: 'test1' });
-      wsCallback({ meta: { hash: 'hash-2' }, data: 'test2' });
+      wsCallback({ data: { meta: { hash: 'hash-1' } }, topic: 'block' });
+      wsCallback({ data: { meta: { hash: 'hash-2' } }, topic: 'block' });
 
       // TTLの半分経過（クリーンアップ実行）
       vi.advanceTimersByTime(5000);
 
       // まだTTL内なので再送信されない
-      wsCallback({ meta: { hash: 'hash-1' }, data: 'test1' });
+      wsCallback({ data: { meta: { hash: 'hash-1' } }, topic: 'block' });
       expect(callback).toHaveBeenCalledTimes(2);
 
       // TTL経過後、さらにクリーンアップ実行
       vi.advanceTimersByTime(6000);
 
       // 期限切れなので再送信される
-      wsCallback({ meta: { hash: 'hash-1' }, data: 'test1' });
+      wsCallback({ data: { meta: { hash: 'hash-1' } }, topic: 'block' });
       expect(callback).toHaveBeenCalledTimes(3);
     });
   });

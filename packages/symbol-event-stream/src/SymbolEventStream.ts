@@ -217,6 +217,14 @@ export class SymbolEventStream {
   private extractId(message: unknown): string | undefined {
     if (typeof message !== 'object' || message === null) return undefined;
     const msg = message as Record<string, any>;
+
+    // topic/data構造の場合
+    if (msg.data) {
+      const data = msg.data;
+      return data?.meta?.hash || data?.hash || data?.uid;
+    }
+
+    // 直接的な構造の場合
     return msg?.meta?.hash || msg?.hash || msg?.uid;
   }
 

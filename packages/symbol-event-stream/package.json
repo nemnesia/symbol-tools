@@ -54,7 +54,7 @@
   },
   "packageManager": "pnpm@10.28.0",
   "dependencies": {
-    "@nemnesia/symbol-websocket": "^0.2.0"
+    "@nemnesia/symbol-websocket": "workspace:*"
   },
   "publishConfig": {
     "access": "public"
