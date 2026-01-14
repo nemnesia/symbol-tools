@@ -1,13 +1,11 @@
 {
   "name": "@nemnesia/symbol-websocket",
   "version": "0.2.0",
-  "description": "Symbol WebSocket Client Library",
+  "description": "Symbol ブロックチェーンのリアルタイムデータを監視する TypeScript ライブラリ",
   "keywords": [
-    "nem",
     "symbol",
     "blockchain",
-    "websocket",
-    "nodejs"
+    "websocket"
   ],
   "author": "ccHarvestasya",
   "license": "MIT",
