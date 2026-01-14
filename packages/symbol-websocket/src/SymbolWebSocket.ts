@@ -56,7 +56,7 @@ export class SymbolWebSocket {
    */
   private createConnection(): void {
     const endPointHost = this.options.host;
-    const ssl = this.options.ssl ?? false;
+    const ssl = this.options.ssl ?? true;
 
     const protocol = ssl ? 'wss' : 'ws';
     const endPointPort = ssl ? '3001' : '3000';
@@ -388,5 +388,12 @@ export class SymbolWebSocket {
     this.isFirstMessage = true;
     this.reconnectAttempts = 0;
     this.isFatalError = false;
+  }
+
+  /**
+   * WebSocket接続を切断（disconnectのエイリアス）
+   */
+  close(): void {
+    this.disconnect();
   }
 }

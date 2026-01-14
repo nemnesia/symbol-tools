@@ -8,24 +8,24 @@
 
 ### 追加
 
-- 構造化エラー処理機能（`SymbolWebSocketError`型）を追加。
-  - エラータイプ（`timeout`, `network`, `parse`, `connection`, `unknown`）の識別。
-  - エラー重大度（`fatal`, `recoverable`）の分類。
-  - 接続先ホスト、再接続状態、再接続試行回数などのコンテキスト情報を提供。
-- エラーコールバック未登録時に`console.warn`で警告を出力する機能。
+- `SymbolWebSocketError`型による構造化エラー処理
+  - エラータイプの識別（`timeout`, `network`, `parse`, `connection`, `unknown`）
+  - エラー重大度の分類（`fatal`, `recoverable`）
+  - 接続先ホスト、再接続状態、再接続試行回数の情報
+- エラーコールバック未登録時に`console.warn`で警告出力
 
 ### 変更
 
-- `onError`コールバックの型を`WebSocket.ErrorEvent`から`SymbolWebSocketError`に変更。
-- fatalエラー（タイムアウトなど）発生時は自動再接続を停止するように改善。
-- 再接続時に古いWebSocket接続を明示的にクローズするように改善。
+- `onError`コールバックの型を`WebSocket.ErrorEvent`から`SymbolWebSocketError`に変更
+- fatalエラー（タイムアウトなど）発生時は自動再接続を停止
+- 再接続時に古いWebSocket接続を明示的にクローズ
 
 ## [0.1.0] - 2025/12/29
 
 ### 追加
 
-- Symbol ブロックチェーンのWebSocket接続をサポート。
-- リアルタイムデータ取得機能（ブロック、トランザクション、アカウント情報など）。
-- 柔軟なサブスクリプション管理機能。
-- 自動再接続機能とサブスクリプション復元機能。
-- エラーおよびクローズイベントのハンドリング機能。
+- Symbol ブロックチェーンのWebSocket接続サポート
+- リアルタイムデータ取得（ブロック、トランザクション、アカウント情報など）
+- サブスクリプション管理
+- 自動再接続とサブスクリプション復元
+- エラー・クローズイベントのハンドリング

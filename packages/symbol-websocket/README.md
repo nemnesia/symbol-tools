@@ -1,13 +1,13 @@
 # Symbol WebSocket
 
-Symbol WebSocket は、Symbol ブロックチェーンのリアルタイムデータを監視するための TypeScript ライブラリです。このライブラリは、WebSocket を使用してブロックチェーンデータを効率的に取得し、サブスクリプションベースのイベントリスニングを提供します。
+Symbol ブロックチェーンのリアルタイムデータを監視する TypeScript ライブラリ。
 
 ## 特徴
 
-- **リアルタイムデータ取得**: ブロック、トランザクション、アカウント情報などをリアルタイムで取得可能。
-- **柔軟なサブスクリプション管理**: 必要なチャネルに簡単にサブスクライブおよびアンサブスクライブ可能。
-- **エラーおよびクローズイベントのハンドリング**: WebSocket のエラーや接続終了を簡単に処理可能。
-- **自動再接続**: 接続が切断された場合、自動的に再接続し、サブスクリプションを復元。
+- リアルタイムデータ取得（ブロック、トランザクション、アカウント情報など）
+- サブスクリプション管理
+- エラー・クローズイベントのハンドリング
+- 自動再接続とサブスクリプション復元
 
 ## インストール
 
@@ -123,26 +123,24 @@ interface SymbolWebSocketError {
 - **reconnecting**: 現在再接続中かどうか
 - **reconnectAttempts**: 現在の再接続試行回数
 
-### エラーハンドリングのベストプラクティス
+### エラーハンドリング例
 
 ```typescript
 ws.onError((err) => {
-  // エラータイプに応じた処理
   switch (err.type) {
     case 'timeout':
-      console.error(`${err.host}への接続がタイムアウトしました`);
+      console.error(`${err.host}への接続がタイムアウト`);
       break;
     case 'network':
-      console.warn('ネットワークエラーが発生しました');
+      console.warn('ネットワークエラー');
       break;
     case 'parse':
-      console.error('メッセージのパースに失敗しました');
+      console.error('メッセージのパースに失敗');
       break;
   }
 
-  // 致命的エラーの場合
   if (err.severity === 'fatal') {
-    // 再接続は自動的に停止されます
+    // 再接続は自動停止
     // 必要に応じてユーザーに通知
   }
 });
@@ -152,11 +150,11 @@ ws.onError((err) => {
 
 ## 注意点
 
-- 再接続は自動的に行われます（デフォルト有効）。
-- 再接続時は既存のサブスクリプションが自動的に復元されます。
-- `autoReconnect: false`を設定することで自動再接続を無効化できます。
-- `severity: 'fatal'`のエラーが発生した場合、自動再接続は停止します。
-- `off()`メソッドは、指定されたチャネルのすべてのコールバックを解除します（subscribePath単位）。
+- 再接続は自動で行われる（デフォルト有効）
+- 再接続時は既存のサブスクリプションを自動復元
+- `autoReconnect: false`で自動再接続を無効化可能
+- `severity: 'fatal'`のエラーが発生した場合は自動再接続停止
+- `off()`は指定チャネルのすべてのコールバックを解除（subscribePath単位）
 
 ## ライセンス
 
@@ -164,8 +162,8 @@ ws.onError((err) => {
 
 ## 貢献方法
 
-バグ報告・機能要望・プルリクエストは [GitHubリポジトリ](https://github.com/nemnesia/symbol-tools/tree/main/packages/symbol-websocket) で受け付けています。お気軽にご参加ください。
+バグ報告・機能要望・プルリクエストは [GitHubリポジトリ](https://github.com/nemnesia/symbol-tools/tree/main/packages/symbol-websocket) で受け付けています。
 
 ## バグ報告・質問
 
-問題や質問は [GitHub Issues](https://github.com/nemnesia/symbol-tools/issues) からご連絡ください。
+問題や質問は [GitHub Issues](https://github.com/nemnesia/symbol-tools/issues) まで。
