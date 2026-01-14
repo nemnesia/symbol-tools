@@ -166,7 +166,7 @@ export class SymbolWebSocket {
 
   /**
    * コンテキスト付きエラーを生成
-   * 
+   *
    * @param type エラータイプ
    * @param severity エラーの深刻度
    * @param originalError 元のエラーオブジェクト
@@ -183,7 +183,7 @@ export class SymbolWebSocket {
       type,
       severity,
       host: this.options.host,
-      reconnecting: this.reconnectAttempts > 0,
+      reconnecting: severity === 'recoverable' && this.reconnectAttempts > 0,
       reconnectAttempts: this.reconnectAttempts,
       originalError,
       timestamp: Date.now(),
