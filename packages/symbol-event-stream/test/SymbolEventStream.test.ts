@@ -9,7 +9,10 @@ class MockSymbolWebSocket {
   public off = vi.fn();
   public close = vi.fn();
   public onError = vi.fn();
-  public uid = 'test-uid';
+  public onConnect = vi.fn();
+  public onClose = vi.fn();
+  public onReconnect = vi.fn();
+  public uid: string | null = 'test-uid';
   public isConnected = true;
 
   constructor(public options: any) {}
@@ -25,7 +28,10 @@ vi.mock('@nemnesia/symbol-websocket', () => {
       public off: any;
       public close: any;
       public onError: any;
-      public uid: string;
+      public onConnect: any;
+      public onClose: any;
+      public onReconnect: any;
+      public uid: string | null;
       public isConnected: boolean;
       public options: any;
 
@@ -36,6 +42,9 @@ vi.mock('@nemnesia/symbol-websocket', () => {
         this.off = instance.off;
         this.close = instance.close;
         this.onError = instance.onError;
+        this.onConnect = instance.onConnect;
+        this.onClose = instance.onClose;
+        this.onReconnect = instance.onReconnect;
         this.uid = instance.uid;
         this.isConnected = instance.isConnected;
         this.options = instance.options;
@@ -499,6 +508,311 @@ describe('SymbolEventStream', () => {
 
       // 複数のホストが選択されていることを確認（完全にランダムなので必ず全て選ばれるわけではない）
       expect(hosts.size).toBeGreaterThan(1);
+    });
+  });
+
+  describe('接続管理機能', () => {
+    let stream: SymbolEventStream;
+
+    beforeEach(() => {
+      stream = new SymbolEventStream({
+        nodeUrls: ['node1.example.com', 'node2.example.com'],
+        connections: 2,
+      });
+    });
+
+    afterEach(() => {
+      stream.close();
+    });
+
+    describe('onConnect', () => {
+      it('接続コールバックが登録されるべきである', () => {
+        const connectCallback = vi.fn();
+        stream.onConnect(connectCallback);
+
+        // 各WebSocketに対してonConnectが呼ばれていることを確認
+        expect(mockInstances[0].onConnect).toHaveBeenCalled();
+        expect(mockInstances[1].onConnect).toHaveBeenCalled();
+      });
+
+      it('接続時にノードURLとUIDがコールバックに渡されるべきである', () => {
+        const connectCallback = vi.fn();
+
+        // 既存接続の即座呼び出しをクリア
+        connectCallback.mockClear();
+
+        stream.onConnect(connectCallback);
+
+        // WebSocketのonConnectコールバックをシミュレート
+        const wsConnectCallback1 = mockInstances[0].onConnect.mock.calls[0][0];
+        const wsConnectCallback2 = mockInstances[1].onConnect.mock.calls[0][0];
+
+        // 既存の呼び出し回数を記録
+        const beforeCalls = connectCallback.mock.calls.length;
+
+        wsConnectCallback1('uid-1');
+        wsConnectCallback2('uid-2');
+
+        // 新たに2回呼ばれたことを確認
+        expect(connectCallback.mock.calls.length).toBe(beforeCalls + 2);
+
+        // UIDが渡されていることを確認
+        const allCalls = connectCallback.mock.calls;
+        const newCalls = allCalls.slice(beforeCalls);
+        expect(newCalls.some((call: any[]) => call[1] === 'uid-1')).toBe(true);
+        expect(newCalls.some((call: any[]) => call[1] === 'uid-2')).toBe(true);
+      });
+
+      it('すでに接続済みの場合は即座にコールバックが呼ばれるべきである', () => {
+        const connectCallback = vi.fn();
+
+        // すでに接続済みの状態（モックのデフォルト）
+        stream.onConnect(connectCallback);
+
+        expect(connectCallback).toHaveBeenCalledTimes(2);
+        expect(connectCallback).toHaveBeenCalledWith(expect.any(String), 'test-uid');
+      });
+    });
+
+    describe('onDisconnect', () => {
+      it('切断コールバックが登録されるべきである', () => {
+        const disconnectCallback = vi.fn();
+        stream.onDisconnect(disconnectCallback);
+
+        // 各WebSocketに対してonCloseが呼ばれていることを確認
+        expect(mockInstances[0].onClose).toHaveBeenCalled();
+        expect(mockInstances[1].onClose).toHaveBeenCalled();
+      });
+
+      it('切断時にノードURLがコールバックに渡されるべきである', () => {
+        const disconnectCallback = vi.fn();
+        stream.onDisconnect(disconnectCallback);
+
+        // WebSocketのonCloseコールバックをシミュレート
+        const wsCloseCallback1 = mockInstances[0].onClose.mock.calls[0][0];
+        const wsCloseCallback2 = mockInstances[1].onClose.mock.calls[0][0];
+
+        wsCloseCallback1();
+        wsCloseCallback2();
+
+        expect(disconnectCallback).toHaveBeenCalledWith('node1.example.com');
+        expect(disconnectCallback).toHaveBeenCalledWith('node2.example.com');
+      });
+    });
+
+    describe('isConnected', () => {
+      it('少なくとも1つ接続されている場合はtrueを返すべきである', () => {
+        mockInstances[0].isConnected = true;
+        mockInstances[1].isConnected = false;
+
+        expect(stream.isConnected()).toBe(true);
+      });
+
+      it('全て接続されている場合はtrueを返すべきである', () => {
+        mockInstances[0].isConnected = true;
+        mockInstances[1].isConnected = true;
+
+        expect(stream.isConnected()).toBe(true);
+      });
+
+      it('全て切断されている場合はfalseを返すべきである', () => {
+        mockInstances[0].isConnected = false;
+        mockInstances[1].isConnected = false;
+
+        expect(stream.isConnected()).toBe(false);
+      });
+    });
+
+    describe('getConnectedNodes', () => {
+      it('接続中のノードURLリストを返すべきである', () => {
+        mockInstances[0].isConnected = true;
+        mockInstances[1].isConnected = false;
+
+        const connectedNodes = stream.getConnectedNodes();
+
+        expect(connectedNodes).toHaveLength(1);
+        // ランダムに選ばれるため、どちらかのノードが含まれることを確認
+        expect(connectedNodes[0]).toMatch(/node\d\.example\.com/);
+      });
+
+      it('全て接続されている場合は全ノードを返すべきである', () => {
+        mockInstances[0].isConnected = true;
+        mockInstances[1].isConnected = true;
+
+        const connectedNodes = stream.getConnectedNodes();
+
+        expect(connectedNodes).toHaveLength(2);
+        expect(connectedNodes).toContain('node1.example.com');
+        expect(connectedNodes).toContain('node2.example.com');
+      });
+
+      it('全て切断されている場合は空配列を返すべきである', () => {
+        mockInstances[0].isConnected = false;
+        mockInstances[1].isConnected = false;
+
+        const connectedNodes = stream.getConnectedNodes();
+
+        expect(connectedNodes).toHaveLength(0);
+      });
+    });
+
+    describe('getConnectionStatus', () => {
+      it('全ノードの接続状態を返すべきである', () => {
+        mockInstances[0].isConnected = true;
+        mockInstances[0].uid = 'uid-1';
+        mockInstances[1].isConnected = false;
+        mockInstances[1].uid = null;
+
+        const status = stream.getConnectionStatus();
+
+        expect(status).toHaveLength(2);
+
+        // ランダムに選ばれるため、配列全体の内容をチェック
+        const connectedNode = status.find((s) => s.connected);
+        const disconnectedNode = status.find((s) => !s.connected);
+
+        expect(connectedNode).toBeDefined();
+        expect(connectedNode?.connected).toBe(true);
+        expect(connectedNode?.uid).toBe('uid-1');
+        expect(connectedNode?.nodeUrl).toMatch(/node\d\.example\.com/);
+
+        expect(disconnectedNode).toBeDefined();
+        expect(disconnectedNode?.connected).toBe(false);
+        expect(disconnectedNode?.uid).toBeNull();
+        expect(disconnectedNode?.nodeUrl).toMatch(/node\d\.example\.com/);
+      });
+
+      it('UIDがnullの場合も正しく処理されるべきである', () => {
+        mockInstances[0].isConnected = true;
+        mockInstances[0].uid = null;
+
+        const status = stream.getConnectionStatus();
+
+        expect(status[0].uid).toBeNull();
+      });
+    });
+
+    describe('close時のクリーンアップ', () => {
+      it('close時に接続コールバックもクリアされるべきである', () => {
+        const connectCallback = vi.fn();
+        stream.onConnect(connectCallback);
+
+        stream.close();
+
+        // closeされた後はgetActiveConnectionCountが0を返す
+        expect(stream.getActiveConnectionCount()).toBe(0);
+      });
+    });
+  });
+
+  describe('ノード切り替え機能', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('再接続試行回数が上限を超えたら別のノードに切り替えるべきである', () => {
+      const stream = new SymbolEventStream({
+        nodeUrls: ['node1.example.com', 'node2.example.com', 'node3.example.com'],
+        connections: 1,
+        maxReconnectBeforeSwitching: 3,
+      });
+
+      const initialWs = mockInstances[0];
+      const initialNodeCount = stream.getActiveConnectionCount();
+
+      // onReconnectコールバックを取得
+      const reconnectCallback = initialWs.onReconnect.mock.calls[0][0];
+
+      // 再接続を3回シミュレート（上限に達する）
+      reconnectCallback(3);
+
+      // 新しいWebSocketが作成されたことを確認
+      expect(mockInstances.length).toBeGreaterThan(initialNodeCount);
+
+      stream.close();
+    });
+
+    it('ブラックリストに登録されたノードは選択されないべきである', () => {
+      const stream = new SymbolEventStream({
+        nodeUrls: ['node1.example.com', 'node2.example.com', 'node3.example.com'],
+        connections: 1,
+        maxReconnectBeforeSwitching: 2,
+      });
+
+      const initialWs = mockInstances[0];
+      const reconnectCallback = initialWs.onReconnect.mock.calls[0][0];
+
+      // 再接続上限を超えてノード切り替え
+      reconnectCallback(2);
+
+      const blacklisted = stream.getBlacklistedNodes();
+      expect(blacklisted.length).toBeGreaterThan(0);
+
+      stream.close();
+    });
+
+    it('ブラックリストはTTL後にクリアされるべきである', () => {
+      const stream = new SymbolEventStream({
+        nodeUrls: ['node1.example.com', 'node2.example.com', 'node3.example.com'],
+        connections: 1,
+        maxReconnectBeforeSwitching: 2,
+        blacklistTtl: 10000,
+        cacheTtl: 60000, // cacheTtlを大きくしてブラックリストクリーンアップの間隔がブラックリストTTLに従うようにする
+      });
+
+      const initialWs = mockInstances[0];
+      const reconnectCallback = initialWs.onReconnect.mock.calls[0][0];
+
+      // ノード切り替えを発生させる
+      reconnectCallback(2);
+
+      expect(stream.getBlacklistedNodes().length).toBeGreaterThan(0);
+
+      // クリーンアップ間隔は Math.min(cacheTtl / 2, blacklistTtl / 2) = 5000
+      // ブラックリストTTLの10000msを超えた後、次のクリーンアップで削除される
+      vi.advanceTimersByTime(10500); // TTLを超える
+      vi.advanceTimersByTime(5000); // クリーンアップが実行されるまで待つ
+
+      // ブラックリストがクリアされる
+      expect(stream.getBlacklistedNodes().length).toBe(0);
+
+      stream.close();
+    });
+
+    it('利用可能なノードがない場合は切り替えを行わないべきである', () => {
+      const stream = new SymbolEventStream({
+        nodeUrls: ['node1.example.com'],
+        connections: 1,
+        maxReconnectBeforeSwitching: 2,
+      });
+
+      const initialWs = mockInstances[0];
+      const initialCount = mockInstances.length;
+      const reconnectCallback = initialWs.onReconnect.mock.calls[0][0];
+
+      // 再接続上限を超える（でも他にノードがないので切り替わらない）
+      reconnectCallback(2);
+
+      // 新しいWebSocketは作成されない
+      expect(mockInstances.length).toBe(initialCount);
+
+      stream.close();
+    });
+
+    it('getBlacklistedNodesでブラックリスト一覧を取得できるべきである', () => {
+      const stream = new SymbolEventStream({
+        nodeUrls: ['node1.example.com', 'node2.example.com'],
+        connections: 1,
+        maxReconnectBeforeSwitching: 2,
+      });
+
+      expect(stream.getBlacklistedNodes()).toEqual([]);
+
+      stream.close();
     });
   });
 });
