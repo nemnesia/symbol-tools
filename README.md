@@ -24,6 +24,10 @@ Symbol ブロックチェーンのための TypeScript/JavaScript ツールと�
   [![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-websocket?style=flat-square)](https://www.npmjs.com/package/@nemnesia/symbol-websocket)  
   SymbolブロックチェーンのWebSocketリアルタイム監視ライブラリ。
 
+- **[symbol-event-stream](./packages/symbol-event-stream)**
+  [![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-event-stream?style=flat-square)](https://www.npmjs.com/package/@nemnesia/symbol-event-stream)  
+  自動重複排除機能付きマルチ接続シンボルブロックチェーンWebSocketイベントストリーム。
+
 - **[symbol-announcer](./packages/symbol-announcer)**
   [![npm version](https://img.shields.io/npm/v/@nemnesia/symbol-announcer?style=flat-square)](https://www.npmjs.com/package/@nemnesia/symbol-announcer)  
   Symbolトランザクションのアナウンス＆WebSocket監視ツール。
