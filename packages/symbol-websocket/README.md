@@ -55,6 +55,15 @@ ws.disconnect();
 
 ## API
 
+#### プロパティ
+
+- `uid: string | null`
+  - 現在のWebSocket接続のUID。未接続時は`null`。
+- `isConnected: boolean`
+  - WebSocket接続が確立されているかどうか。
+- `client: WebSocket`
+  - 内部のWebSocketクライアントインスタンス。
+
 #### コンストラクタ
 
 ```typescript
@@ -89,6 +98,8 @@ new SymbolWebSocket(options: SymbolWebSocketOptions);
   - クローズイベントのコールバックを登録します。
 - `disconnect(): void`
   - WebSocket 接続を切断します。
+- `close(): void`
+  - WebSocket 接続を切断します（`disconnect()`のエイリアス）。
 
 ## エラー処理
 

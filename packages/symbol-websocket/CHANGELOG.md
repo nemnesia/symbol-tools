@@ -11,8 +11,10 @@
 - `SymbolWebSocketError`型による構造化エラー処理
   - エラータイプの識別（`timeout`, `network`, `parse`, `connection`, `unknown`）
   - エラー重大度の分類（`fatal`, `recoverable`）
-  - 接続先ホスト、再接続状態、再接続試行回数の情報
+  - 接続先ホスト、再接続状態、再接続試行回数、タイムスタンプの情報
 - エラーコールバック未登録時に`console.warn`で警告出力
+- `isConnected`プロパティによる接続状態確認機能
+- `close()`メソッドを`disconnect()`のエイリアスとして追加
 
 ### 変更
 

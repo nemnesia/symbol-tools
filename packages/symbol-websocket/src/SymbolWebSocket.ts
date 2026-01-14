@@ -166,6 +166,12 @@ export class SymbolWebSocket {
 
   /**
    * コンテキスト付きエラーを生成
+   * 
+   * @param type エラータイプ
+   * @param severity エラーの深刻度
+   * @param originalError 元のエラーオブジェクト
+   * @param message エラーメッセージ
+   * @returns コンテキスト付きSymbolWebSocketErrorオブジェクト
    */
   private createContextualError(
     type: SymbolWebSocketErrorType,
@@ -256,6 +262,7 @@ export class SymbolWebSocket {
 
   /**
    * WebSocketエラーイベント登録
+   *
    * @param callback エラー時に呼ばれるコールバック
    */
   public onError(callback: (err: SymbolWebSocketError) => void): void {
@@ -264,6 +271,7 @@ export class SymbolWebSocket {
 
   /**
    * WebSocketクローズイベント登録
+   *
    * @param callback クローズ時に呼ばれるコールバック
    */
   public onClose(callback: (event: WebSocket.CloseEvent) => void): void {
@@ -272,17 +280,28 @@ export class SymbolWebSocket {
 
   /**
    * チャネルサブスクメソッド
+   *
    * @param channel チャネル名
    * @param callback コールバック関数
    */
   on(channel: SymbolChannel, callback: (message: WebSocket.MessageEvent) => void): void;
+
   /**
    * チャネルサブスクメソッド
+   *
    * @param channel チャネル名
    * @param address アドレス
    * @param callback コールバック関数
    */
   on(channel: SymbolChannel, address: string, callback: (message: WebSocket.MessageEvent) => void): void;
+
+  /**
+   * チャネルサブスクメソッド実装
+   *
+   * @param channel チャネル名
+   * @param addressOrCallback アドレスまたはコールバック関数
+   * @param callback コールバック関数
+   */
   on(
     channel: SymbolChannel,
     addressOrCallback: string | ((message: WebSocket.MessageEvent) => void),
@@ -323,15 +342,25 @@ export class SymbolWebSocket {
 
   /**
    * チャネルアンサブスクメソッド
+   *
    * @param channel チャネル名
    */
   off(channel: SymbolChannel): void;
+
   /**
    * チャネルアンサブスクメソッド
+   *
    * @param channel チャネル名
    * @param address アドレス
    */
   off(channel: SymbolChannel, address: string): void;
+
+  /**
+   * チャネルアンサブスクメソッド
+   *
+   * @param channel チャネル名
+   * @param address アドレス
+   */
   off(channel: SymbolChannel, address?: string): void {
     const channelPath = symbolChannelPaths[channel];
 
