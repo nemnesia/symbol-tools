@@ -4,6 +4,22 @@
 
 変更履歴のフォーマットは[変更履歴の管理](https://keepachangelog.com/en/1.0.0/)に基づいています。
 
+## [0.2.0] - 2026/01/14
+
+### 追加
+
+- 構造化エラー処理機能（`SymbolWebSocketError`型）を追加。
+  - エラータイプ（`timeout`, `network`, `parse`, `connection`, `unknown`）の識別。
+  - エラー重大度（`fatal`, `recoverable`）の分類。
+  - 接続先ホスト、再接続状態、再接続試行回数などのコンテキスト情報を提供。
+- エラーコールバック未登録時に`console.warn`で警告を出力する機能。
+
+### 変更
+
+- `onError`コールバックの型を`WebSocket.ErrorEvent`から`SymbolWebSocketError`に変更。
+- fatalエラー（タイムアウトなど）発生時は自動再接続を停止するように改善。
+- 再接続時に古いWebSocket接続を明示的にクローズするように改善。
+
 ## [0.1.0] - 2025/12/29
 
 ### 追加

@@ -1,6 +1,6 @@
 {
   "name": "@nemnesia/symbol-websocket",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Symbol WebSocket Client Library",
   "keywords": [
     "nem",
@@ -59,7 +59,7 @@
   "dependencies": {
     "@stomp/stompjs": "^7.2.1",
     "isomorphic-ws": "^5.0.0",
-    "ws": "^8.18.3"
+    "ws": "^8.19.0"
   },
   "publishConfig": {
     "access": "public"

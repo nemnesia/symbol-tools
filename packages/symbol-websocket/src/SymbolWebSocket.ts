@@ -1,6 +1,11 @@
 import WebSocket from 'isomorphic-ws';
 
-import { SymbolWebSocketOptions } from './symbol.types.js';
+import {
+  SymbolWebSocketError,
+  SymbolWebSocketErrorSeverity,
+  SymbolWebSocketErrorType,
+  SymbolWebSocketOptions,
+} from './symbol.types.js';
 import { symbolChannelPaths } from './symbolChannelPaths.js';
 import type { SymbolChannel } from './symbolChannelPaths.js';
 
@@ -17,7 +22,7 @@ export class SymbolWebSocket {
   private isFirstMessage = true;
   private eventCallbacks: { [event: string]: ((message: WebSocket.MessageEvent) => void)[] } = {};
   private pendingSubscribes: { subscribePath: string; callback: (message: WebSocket.MessageEvent) => void }[] = [];
-  private errorCallbacks: ((err: WebSocket.ErrorEvent) => void)[] = [];
+  private errorCallbacks: ((err: SymbolWebSocketError) => void)[] = [];
   private onCloseCallback: (event: WebSocket.CloseEvent) => void = () => {};
   private connectCallbacks: ((uid: string) => void)[] = [];
   private reconnectCallbacks: ((attemptCount: number) => void)[] = [];
@@ -28,6 +33,7 @@ export class SymbolWebSocket {
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private connectionTimeoutTimer: ReturnType<typeof setTimeout> | null = null;
   private isManualDisconnect = false;
+  private isFatalError = false;
   private activeSubscriptions: Set<string> = new Set();
 
   /**
@@ -63,8 +69,13 @@ export class SymbolWebSocket {
       this.connectionTimeoutTimer = setTimeout(() => {
         if (this._client.readyState === WS_CONNECTING || !this._uid) {
           const timeoutError = new Error(`WebSocket connection timeout after ${this.options.timeout}ms`);
-          const errorEvent = { error: timeoutError, message: timeoutError.message } as WebSocket.ErrorEvent;
-          this.errorCallbacks.forEach((cb) => cb(errorEvent));
+          const contextualError = this.createContextualError('timeout', 'fatal', timeoutError, 'Connection timeout');
+          this.isFatalError = true;
+          if (this.errorCallbacks.length > 0) {
+            this.errorCallbacks.forEach((cb) => cb(contextualError));
+          } else {
+            console.warn('[SymbolWebSocket]', contextualError);
+          }
           this._client.close();
         }
       }, this.options.timeout);
@@ -74,15 +85,28 @@ export class SymbolWebSocket {
     this._client.onclose = (event: WebSocket.CloseEvent) => {
       this.onCloseCallback(event);
 
-      // 手動切断でない場合は再接続を試みる
-      if (!this.isManualDisconnect && this.options.autoReconnect) {
+      // 手動切断でない場合、かつfatalエラーでない場合は再接続を試みる
+      if (!this.isManualDisconnect && !this.isFatalError && this.options.autoReconnect) {
         this.attemptReconnect();
       }
+
+      // fatalフラグをリセット（次の接続のため）
+      this.isFatalError = false;
     };
 
     // エラー発生時の処理
     this._client.onerror = (err: WebSocket.ErrorEvent) => {
-      this.errorCallbacks.forEach((cb) => cb(err));
+      const contextualError = this.createContextualError(
+        'network',
+        'recoverable',
+        err,
+        err.message || 'WebSocket network error'
+      );
+      if (this.errorCallbacks.length > 0) {
+        this.errorCallbacks.forEach((cb) => cb(contextualError));
+      } else {
+        console.warn('[SymbolWebSocket]', contextualError);
+      }
     };
 
     // メッセージ受信時の処理
@@ -125,12 +149,39 @@ export class SymbolWebSocket {
         }
       } catch (e) {
         if (this.errorCallbacks.length > 0) {
-          const errorEvent = { ...(e instanceof Error ? e : { message: String(e) }) } as WebSocket.ErrorEvent;
-          this.errorCallbacks.forEach((cb) => cb(errorEvent));
+          const error = e instanceof Error ? e : new Error(String(e));
+          const contextualError = this.createContextualError(
+            'parse',
+            'recoverable',
+            error,
+            'Failed to parse WebSocket message'
+          );
+          this.errorCallbacks.forEach((cb) => cb(contextualError));
         } else {
           throw e;
         }
       }
+    };
+  }
+
+  /**
+   * コンテキスト付きエラーを生成
+   */
+  private createContextualError(
+    type: SymbolWebSocketErrorType,
+    severity: SymbolWebSocketErrorSeverity,
+    originalError: WebSocket.ErrorEvent | Error,
+    message: string
+  ): SymbolWebSocketError {
+    return {
+      type,
+      severity,
+      host: this.options.host,
+      reconnecting: this.reconnectAttempts > 0,
+      reconnectAttempts: this.reconnectAttempts,
+      originalError,
+      timestamp: Date.now(),
+      message,
     };
   }
 
@@ -151,6 +202,11 @@ export class SymbolWebSocket {
 
     const interval = this.options.reconnectInterval ?? 3000;
     this.reconnectTimer = setTimeout(() => {
+      // 古いWebSocketを明示的にclose
+      if (this._client.readyState === WS_OPEN || this._client.readyState === WS_CONNECTING) {
+        this._client.close();
+      }
+
       this.isFirstMessage = true;
       this._uid = null;
       this.createConnection();
@@ -202,7 +258,7 @@ export class SymbolWebSocket {
    * WebSocketエラーイベント登録
    * @param callback エラー時に呼ばれるコールバック
    */
-  public onError(callback: (err: WebSocket.ErrorEvent) => void): void {
+  public onError(callback: (err: SymbolWebSocketError) => void): void {
     this.errorCallbacks.push(callback);
   }
 
@@ -331,5 +387,6 @@ export class SymbolWebSocket {
     this._uid = null;
     this.isFirstMessage = true;
     this.reconnectAttempts = 0;
+    this.isFatalError = false;
   }
 }

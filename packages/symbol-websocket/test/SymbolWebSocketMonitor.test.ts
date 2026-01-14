@@ -566,4 +566,293 @@ describe('SymbolWebSocketMonitor', () => {
       vi.useRealTimers();
     });
   });
+
+  describe('構造化エラー処理', () => {
+    it('createContextualErrorがエラーコンテキストを正しく生成するべきである', () => {
+      const errorCallback = vi.fn();
+      monitor.onError(errorCallback);
+
+      // @ts-ignore
+      monitor.reconnectAttempts = 3;
+      // @ts-ignore
+      monitor.client.onerror({ message: 'test network error', type: 'error' });
+
+      expect(errorCallback).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'network',
+          severity: 'recoverable',
+          host: 'localhost',
+          reconnecting: true,
+          reconnectAttempts: 3,
+          message: 'test network error',
+          timestamp: expect.any(Number),
+        })
+      );
+    });
+
+    it('parseエラー時にcontextualErrorが生成されるべきである', () => {
+      const errorCallback = vi.fn();
+      monitor.onError(errorCallback);
+
+      // @ts-ignore
+      monitor.client.onmessage({ data: '{invalid json' });
+
+      expect(errorCallback).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'parse',
+          severity: 'recoverable',
+          message: 'Failed to parse WebSocket message',
+        })
+      );
+    });
+
+    it('エラーコールバックがない場合にconsole.warnが呼ばれるべきである', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      // @ts-ignore
+      monitor.errorCallbacks = [];
+      // @ts-ignore
+      monitor.client.onerror({ message: 'test error', type: 'error' });
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[SymbolWebSocket]',
+        expect.objectContaining({
+          type: 'network',
+          message: 'test error',
+        })
+      );
+
+      warnSpy.mockRestore();
+    });
+
+    it('timeout時にfatalエラーが生成されるべきである', () => {
+      vi.useFakeTimers();
+      const errorCallback = vi.fn();
+
+      const options: SymbolWebSocketOptions = {
+        host: 'test-host',
+        timeout: 1000,
+        ssl: false,
+      };
+      // @ts-ignore
+      const testMonitor = new SymbolWebSocket(options);
+      testMonitor.onError(errorCallback);
+
+      // @ts-ignore
+      testMonitor._client.readyState = 0; // CONNECTING
+
+      vi.advanceTimersByTime(1000);
+
+      expect(errorCallback).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'timeout',
+          severity: 'fatal',
+          message: 'Connection timeout',
+        })
+      );
+
+      vi.useRealTimers();
+    });
+
+    it('timeout時でエラーコールバックがない場合にconsole.warnが呼ばれるべきである', () => {
+      vi.useFakeTimers();
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      const options: SymbolWebSocketOptions = {
+        host: 'test-host',
+        timeout: 1000,
+        ssl: false,
+      };
+      // @ts-ignore
+      const testMonitor = new SymbolWebSocket(options);
+      // @ts-ignore
+      testMonitor._client.readyState = 0; // CONNECTING
+
+      vi.advanceTimersByTime(1000);
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[SymbolWebSocket]',
+        expect.objectContaining({
+          type: 'timeout',
+          severity: 'fatal',
+        })
+      );
+
+      warnSpy.mockRestore();
+      vi.useRealTimers();
+    });
+  });
+
+  describe('fatalエラー時の再接続制御', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('fatalエラー時は再接続を試みないべきである', () => {
+      const options: SymbolWebSocketOptions = {
+        host: 'test-host',
+        timeout: 1000,
+        ssl: false,
+        autoReconnect: true,
+      };
+      // @ts-ignore
+      const testMonitor = new SymbolWebSocket(options);
+
+      const reconnectCallback = vi.fn();
+      testMonitor.onReconnect(reconnectCallback);
+
+      // fatalエラーをシミュレート
+      // @ts-ignore
+      testMonitor.isFatalError = true;
+      // @ts-ignore
+      testMonitor.isManualDisconnect = false;
+      // @ts-ignore
+      testMonitor._client.onclose({ type: 'close' });
+
+      vi.advanceTimersByTime(5000);
+
+      expect(reconnectCallback).not.toHaveBeenCalled();
+    });
+
+    it('timeout後にoncloseでfatalフラグがリセットされるべきである', () => {
+      const options: SymbolWebSocketOptions = {
+        host: 'test-host',
+        timeout: 1000,
+        ssl: false,
+        autoReconnect: true,
+      };
+      // @ts-ignore
+      const testMonitor = new SymbolWebSocket(options);
+
+      // @ts-ignore
+      testMonitor._client.readyState = 0; // CONNECTING
+      vi.advanceTimersByTime(1000);
+
+      // @ts-ignore
+      expect(testMonitor.isFatalError).toBe(true);
+
+      // oncloseが呼ばれるとフラグがリセット
+      // @ts-ignore
+      testMonitor._client.onclose({ type: 'close' });
+
+      // @ts-ignore
+      expect(testMonitor.isFatalError).toBe(false);
+    });
+
+    it('disconnect時にfatalフラグがリセットされるべきである', () => {
+      // @ts-ignore
+      monitor.isFatalError = true;
+
+      monitor.disconnect();
+
+      // @ts-ignore
+      expect(monitor.isFatalError).toBe(false);
+    });
+  });
+
+  describe('再接続時の古いWebSocketクローズ', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('再接続時にOPEN状態の古いWebSocketがcloseされるべきである', () => {
+      const options: SymbolWebSocketOptions = {
+        host: 'test-host',
+        timeout: 1000,
+        ssl: false,
+        autoReconnect: true,
+        reconnectInterval: 1000,
+      };
+      // @ts-ignore
+      const testMonitor = new SymbolWebSocket(options);
+
+      const closeSpy = vi.fn();
+      // @ts-ignore
+      testMonitor._client.close = closeSpy;
+      // @ts-ignore
+      testMonitor._client.readyState = 1; // OPEN
+
+      // @ts-ignore
+      testMonitor.isManualDisconnect = false;
+      // @ts-ignore
+      testMonitor._client.onclose({ type: 'close' });
+
+      vi.advanceTimersByTime(1000);
+
+      expect(closeSpy).toHaveBeenCalled();
+    });
+
+    it('再接続時にCONNECTING状態の古いWebSocketがcloseされるべきである', () => {
+      const options: SymbolWebSocketOptions = {
+        host: 'test-host',
+        timeout: 1000,
+        ssl: false,
+        autoReconnect: true,
+        reconnectInterval: 1000,
+      };
+      // @ts-ignore
+      const testMonitor = new SymbolWebSocket(options);
+
+      const closeSpy = vi.fn();
+      // @ts-ignore
+      testMonitor._client.close = closeSpy;
+      // @ts-ignore
+      testMonitor._client.readyState = 0; // CONNECTING
+
+      // @ts-ignore
+      testMonitor.isManualDisconnect = false;
+      // @ts-ignore
+      testMonitor._client.onclose({ type: 'close' });
+
+      vi.advanceTimersByTime(1000);
+
+      expect(closeSpy).toHaveBeenCalled();
+    });
+
+    it('再接続時にCLOSED状態のWebSocketはcloseを呼ばないべきである', () => {
+      const options: SymbolWebSocketOptions = {
+        host: 'test-host',
+        timeout: 1000,
+        ssl: false,
+        autoReconnect: true,
+        reconnectInterval: 1000,
+      };
+      // @ts-ignore
+      const testMonitor = new SymbolWebSocket(options);
+
+      const closeSpy = vi.fn();
+      // @ts-ignore
+      testMonitor._client.close = closeSpy;
+      // @ts-ignore
+      testMonitor._client.readyState = 3; // CLOSED
+
+      // @ts-ignore
+      testMonitor.isManualDisconnect = false;
+      // タイムアウトが発生した場合、_client.close()が呼ばれる
+      // その後oncloseが呼ばれ、再接続タイマーが起動
+      // 再接続時、CLOSED状態なのでcloseは呼ばれない
+
+      // タイムアウトを進める前にクリア（タイムアウト処理をスキップ）
+      if (testMonitor['connectionTimeoutTimer']) {
+        clearTimeout(testMonitor['connectionTimeoutTimer']);
+        // @ts-ignore
+        testMonitor.connectionTimeoutTimer = null;
+      }
+
+      // @ts-ignore
+      testMonitor._client.onclose({ type: 'close' });
+
+      vi.advanceTimersByTime(1000);
+
+      expect(closeSpy).not.toHaveBeenCalled();
+    });
+  });
 });
