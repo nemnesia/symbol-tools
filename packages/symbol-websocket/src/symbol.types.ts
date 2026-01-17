@@ -52,11 +52,19 @@ export interface SymbolWebSocketError {
  * Symbolウェブソケットモニターオプション
  */
 export interface SymbolWebSocketOptions {
+  /**
+   * 接続先ホスト
+   */
   host: string;
   /**
    * 接続タイムアウト（ミリ秒）
+   * @default 10000
    */
   timeout?: number;
+  /**
+   * SSLを使用する
+   * @default true
+   */
   ssl?: boolean;
   /**
    * 自動再接続を有効にする
