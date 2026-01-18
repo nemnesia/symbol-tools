@@ -8,6 +8,7 @@ import {
 } from './symbol.types.js';
 import { symbolChannelPaths } from './symbolChannelPaths.js';
 import type { SymbolChannel } from './symbolChannelPaths.js';
+import type { SymbolNotificationMap } from './symbolNotifications.types.js';
 
 // WebSocket readyState 定数のフォールバック（テスト環境ではモックに定数がないことがあるため）
 const WS_OPEN = WebSocket.OPEN ?? 1;
@@ -20,8 +21,8 @@ export class SymbolWebSocket {
   private _client!: WebSocket;
   private _uid: string | null = null;
   private isFirstMessage = true;
-  private eventCallbacks: { [event: string]: ((message: WebSocket.MessageEvent) => void)[] } = {};
-  private pendingSubscribes: { subscribePath: string; callback: (message: WebSocket.MessageEvent) => void }[] = [];
+  private eventCallbacks: { [event: string]: ((message: unknown) => void)[] } = {};
+  private pendingSubscribes: { subscribePath: string; callback: (message: unknown) => void }[] = [];
   private errorCallbacks: ((err: SymbolWebSocketError) => void)[] = [];
   private onCloseCallback: (event: WebSocket.CloseEvent) => void = () => {};
   private connectCallbacks: ((uid: string) => void)[] = [];
@@ -38,6 +39,7 @@ export class SymbolWebSocket {
 
   /**
    * コンストラクタ
+   *
    * @param options Symbolウェブソケットオプション
    */
   constructor(options: SymbolWebSocketOptions) {
@@ -221,6 +223,7 @@ export class SymbolWebSocket {
 
   /**
    * WebSocket接続完了イベント登録
+   *
    * @param callback 接続時に呼ばれるコールバック
    */
   public onConnect(callback: (uid: string) => void): void {
@@ -233,6 +236,7 @@ export class SymbolWebSocket {
 
   /**
    * WebSocket再接続イベント登録
+   *
    * @param callback 再接続試行時に呼ばれるコールバック
    */
   public onReconnect(callback: (attemptCount: number) => void): void {
@@ -284,7 +288,7 @@ export class SymbolWebSocket {
    * @param channel チャネル名
    * @param callback コールバック関数
    */
-  on(channel: SymbolChannel, callback: (message: WebSocket.MessageEvent) => void): void;
+  on<K extends SymbolChannel>(channel: K, callback: (message: SymbolNotificationMap[K]) => void): void;
 
   /**
    * チャネルサブスクメソッド
@@ -293,7 +297,7 @@ export class SymbolWebSocket {
    * @param address アドレス
    * @param callback コールバック関数
    */
-  on(channel: SymbolChannel, address: string, callback: (message: WebSocket.MessageEvent) => void): void;
+  on<K extends SymbolChannel>(channel: K, address: string, callback: (message: SymbolNotificationMap[K]) => void): void;
 
   /**
    * チャネルサブスクメソッド実装
@@ -302,14 +306,14 @@ export class SymbolWebSocket {
    * @param addressOrCallback アドレスまたはコールバック関数
    * @param callback コールバック関数
    */
-  on(
-    channel: SymbolChannel,
-    addressOrCallback: string | ((message: WebSocket.MessageEvent) => void),
-    callback?: (message: WebSocket.MessageEvent) => void
+  on<K extends SymbolChannel>(
+    channel: K,
+    addressOrCallback: string | ((message: SymbolNotificationMap[K]) => void),
+    callback?: (message: SymbolNotificationMap[K]) => void
   ): void {
     // 引数を解析
     const address = typeof addressOrCallback === 'string' ? addressOrCallback : undefined;
-    const actualCallback = typeof addressOrCallback === 'function' ? addressOrCallback : callback!;
+    const actualCallback = (typeof addressOrCallback === 'function' ? addressOrCallback : callback) as (message: unknown) => void;
 
     const channelPath = symbolChannelPaths[channel];
 
