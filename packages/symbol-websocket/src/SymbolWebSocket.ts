@@ -313,7 +313,9 @@ export class SymbolWebSocket {
   ): void {
     // 引数を解析
     const address = typeof addressOrCallback === 'string' ? addressOrCallback : undefined;
-    const actualCallback = (typeof addressOrCallback === 'function' ? addressOrCallback : callback) as (message: unknown) => void;
+    const actualCallback = (typeof addressOrCallback === 'function' ? addressOrCallback : callback) as (
+      message: unknown
+    ) => void;
 
     const channelPath = symbolChannelPaths[channel];
 

@@ -1,9 +1,5 @@
 export { symbolChannelPaths } from './symbolChannelPaths.js';
 export { SymbolWebSocket } from './SymbolWebSocket.js';
-export { asTypedSymbolWebSocket } from './typedSymbolWebSocket.js';
-export type {
-  TypedSymbolWebSocket,
-} from './typedSymbolWebSocket.js';
 export type {
   SymbolNotificationMap,
   SymbolNotificationDataMap,
