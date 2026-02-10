@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Symbol テストネット Faucet</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --ink: #1b1b1b;
+      --accent: #d04f35;
+      --panel: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      font-family: serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 20px;
+    }
+
+    .card {
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+    }
+
+    p {
+      margin: 0 0 16px;
+    }
+
+    input {
+      width: 100%;
+      font-size: 16px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 12px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+
+    #status {
+      margin-top: 16px;
+      min-height: 24px;
+    }
+
+    .balance {
+      margin-top: 16px;
+      padding: 12px;
+      border: 1px solid #eadfd2;
+      border-radius: 8px;
+      background: #faf7f2;
+      font-size: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <div class="card">
+      <h1>Symbol テストネット Faucet</h1>
+      <p>テストネットアドレスを入力してXYMを受け取ります。</p>
+
+      <div class="balance" id="balance">残高: 読み込み中...</div>
+
+      <input id="address" placeholder="T..." />
+      <button id="submit">受け取る</button>
+      <div id="status"></div>
+    </div>
+  </main>
+
+  <script>
+    const API_URL = "/api/faucet";
+    const BALANCE_URL = "/api/balance";
+    const TOKEN_URL = "/api/token";
+
+    const btn = document.getElementById("submit");
+    const statusEl = document.getElementById("status");
+    const addressEl = document.getElementById("address");
+    const balanceEl = document.getElementById("balance");
+
+    function normalizeAddress(input) {
+      return input.replace(/-/g, "").toUpperCase();
+    }
+
+    function isProbablyValidAddress(addr) {
+      if (addr.length !== 39) return false;
+      return /^[A-Z2-7]+$/.test(addr);
+    }
+
+    function setStatus(msg) {
+      statusEl.textContent = msg;
+    }
+
+    async function loadBalance() {
+      try {
+        const resp = await fetch(BALANCE_URL);
+        const data = await resp.json();
+        if (!resp.ok) {
+          balanceEl.textContent = "残高: 取得できません";
+          return;
+        }
+        balanceEl.textContent = `残高: ${data.balance.toFixed(2)} XYM`;
+      } catch (e) {
+        balanceEl.textContent = "残高: 取得できません";
+      }
+    }
+
+    addressEl.addEventListener("input", () => {
+      const normalized = normalizeAddress(addressEl.value);
+      addressEl.value = normalized;
+    });
+
+    btn.addEventListener("click", async () => {
+      let address = addressEl.value.trim();
+      address = normalizeAddress(address);
+
+      if (!address) {
+        setStatus("アドレスを入力してください。");
+        return;
+      }
+      if (!isProbablyValidAddress(address)) {
+        setStatus("アドレスの形式が無効です。");
+        return;
+      }
+
+      setStatus("準備中...");
+      btn.disabled = true;
+
+      try {
+        const tokenResp = await fetch(`${TOKEN_URL}?address=${encodeURIComponent(address)}`);
+        const tokenData = await tokenResp.json();
+        if (!tokenResp.ok) {
+          setStatus(tokenData.message || "リクエストの準備に失敗しました。");
+          return;
+        }
+
+        const resp = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            address,
+            token: tokenData.token,
+            tokenTs: tokenData.tokenTs,
+          }),
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          if (data.nextAvailableAt) {
+            setStatus(`${data.message} 次回: ${data.nextAvailableAt}`);
+          } else {
+            setStatus(data.message || "失敗しました。");
+          }
+          return;
+        }
+
+        setStatus(`送信完了。Tx: ${data.txHash}`);
+      } catch (e) {
+        setStatus("リクエストに失敗しました。しばらくしてからもう一度お試しください。");
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    loadBalance();
+  </script>
+</body>
+
+</html>

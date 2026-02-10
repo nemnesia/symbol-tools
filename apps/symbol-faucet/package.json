@@ -1,0 +1,28 @@
+{
+  "name": "symbol-faucet",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env dist/app.js",
+    "clean": "rm -rf dist",
+    "build": "pnpm run clean && tsup",
+    "lint": "eslint \"{src,test,e2e,examples}/**/*.ts\" --fix",
+    "format": "prettier --write \"{src,test,e2e,examples}/**/*.ts\"",
+    "test": "vitest run test",
+    "test:watch": "vitest --watch test",
+    "test:coverage": "vitest run --coverage test"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "express": "^5.2.1",
+    "symbol-sdk": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^5.0.6"
+  },
+  "volta": {
+    "node": "24.13.0"
+  }
+}
