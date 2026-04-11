@@ -7,22 +7,13 @@ import '../App.css';
 import ChainInfoCard from './ChainInfoCard';
 import VotingNodeList from './VotingNodeList';
 
-function FinalizationProofViewer() {
-  const [height, setHeight] = useState('0');
+function FinalizationProofViewer({ networkName }: { networkName: 'mainnet' | 'testnet' }) {
+  const [_height, setHeight] = useState('0');
   const [votingNodes, setVotingNodes] = useState<Node[]>([]);
 
-  // URLからパラメータを取得
+  // URLからフィルターパラメータを取得
   const urlParams = new URLSearchParams(window.location.search);
-  const networkName = urlParams.get('network') || 'testnet';
   const urlFilter = urlParams.get('filter');
-
-  if (networkName !== 'mainnet' && networkName !== 'testnet') {
-    return (
-      <Box sx={{ margin: '0 auto', maxWidth: 1024, width: '100%' }}>
-        <Box sx={{ m: 1, color: 'red' }}>Error: Invalid network parameter. Please use 'mainnet' or 'testnet'.</Box>
-      </Box>
-    );
-  }
 
   // urlFilterはホスト名に使用される文字のみを許可
   if (urlFilter && !/^[a-zA-Z0-9.-]*$/.test(urlFilter)) {
@@ -48,9 +39,9 @@ function FinalizationProofViewer() {
       console.log('votingNodes', votingNodes);
     };
 
-    if (votingNodes.length !== 0) return;
+    setVotingNodes([]);
     fetchVotingNodes();
-  }, []);
+  }, [networkName]);
 
   return (
     <Box sx={{ margin: '0 auto', maxWidth: 1024, width: '100%' }}>

@@ -1,5 +1,6 @@
-import { Cancel, CheckCircle } from '@mui/icons-material';
-import { Box, Card, CardContent, Chip, LinearProgress, LinearProgressProps, Tooltip, Typography } from '@mui/material';
+import { Cancel, Check, CheckCircle, ContentCopy, InfoOutlined } from '@mui/icons-material';
+import { Box, Card, CardContent, Chip, IconButton, LinearProgress, LinearProgressProps, Popover, Tooltip, Typography } from '@mui/material';
+import { useState } from 'react';
 
 import { formatStringNumber } from '../utils/numberFormat';
 
@@ -57,92 +58,140 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
   const hasEnoughAmount = parseAmountXym(votingNodeInfo.amount) >= VOTING_THRESHOLD;
   const firstKey = votingNodeInfo.votingPublicKeys?.[0];
 
+  const [infoAnchorEl, setInfoAnchorEl] = useState<HTMLElement | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const handleInfoOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setInfoAnchorEl(event.currentTarget);
+  };
+  const handleInfoClose = () => setInfoAnchorEl(null);
+  const infoOpen = Boolean(infoAnchorEl);
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(label);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
   return (
     <Card variant="outlined" sx={{ mb: 1 }}>
       <CardContent sx={{ py: 1, '&:last-child': { pb: 1 } }}>
         {/* トップ行: Host ⓘ | 残高アイコン | [Current] ✓ [Prev] ✓ */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-          {/* Host — ホバー/タップで PublicKey・Address を表示 */}
-          <Tooltip
-            enterTouchDelay={0}
-            title={
-              <Box>
-                <Typography variant="caption" display="block" sx={{ fontWeight: 'bold' }}>
-                  PublicKey
-                </Typography>
-                <Typography variant="caption" display="block" sx={{ wordBreak: 'break-all', fontFamily: 'monospace' }}>
+          {/* Host — クリックでコピー、ⓘ でPopoverを開く */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexGrow: 1 }}>
+            <Tooltip enterTouchDelay={0} title="Node info">
+              <IconButton size="small" onClick={handleInfoOpen}>
+                <InfoOutlined fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip enterTouchDelay={0} title="Click to copy">
+              <Typography
+                variant="body1"
+                sx={{ fontWeight: 'bold', cursor: 'pointer' }}
+                onClick={() => copyToClipboard(votingNodeInfo.host, 'host')}
+              >
+                {votingNodeInfo.host}
+              </Typography>
+            </Tooltip>
+            {copied === 'host' && (
+              <Typography variant="caption" color="success.main" sx={{ fontSize: '0.7rem' }}>
+                Copied!
+              </Typography>
+            )}
+          </Box>
+          <Popover
+            open={infoOpen}
+            anchorEl={infoAnchorEl}
+            onClose={handleInfoClose}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+          >
+            <Box sx={{ p: 1.5, maxWidth: 420 }}>
+              <Typography variant="caption" display="block" sx={{ fontWeight: 'bold' }}>
+                PublicKey
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography variant="caption" sx={{ wordBreak: 'break-all', fontFamily: 'monospace', flexGrow: 1 }}>
                   {votingNodeInfo.publicKey}
                 </Typography>
-                <Typography variant="caption" display="block" sx={{ fontWeight: 'bold', mt: 0.5 }}>
-                  Address
-                </Typography>
-                <Typography variant="caption" display="block" sx={{ fontFamily: 'monospace' }}>
+                <IconButton size="small" onClick={() => copyToClipboard(votingNodeInfo.publicKey, 'publicKey')}>
+                  {copied === 'publicKey' ? <Check fontSize="small" color="success" /> : <ContentCopy fontSize="small" />}
+                </IconButton>
+              </Box>
+              <Typography variant="caption" display="block" sx={{ fontWeight: 'bold', mt: 0.5 }}>
+                Address
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography variant="caption" sx={{ fontFamily: 'monospace', flexGrow: 1 }}>
                   {votingNodeInfo.address}
                 </Typography>
+                <IconButton size="small" onClick={() => copyToClipboard(votingNodeInfo.address, 'address')}>
+                  {copied === 'address' ? <Check fontSize="small" color="success" /> : <ContentCopy fontSize="small" />}
+                </IconButton>
               </Box>
-            }
-          >
-            <Typography variant="body1" sx={{ fontWeight: 'bold', cursor: 'help', flexGrow: 1 }}>
-              {votingNodeInfo.host}
-            </Typography>
-          </Tooltip>
+            </Box>
+          </Popover>
 
-          {/* 残高チェックアイコン — ホバー/タップで Amount を表示 */}
-          <Tooltip enterTouchDelay={0} title={votingNodeInfo.amount}>
-            <Chip label="Amount" size="small" variant="outlined" sx={{ cursor: 'help' }} />
-          </Tooltip>
-          {hasEnoughAmount ? (
-            <CheckCircle color="success" fontSize="small" />
-          ) : (
-            <Cancel color="error" fontSize="small" />
-          )}
+          {/* 残高・署名グループ — 幅が狭いとまとめて2行目に折り返す */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
+            {/* 残高チェックアイコン — ホバー/タップで Amount を表示 */}
+            <Tooltip enterTouchDelay={0} title={votingNodeInfo.amount}>
+              <Chip label="Amount" size="small" variant="outlined" sx={{ cursor: 'help' }} />
+            </Tooltip>
+            {hasEnoughAmount ? (
+              <CheckCircle color="success" fontSize="small" />
+            ) : (
+              <Cancel color="error" fontSize="small" />
+            )}
 
-          {/* ファイナライゼーション署名 — 最初の投票キーのみ表示 */}
-          {firstKey && (
-            <>
-              {/* Current round (Stage1) */}
-              <Tooltip enterTouchDelay={0} title={`Height: ${stage1Height}`}>
-                <Chip label="Current" size="small" variant="outlined" sx={{ cursor: 'help' }} />
-              </Tooltip>
-              <Tooltip
-                enterTouchDelay={0}
-                title={
-                  firstKey.stage1Signature && firstKey.stage1Signature !== '-'
-                    ? firstKey.stage1Signature
-                    : 'No signature'
-                }
-              >
-                <span>
-                  {firstKey.stage1Signature && firstKey.stage1Signature !== '-' ? (
-                    <CheckCircle color="success" fontSize="small" />
-                  ) : (
-                    <Cancel color="error" fontSize="small" />
-                  )}
-                </span>
-              </Tooltip>
+            {/* ファイナライゼーション署名 — 最初の投票キーのみ表示 */}
+            {firstKey && (
+              <>
+                {/* Current round (Stage1) */}
+                <Tooltip enterTouchDelay={0} title={`Height: ${stage1Height}`}>
+                  <Chip label="Current" size="small" variant="outlined" sx={{ cursor: 'help' }} />
+                </Tooltip>
+                <Tooltip
+                  enterTouchDelay={0}
+                  title={
+                    firstKey.stage1Signature && firstKey.stage1Signature !== '-'
+                      ? `Signature: ${firstKey.stage1Signature}`
+                      : 'No signature'
+                  }
+                >
+                  <span>
+                    {firstKey.stage1Signature && firstKey.stage1Signature !== '-' ? (
+                      <CheckCircle color="success" fontSize="small" />
+                    ) : (
+                      <Cancel color="error" fontSize="small" />
+                    )}
+                  </span>
+                </Tooltip>
 
-              {/* Prev round (Stage0) */}
-              <Tooltip enterTouchDelay={0} title={`Height: ${stage0Height}`}>
-                <Chip label="Prev" size="small" variant="outlined" sx={{ cursor: 'help' }} />
-              </Tooltip>
-              <Tooltip
-                enterTouchDelay={0}
-                title={
-                  firstKey.stage0Signature && firstKey.stage0Signature !== '-'
-                    ? firstKey.stage0Signature
-                    : 'No signature'
-                }
-              >
-                <span>
-                  {firstKey.stage0Signature && firstKey.stage0Signature !== '-' ? (
-                    <CheckCircle color="success" fontSize="small" />
-                  ) : (
-                    <Cancel color="error" fontSize="small" />
-                  )}
-                </span>
-              </Tooltip>
-            </>
-          )}
+                {/* Prev round (Stage0) */}
+                <Tooltip enterTouchDelay={0} title={`Height: ${stage0Height}`}>
+                  <Chip label="Prev" size="small" variant="outlined" sx={{ cursor: 'help' }} />
+                </Tooltip>
+                <Tooltip
+                  enterTouchDelay={0}
+                  title={
+                    firstKey.stage0Signature && firstKey.stage0Signature !== '-'
+                      ? `Signature: ${firstKey.stage0Signature}`
+                      : 'No signature'
+                  }
+                >
+                  <span>
+                    {firstKey.stage0Signature && firstKey.stage0Signature !== '-' ? (
+                      <CheckCircle color="success" fontSize="small" />
+                    ) : (
+                      <Cancel color="error" fontSize="small" />
+                    )}
+                  </span>
+                </Tooltip>
+              </>
+            )}
+          </Box>
         </Box>
 
         {/* 投票キー期間 — 縦積み、Expired はグレーアウト */}
@@ -154,7 +203,7 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
               return (
                 <Box key={index} sx={{ opacity: isExpired ? 0.45 : 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Tooltip enterTouchDelay={0} title={val.votingPublicKey!}>
+                    <Tooltip enterTouchDelay={0} title={`PublicKey: ${val.votingPublicKey!}`}>
                       <Chip
                         label={status}
                         size="small"
