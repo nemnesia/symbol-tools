@@ -1,5 +1,4 @@
 import { Card, CardContent, Grid, LinearProgress, Typography } from '@mui/material';
-import { Network } from '@nemnesia/symbol-catbuffer/symbol';
 import {
   BlockInfoDTO,
   BlockRoutesApi,
@@ -12,6 +11,7 @@ import { nemSymbolNodePicker } from 'nem-symbol-node-picker';
 import { useEffect, useRef, useState } from 'react';
 
 import { formatStringNumber } from '../utils/numberFormat';
+import {Network} from '@nemnesia/symbol-sdk/symbol';
 
 type ChainInfoCardProps = {
   networkName: string;

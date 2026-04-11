@@ -1,6 +1,5 @@
 import { Cancel, CheckCircle } from '@mui/icons-material';
-import { Card, CardContent, Grid, LinearProgress, LinearProgressProps, Tooltip, Typography } from '@mui/material';
-import React from 'react';
+import { Box, Card, CardContent, Chip, LinearProgress, LinearProgressProps, Tooltip, Typography } from '@mui/material';
 
 import { formatStringNumber } from '../utils/numberFormat';
 
@@ -26,20 +25,22 @@ interface VotingNodeCardProps {
   stage1Height: string;
 }
 
+const VOTING_THRESHOLD = 3_000_000;
+
+const parseAmountXym = (amount: string): number => {
+  return parseFloat(amount.replace(/,/g, '').replace(' XYM', '')) || 0;
+};
+
 const LinearProgressExt = (props: LinearProgressProps & { value: number }) => {
   let color: 'success' | 'warning' | 'error' = 'success';
   if (props.value < 85) {
-    // 85%未満
     color = 'success';
   } else if (props.value <= 99) {
-    // 85%以上、99%以下
     color = 'warning';
   } else {
-    // 100%
     color = 'error';
   }
-
-  return <LinearProgress variant="determinate" color={color} style={{ clear: 'both' }} value={props.value} />;
+  return <LinearProgress variant="determinate" color={color} value={props.value} />;
 };
 
 const judgmentVotingKey = (currentEpoch: number, startEpoch: number, endEpoch: number) => {
@@ -51,199 +52,132 @@ const judgmentVotingKey = (currentEpoch: number, startEpoch: number, endEpoch: n
   return 'Current';
 };
 
-const GridItem = (props: { title: string; value: string }) => {
-  return (
-    <>
-      <Typography variant="caption" component="div" sx={{ color: 'text.secondary', fontSize: 14 }}>
-        {props.title}
-      </Typography>
-      <Typography
-        variant="body2"
-        component="div"
-        gutterBottom
-        style={{ whiteSpace: 'nowrap', overflowX: 'hidden', textOverflow: 'ellipsis' }}
-      >
-        {props.value}
-      </Typography>
-    </>
-  );
-};
-
-/**
- * 文字列を6文字ごとにスペースで区切る（スペースはコピー不可）
- * @param str 文字列
- * @returns JSX.Element
- */
-const formatAddressWithSpaces = (str: string): React.JSX.Element => {
-  const parts = str.match(/.{1,6}/g) ?? [str];
-  return (
-    <>
-      {parts.map((part, idx) => (
-        <React.Fragment key={idx}>
-          {part}
-          {idx !== parts.length - 1 && <span style={{ userSelect: 'none' }}> </span>}
-        </React.Fragment>
-      ))}
-    </>
-  );
-};
-
-const formatPublicKeyWithSpaces = (str: string): React.JSX.Element => {
-  const parts = str.match(/.{1,8}/g) ?? [str];
-  return (
-    <>
-      {parts.map((part, idx) => (
-        <React.Fragment key={idx}>
-          {part}
-          {idx !== parts.length - 1 && <span style={{ userSelect: 'none' }}> </span>}
-        </React.Fragment>
-      ))}
-    </>
-  );
-};
-
 function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage1Height }: VotingNodeCardProps) {
-  return (
-    <Card variant="outlined" sx={{ minWidth: 275 }} style={{ marginBottom: '10px' }}>
-      <CardContent>
-        <Typography gutterBottom sx={{ color: 'text.primary', fontSize: 18, fontWeight: 'bold' }}>
-          Node Info
-        </Typography>
+  const currentEpoch = parseInt(finalizationEpoch.replace(/,/g, ''));
+  const hasEnoughAmount = parseAmountXym(votingNodeInfo.amount) >= VOTING_THRESHOLD;
+  const firstKey = votingNodeInfo.votingPublicKeys?.[0];
 
-        <Grid container spacing={0.5}>
-          <Grid size={{ xs: 12, sm: 12, md: 12 }}>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Host
-            </Typography>
-            <Typography variant="body1" sx={{ color: 'text.primary' }}>
+  return (
+    <Card variant="outlined" sx={{ mb: 1 }}>
+      <CardContent sx={{ py: 1, '&:last-child': { pb: 1 } }}>
+        {/* トップ行: Host ⓘ | 残高アイコン | [Current] ✓ [Prev] ✓ */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+          {/* Host — ホバー/タップで PublicKey・Address を表示 */}
+          <Tooltip
+            enterTouchDelay={0}
+            title={
+              <Box>
+                <Typography variant="caption" display="block" sx={{ fontWeight: 'bold' }}>
+                  PublicKey
+                </Typography>
+                <Typography variant="caption" display="block" sx={{ wordBreak: 'break-all', fontFamily: 'monospace' }}>
+                  {votingNodeInfo.publicKey}
+                </Typography>
+                <Typography variant="caption" display="block" sx={{ fontWeight: 'bold', mt: 0.5 }}>
+                  Address
+                </Typography>
+                <Typography variant="caption" display="block" sx={{ fontFamily: 'monospace' }}>
+                  {votingNodeInfo.address}
+                </Typography>
+              </Box>
+            }
+          >
+            <Typography variant="body1" sx={{ fontWeight: 'bold', cursor: 'help', flexGrow: 1 }}>
               {votingNodeInfo.host}
             </Typography>
-          </Grid>
+          </Tooltip>
 
-          <Grid size={{ xs: 12, sm: 12, md: 12 }}>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              PublicKey
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.primary' }}>
-              {formatPublicKeyWithSpaces(votingNodeInfo.publicKey)}
-            </Typography>
-          </Grid>
+          {/* 残高チェックアイコン — ホバー/タップで Amount を表示 */}
+          <Tooltip enterTouchDelay={0} title={votingNodeInfo.amount}>
+            <Chip label="Amount" size="small" variant="outlined" sx={{ cursor: 'help' }} />
+          </Tooltip>
+          {hasEnoughAmount ? (
+            <CheckCircle color="success" fontSize="small" />
+          ) : (
+            <Cancel color="error" fontSize="small" />
+          )}
 
-          <Grid size={{ xs: 12, sm: 7, md: 9 }}>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Address
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.primary' }}>
-              {formatAddressWithSpaces(votingNodeInfo.address)}
-            </Typography>
-          </Grid>
+          {/* ファイナライゼーション署名 — 最初の投票キーのみ表示 */}
+          {firstKey && (
+            <>
+              {/* Current round (Stage1) */}
+              <Tooltip enterTouchDelay={0} title={`Height: ${stage1Height}`}>
+                <Chip label="Current" size="small" variant="outlined" sx={{ cursor: 'help' }} />
+              </Tooltip>
+              <Tooltip
+                enterTouchDelay={0}
+                title={
+                  firstKey.stage1Signature && firstKey.stage1Signature !== '-'
+                    ? firstKey.stage1Signature
+                    : 'No signature'
+                }
+              >
+                <span>
+                  {firstKey.stage1Signature && firstKey.stage1Signature !== '-' ? (
+                    <CheckCircle color="success" fontSize="small" />
+                  ) : (
+                    <Cancel color="error" fontSize="small" />
+                  )}
+                </span>
+              </Tooltip>
 
-          <Grid size={{ xs: 12, sm: 5, md: 3 }}>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Amount
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.primary' }}>
-              {votingNodeInfo.amount}
-            </Typography>
-          </Grid>
+              {/* Prev round (Stage0) */}
+              <Tooltip enterTouchDelay={0} title={`Height: ${stage0Height}`}>
+                <Chip label="Prev" size="small" variant="outlined" sx={{ cursor: 'help' }} />
+              </Tooltip>
+              <Tooltip
+                enterTouchDelay={0}
+                title={
+                  firstKey.stage0Signature && firstKey.stage0Signature !== '-'
+                    ? firstKey.stage0Signature
+                    : 'No signature'
+                }
+              >
+                <span>
+                  {firstKey.stage0Signature && firstKey.stage0Signature !== '-' ? (
+                    <CheckCircle color="success" fontSize="small" />
+                  ) : (
+                    <Cancel color="error" fontSize="small" />
+                  )}
+                </span>
+              </Tooltip>
+            </>
+          )}
+        </Box>
 
-          <Grid size={{ xs: 12, sm: 12, md: 12 }}>
-            <Card sx={{ minWidth: 275 }} style={{ marginTop: '10px' }}>
-              <CardContent>
-                <Typography gutterBottom sx={{ color: 'text.primary', fontSize: 18, fontWeight: 'bold' }}>
-                  Voting Key Info
-                </Typography>
-
-                {votingNodeInfo.votingPublicKeys?.map((val, index) => (
-                  <Card variant="outlined" sx={{ minWidth: 275 }} style={{ marginBottom: '10px' }} key={index}>
-                    <CardContent>
-                      <Typography gutterBottom sx={{ color: 'text.primary', fontSize: 16, fontWeight: 'bold' }}>
-                        {judgmentVotingKey(
-                          parseInt(finalizationEpoch.replace(/,/g, '')),
-                          val.startEpoch!,
-                          val.endEpoch!
-                        )}{' '}
-                        Voting Key
-                      </Typography>
-
-                      <Grid container spacing={0.5}>
-                        <Grid size={{ xs: 12, sm: 12, md: 12 }}>
-                          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            Voting PublicKey
-                          </Typography>
-                          <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                            {formatPublicKeyWithSpaces(val.votingPublicKey!)}
-                          </Typography>
-                          <Grid size={{ xs: 12, sm: 12, md: 12 }}>
-                            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                              Voting Key Period
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              component="div"
-                              gutterBottom
-                              style={{
-                                whiteSpace: 'nowrap',
-                                overflowX: 'hidden',
-                                textOverflow: 'ellipsis',
-                              }}
-                            >
-                              <div style={{ float: 'left' }}>{formatStringNumber(val.startEpoch!.toString())}</div>
-                              <div style={{ float: 'right' }}>{formatStringNumber(val.endEpoch!.toString())}</div>
-                              <LinearProgressExt value={val.progress!} />
-                            </Typography>
-                          </Grid>
-                        </Grid>
-
-                        {index === 0 ? (
-                          <>
-                            {/* 今回 */}
-                            <Grid size={{ xs: 12, sm: 6, md: 6 }}>
-                              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                                {`Stage1 Bottom Signature (Height: ${stage1Height})`}
-                              </Typography>
-                              <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                                {val.stage1Signature && val.stage1Signature !== '-' ? (
-                                  <Tooltip title={val.stage1Signature} arrow>
-                                    <CheckCircle color="success" />
-                                  </Tooltip>
-                                ) : (
-                                  <Tooltip title="No signature" arrow>
-                                    <Cancel color="error" />
-                                  </Tooltip>
-                                )}
-                              </Typography>
-                            </Grid>
-
-                            {/* 前回 */}
-                            <Grid size={{ xs: 12, sm: 6, md: 6 }}>
-                              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                                {`Stage0 Bottom Signature (Height: ${stage0Height})`}
-                              </Typography>
-                              <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                                {val.stage0Signature && val.stage0Signature !== '-' ? (
-                                  <Tooltip title={val.stage0Signature} arrow>
-                                    <CheckCircle color="success" />
-                                  </Tooltip>
-                                ) : (
-                                  <Tooltip title="No signature" arrow>
-                                    <Cancel color="error" />
-                                  </Tooltip>
-                                )}
-                              </Typography>
-                            </Grid>
-                          </>
-                        ) : (
-                          <></>
-                        )}
-                      </Grid>
-                    </CardContent>
-                  </Card>
-                ))}
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        {/* 投票キー期間 — 縦積み、Expired はグレーアウト */}
+        {votingNodeInfo.votingPublicKeys && votingNodeInfo.votingPublicKeys.length > 0 && (
+          <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+            {votingNodeInfo.votingPublicKeys.map((val, index) => {
+              const status = judgmentVotingKey(currentEpoch, val.startEpoch!, val.endEpoch!);
+              const isExpired = status === 'Expired';
+              return (
+                <Box key={index} sx={{ opacity: isExpired ? 0.45 : 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Tooltip enterTouchDelay={0} title={val.votingPublicKey!}>
+                      <Chip
+                        label={status}
+                        size="small"
+                        color={status === 'Current' ? 'primary' : 'default'}
+                        variant={isExpired ? 'outlined' : 'filled'}
+                        sx={{ cursor: 'help', minWidth: 70 }}
+                      />
+                    </Tooltip>
+                    <Typography variant="caption" sx={{ minWidth: 55, textAlign: 'right', fontFamily: 'monospace' }}>
+                      {formatStringNumber(val.startEpoch!.toString())}
+                    </Typography>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <LinearProgressExt value={val.progress!} />
+                    </Box>
+                    <Typography variant="caption" sx={{ minWidth: 55, fontFamily: 'monospace' }}>
+                      {formatStringNumber(val.endEpoch!.toString())}
+                    </Typography>
+                  </Box>
+                </Box>
+              );
+            })}
+          </Box>
+        )}
       </CardContent>
     </Card>
   );
