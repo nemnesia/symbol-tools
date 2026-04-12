@@ -8,7 +8,7 @@ import ChainInfoCard from './ChainInfoCard';
 import VotingNodeList from './VotingNodeList';
 
 function FinalizationProofViewer({ networkName }: { networkName: 'mainnet' | 'testnet' }) {
-  const [_height, setHeight] = useState('0');
+  const [, setHeight] = useState('0');
   const [votingNodes, setVotingNodes] = useState<Node[]>([]);
 
   // URLからフィルターパラメータを取得

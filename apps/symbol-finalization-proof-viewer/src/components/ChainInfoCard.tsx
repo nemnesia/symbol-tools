@@ -2,9 +2,7 @@ import { Card, CardContent, Grid, Typography } from '@mui/material';
 import {
   ChainRoutesApi,
   Configuration,
-  FinalizedBlockDTO,
 } from '@nemnesia/symbol-openapi-typescript-fetch-client';
-import { SymbolWebSocket } from '@nemnesia/symbol-websocket';
 import { nemSymbolNodePicker } from 'nem-symbol-node-picker';
 import { useEffect, useState } from 'react';
 
@@ -24,12 +22,6 @@ const ChainInfoCard: React.FC<ChainInfoCardProps> = ({ networkName, onHeightChan
 
   useEffect(() => {
 
-    /**
-     * チェーン情報の初期取得とWebSocket接続の確立
-     * - ノードの選択と接続
-     * - REST APIからの初期チェーン情報取得
-     * - WebSocketによるリアルタイム更新の購読
-     */
     const fetchData = async () => {
       // 利用可能なSymbolノードを取得
       const symbolNodes = await nemSymbolNodePicker({
@@ -39,23 +31,7 @@ const ChainInfoCard: React.FC<ChainInfoCardProps> = ({ networkName, onHeightChan
         isSsl: true,
       });
 
-      // WebSocket接続を確立してリアルタイム更新を受信
-      console.log('Connecting to websocket node:', new URL(symbolNodes[0]).hostname);
-      const monitor = new SymbolWebSocket({
-        host: new URL(symbolNodes[0]).hostname,
-        ssl: true,
-      });
-
-      // ブロックがファイナライズされたときの処理
-      monitor.on('finalizedBlock', async (message) => {
-        const finalizedBlockInfo = message.data as unknown as FinalizedBlockDTO;
-        console.log('Received finalized block info :', finalizedBlockInfo);
-        setFinalizedHeight(formatStringNumber(finalizedBlockInfo.height.toString()));
-        setFinalizationEpoch(formatStringNumber(finalizedBlockInfo.finalizationEpoch.toString()));
-        setFinalizationPoint(formatStringNumber(finalizedBlockInfo.finalizationPoint.toString()));
-      });
-
-      // REST APIを使用して初期チェーン情報を取得
+      // REST APIを使用してチェーン情報を取得
       const chainRoutesApi = new ChainRoutesApi(new Configuration({ basePath: symbolNodes[0] }));
       const chainInfo = await chainRoutesApi.getChainInfo();
 

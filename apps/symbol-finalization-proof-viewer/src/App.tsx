@@ -4,7 +4,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { AppBar, Box, Button, Dialog, DialogContent, DialogTitle, FormControlLabel, IconButton, Link, Switch, ThemeProvider, Toolbar, Tooltip, Typography, createTheme, useMediaQuery } from '@mui/material';
-import { deepPurple, purple } from '@mui/material/colors';
+import { deepPurple } from '@mui/material/colors';
 import { useMemo, useState } from 'react';
 
 import './App.css';
@@ -16,20 +16,23 @@ function App() {
   const [mode, setMode] = useState<'light' | 'dark' | null>(null);
 
   // ネットワーク選択 (URLパラメータ → localStorage → デフォルト testnet の優先順)
-  const initialNetwork = (() => {
+  const [networkName, setNetworkName] = useState<'mainnet' | 'testnet'>(() => {
     const urlNetwork = new URLSearchParams(window.location.search).get('network');
     if (urlNetwork === 'mainnet' || urlNetwork === 'testnet') return urlNetwork;
     const saved = localStorage.getItem('networkName');
     return saved === 'mainnet' ? 'mainnet' : 'testnet';
-  })();
-  const [networkName, setNetworkName] = useState<'mainnet' | 'testnet'>(initialNetwork);
+  });
   const [supportOpen, setSupportOpen] = useState(false);
   const [addressCopied, setAddressCopied] = useState(false);
 
-  const copySymbolAddress = () => {
-    navigator.clipboard.writeText('NC3XK5WRNQSDZRDBRD6NWL3RHYV5QNLU4WTXODA');
-    setAddressCopied(true);
-    setTimeout(() => setAddressCopied(false), 2000);
+  const copySymbolAddress = async () => {
+    try {
+      await navigator.clipboard.writeText('NC3XK5WRNQSDZRDBRD6NWL3RHYV5QNLU4WTXODA');
+      setAddressCopied(true);
+      setTimeout(() => setAddressCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy symbol address:', error);
+    }
   };
 
   const handleNetworkChange = (isMainnet: boolean) => {
@@ -47,7 +50,9 @@ function App() {
         palette: {
           mode: currentMode,
           primary: deepPurple,
-          secondary: purple,
+          secondary: {
+            main: '#78B6E4',
+          },
         },
       }),
     [currentMode]
@@ -113,7 +118,7 @@ function App() {
               NC3XK5WRNQSDZRDBRD6NWL3RHYV5QNLU4WTXODA
             </Typography>
             <Tooltip title={addressCopied ? 'Copied!' : 'コピー'} enterTouchDelay={0}>
-              <IconButton size="small" onClick={copySymbolAddress}>
+              <IconButton size="small" onClick={copySymbolAddress} aria-label="支援用のシンボルアドレスをコピー">
                 {addressCopied ? <CheckIcon fontSize="small" color="success" /> : <ContentCopyIcon fontSize="small" />}
               </IconButton>
             </Tooltip>

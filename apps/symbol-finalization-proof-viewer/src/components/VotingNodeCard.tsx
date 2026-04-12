@@ -1,6 +1,6 @@
 import { Cancel, Check, CheckCircle, ContentCopy, InfoOutlined } from '@mui/icons-material';
 import { Box, Card, CardContent, Chip, IconButton, LinearProgress, LinearProgressProps, Popover, Tooltip, Typography } from '@mui/material';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { formatStringNumber } from '../utils/numberFormat';
 
@@ -67,10 +67,14 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
   const handleInfoClose = () => setInfoAnchorEl(null);
   const infoOpen = Boolean(infoAnchorEl);
 
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(label);
-    setTimeout(() => setCopied(null), 2000);
+  const copyToClipboard = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(label);
+      setTimeout(() => setCopied(null), 2000);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+    }
   };
 
   return (
@@ -81,7 +85,7 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
           {/* Host — クリックでコピー、ⓘ でPopoverを開く */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexGrow: 1 }}>
             <Tooltip enterTouchDelay={0} title="Node info">
-              <IconButton size="small" onClick={handleInfoOpen}>
+              <IconButton aria-label="Node info" size="small" onClick={handleInfoOpen}>
                 <InfoOutlined fontSize="small" />
               </IconButton>
             </Tooltip>
@@ -115,7 +119,7 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
                 <Typography variant="caption" sx={{ wordBreak: 'break-all', fontFamily: 'monospace', flexGrow: 1 }}>
                   {votingNodeInfo.publicKey}
                 </Typography>
-                <IconButton size="small" onClick={() => copyToClipboard(votingNodeInfo.publicKey, 'publicKey')}>
+                <IconButton aria-label="Copy public key" size="small" onClick={() => copyToClipboard(votingNodeInfo.publicKey, 'publicKey')}>
                   {copied === 'publicKey' ? <Check fontSize="small" color="success" /> : <ContentCopy fontSize="small" />}
                 </IconButton>
               </Box>
@@ -126,7 +130,7 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
                 <Typography variant="caption" sx={{ fontFamily: 'monospace', flexGrow: 1 }}>
                   {votingNodeInfo.address}
                 </Typography>
-                <IconButton size="small" onClick={() => copyToClipboard(votingNodeInfo.address, 'address')}>
+                <IconButton aria-label="Copy address" size="small" onClick={() => copyToClipboard(votingNodeInfo.address, 'address')}>
                   {copied === 'address' ? <Check fontSize="small" color="success" /> : <ContentCopy fontSize="small" />}
                 </IconButton>
               </Box>
