@@ -192,6 +192,18 @@ importers:
         specifier: ^0.4.26
         version: 0.4.26(eslint@9.39.2)
 
+  apps/test-app:
+    dependencies:
+      '@nemnesia/nem-websocket':
+        specifier: workspace:*
+        version: link:../../packages/nem-websocket
+      '@nemnesia/symbol-event-stream':
+        specifier: workspace:*
+        version: link:../../packages/symbol-event-stream
+      '@nemnesia/symbol-websocket':
+        specifier: workspace:*
+        version: link:../../packages/symbol-websocket
+
   apps/xeym:
     dependencies:
       '@emotion/react':
@@ -219,8 +231,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       '@nemnesia/symbol-websocket':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.2.0
+        version: 0.2.0
       '@types/react-router-dom':
         specifier: ^5.3.3
         version: 5.3.3
@@ -360,7 +372,11 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0
 
-  packages/symbol-cosigner-core: {}
+  packages/symbol-event-stream:
+    dependencies:
+      '@nemnesia/symbol-websocket':
+        specifier: ^0.2.0
+        version: 0.2.0
 
   packages/symbol-openapi-typescript-fetch-client: {}
 
@@ -1531,6 +1547,10 @@ packages:
 
   '@nemnesia/symbol-websocket@0.1.0':
     resolution: {integrity: sha512-q8AgaRpDBPhx3ZIR21A754pS8H+qcnnKV0fPtKxgPj1AzLAvVavUPRfBOjBcd+csj9dG7I3IM4QK7HY69VaIuQ==}
+    engines: {node: '>=20.0.0'}
+
+  '@nemnesia/symbol-websocket@0.2.0':
+    resolution: {integrity: sha512-SVcYpI3IgCFNtq/OIq0faNpILk2a4Jza7J0oK3dau3HZjUbY9op6IEbItgOLlsLNEM0gwtHMZkqR/dlmr9lW0w==}
     engines: {node: '>=20.0.0'}
 
   '@nestjs/axios@4.0.1':
@@ -6393,6 +6413,15 @@ snapshots:
       '@scure/bip39': 2.0.1
 
   '@nemnesia/symbol-websocket@0.1.0':
+    dependencies:
+      '@stomp/stompjs': 7.2.1
+      isomorphic-ws: 5.0.0(ws@8.19.0)
+      ws: 8.19.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@nemnesia/symbol-websocket@0.2.0':
     dependencies:
       '@stomp/stompjs': 7.2.1
       isomorphic-ws: 5.0.0(ws@8.19.0)
