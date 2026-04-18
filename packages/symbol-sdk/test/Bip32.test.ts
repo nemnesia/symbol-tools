@@ -1,8 +1,8 @@
-import { NemAccount, NemFacade } from 'symbol-sdk/nem';
 import { describe, expect, it } from 'vitest';
 
 import { Bip32, Bip32Node } from '../src/Bip32.js';
 import { PrivateKey } from '../src/CryptoTypes.js';
+import { NemAccount, NemFacade } from '../src/nem/index.js';
 import { SymbolAccount, SymbolFacade } from '../src/symbol/index.js';
 
 describe('Bip32Node', () => {

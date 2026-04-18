@@ -1,10 +1,10 @@
-import { utils } from 'symbol-sdk';
-import { models } from 'symbol-sdk/nem';
 import { describe, expect, it } from 'vitest';
 
 import { PrivateKey, PublicKey } from '../../src/CryptoTypes.js';
+import { utils } from '../../src/index.js';
 import { KeyPair } from '../../src/nem/KeyPair.js';
 import MessageEncoder from '../../src/nem/MessageEncoder.js';
+import { models } from '../../src/nem/index.js';
 import { Message, MessageType } from '../../src/nem/models.js';
 
 // テスト用の固定キーペア
