@@ -45,7 +45,8 @@ const fetchPasomiMainnetNode = async (): Promise<Node | null> => {
       balance: 0,
       roles: nodeInfo.roles,
     };
-  } catch {
+  } catch (error) {
+    console.warn('Failed to fetch pasomi mainnet node info:', error);
     return null;
   } finally {
     clearTimeout(timeoutId);
