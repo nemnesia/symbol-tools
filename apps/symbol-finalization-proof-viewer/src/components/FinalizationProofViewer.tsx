@@ -7,17 +7,33 @@ import '../App.css';
 import ChainInfoCard from './ChainInfoCard';
 import VotingNodeList from './VotingNodeList';
 
-const PASOMI_NODE_INFO_URL = 'https://pasomi.net:3001/node/info';
+const PASOMI_NODE_HOSTS = ['seattle.pasomi.net', 'pasomi.net', 'shoestring.pasomi.net', 'mumbai.pasomi.net'];
+const PASOMI_NODE_INFO_PATH = '/node/info';
+const PASOMI_NODE_INFO_PORT = 3001;
 const PASOMI_NODE_INFO_TIMEOUT_MS = 5000;
 
-const fetchPasomiMainnetNode = async (): Promise<Node | null> => {
+const parseEndpointHostname = (endpoint: string): string | null => {
+  try {
+    return new URL(endpoint).hostname;
+  } catch {
+    try {
+      return new URL(`http://${endpoint}`).hostname;
+    } catch {
+      return null;
+    }
+  }
+};
+
+const fetchPasomiCandidateNode = async (host: string): Promise<Node> => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), PASOMI_NODE_INFO_TIMEOUT_MS);
 
   try {
-    const response = await fetch(PASOMI_NODE_INFO_URL, { signal: controller.signal });
+    const response = await fetch(`https://${host}:${PASOMI_NODE_INFO_PORT}${PASOMI_NODE_INFO_PATH}`, {
+      signal: controller.signal,
+    });
     if (!response.ok) {
-      return null;
+      throw new Error(`HTTP ${response.status}`);
     }
 
     const nodeInfo = (await response.json()) as {
@@ -30,8 +46,8 @@ const fetchPasomiMainnetNode = async (): Promise<Node | null> => {
       roles?: number;
     };
 
-    if (!nodeInfo.publicKey || !nodeInfo.host || !nodeInfo.port) {
-      return null;
+    if (!nodeInfo.publicKey || !nodeInfo.host || !nodeInfo.port || ((nodeInfo.roles ?? 0) & 4) === 0) {
+      throw new Error('Node does not satisfy roles & 4 or required fields are missing');
     }
 
     return {
@@ -45,15 +61,30 @@ const fetchPasomiMainnetNode = async (): Promise<Node | null> => {
       balance: 0,
       roles: nodeInfo.roles,
     };
-  } catch (error) {
-    if (error instanceof DOMException && error.name === 'AbortError') {
-      console.warn(`Timed out while fetching pasomi mainnet node info (${PASOMI_NODE_INFO_TIMEOUT_MS}ms)`);
-    } else {
-      console.warn('Failed to fetch pasomi mainnet node info:', error);
-    }
-    return null;
   } finally {
     clearTimeout(timeoutId);
+  }
+};
+
+const fetchPasomiMainnetNode = async (): Promise<Node | null> => {
+  try {
+    return await Promise.any(
+      PASOMI_NODE_HOSTS.map(async (host) => {
+        try {
+          return await fetchPasomiCandidateNode(host);
+        } catch (error) {
+          if (error instanceof DOMException && error.name === 'AbortError') {
+            console.warn(`Timed out while fetching ${host} node info (${PASOMI_NODE_INFO_TIMEOUT_MS}ms)`);
+          } else {
+            console.warn(`Failed to fetch ${host} node info:`, error);
+          }
+          throw error;
+        }
+      })
+    );
+  } catch (error) {
+    console.warn('No pasomi candidate node satisfied roles & 4. Continue with NodeWatch results only.', error);
+    return null;
   }
 };
 
@@ -89,20 +120,13 @@ function FinalizationProofViewer({ networkName }: { networkName: 'mainnet' | 'te
 
         if (isMainNet) {
           const hasPasomi = votingNodes.some((node) => {
-            try {
-              return new URL(node.endpoint).hostname === 'pasomi.net';
-            } catch {
-              try {
-                return new URL(`http://${node.endpoint}`).hostname === 'pasomi.net';
-              } catch {
-                return false;
-              }
-            }
+            const hostname = parseEndpointHostname(node.endpoint);
+            return hostname ? PASOMI_NODE_HOSTS.includes(hostname) : false;
           });
 
           if (!hasPasomi) {
             const pasomiNode = await fetchPasomiMainnetNode();
-            if (pasomiNode && (pasomiNode.roles ?? 0) & 4) {
+            if (pasomiNode) {
               votingNodes = [...votingNodes, pasomiNode];
             }
           }
