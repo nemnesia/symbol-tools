@@ -8,10 +8,14 @@ import ChainInfoCard from './ChainInfoCard';
 import VotingNodeList from './VotingNodeList';
 
 const PASOMI_NODE_INFO_URL = 'https://pasomi.net:3001/node/info';
+const PASOMI_NODE_INFO_TIMEOUT_MS = 5000;
 
 const fetchPasomiMainnetNode = async (): Promise<Node | null> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), PASOMI_NODE_INFO_TIMEOUT_MS);
+
   try {
-    const response = await fetch(PASOMI_NODE_INFO_URL);
+    const response = await fetch(PASOMI_NODE_INFO_URL, { signal: controller.signal });
     if (!response.ok) {
       return null;
     }
@@ -43,6 +47,8 @@ const fetchPasomiMainnetNode = async (): Promise<Node | null> => {
     };
   } catch {
     return null;
+  } finally {
+    clearTimeout(timeoutId);
   }
 };
 
