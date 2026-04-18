@@ -46,7 +46,11 @@ const fetchPasomiMainnetNode = async (): Promise<Node | null> => {
       roles: nodeInfo.roles,
     };
   } catch (error) {
-    console.warn('Failed to fetch pasomi mainnet node info:', error);
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      console.warn('Timed out while fetching pasomi mainnet node info');
+    } else {
+      console.warn('Failed to fetch pasomi mainnet node info:', error);
+    }
     return null;
   } finally {
     clearTimeout(timeoutId);
