@@ -152,9 +152,9 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
             {/* ファイナライゼーション署名 — 最初の投票キーのみ表示 */}
             {firstKey && (
               <>
-                {/* Current round (Stage1) */}
+                {/* Commit round (Stage1) */}
                 <Tooltip enterTouchDelay={0} title={`Height: ${stage1Height}`}>
-                  <Chip label="Current" size="small" variant="outlined" sx={{ cursor: 'help' }} />
+                  <Chip label="Commit" size="small" variant="outlined" sx={{ cursor: 'help' }} />
                 </Tooltip>
                 <Tooltip
                   enterTouchDelay={0}
@@ -173,9 +173,9 @@ function VotingNodeCard({ votingNodeInfo, finalizationEpoch, stage0Height, stage
                   </span>
                 </Tooltip>
 
-                {/* Prev round (Stage0) */}
+                {/* Vote round (Stage0) */}
                 <Tooltip enterTouchDelay={0} title={`Height: ${stage0Height}`}>
-                  <Chip label="Prev" size="small" variant="outlined" sx={{ cursor: 'help' }} />
+                  <Chip label="Vote" size="small" variant="outlined" sx={{ cursor: 'help' }} />
                 </Tooltip>
                 <Tooltip
                   enterTouchDelay={0}
