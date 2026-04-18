@@ -98,7 +98,8 @@ function FinalizationProofViewer({ networkName }: { networkName: 'mainnet' | 'te
         }
 
         setVotingNodes(votingNodes);
-      } catch {
+      } catch (error) {
+        console.error('Failed to fetch voting nodes:', error);
         setVotingNodes([]);
       }
     };
