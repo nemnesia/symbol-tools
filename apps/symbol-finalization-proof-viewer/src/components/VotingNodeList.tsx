@@ -1,26 +1,11 @@
 import { Node } from '@nemnesia/nodewatch-openapi-typescript-fetch-client';
 import { useEffect, useState } from 'react';
 
+import { VotingNodeInfoData } from '../types/votingNode';
 import { hexToBase32 } from '../utils/hexToBase32';
 import { formatStringNumber, formatXymString } from '../utils/numberFormat';
 import { findAccountByPublicKey, findChainInfo, findFinalizationProofAtEpoch } from '../utils/restClient';
 import VotingNodeCard from './VotingNodeCard';
-
-type VotingNodeInfoData = {
-  host: string;
-  publicKey: string;
-  address: string;
-  amount: string;
-  isVoting: boolean;
-  votingPublicKeys?: {
-    votingPublicKey?: string;
-    startEpoch?: number;
-    endEpoch?: number;
-    progress?: number;
-    stage0Signature?: string;
-    stage1Signature?: string;
-  }[];
-};
 
 interface VotingNodeListProps {
   votingNodes: Node[];

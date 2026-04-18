@@ -2,22 +2,8 @@ import { Cancel, Check, CheckCircle, ContentCopy, InfoOutlined } from '@mui/icon
 import { Box, Card, CardContent, Chip, IconButton, LinearProgress, LinearProgressProps, Popover, Tooltip, Typography } from '@mui/material';
 import React, { useState } from 'react';
 
+import { VotingNodeInfoData } from '../types/votingNode';
 import { formatStringNumber } from '../utils/numberFormat';
-
-type VotingNodeInfoData = {
-  host: string;
-  publicKey: string;
-  address: string;
-  amount: string;
-  votingPublicKeys?: {
-    votingPublicKey?: string;
-    startEpoch?: number;
-    endEpoch?: number;
-    progress?: number;
-    stage0Signature?: string;
-    stage1Signature?: string;
-  }[];
-};
 
 interface VotingNodeCardProps {
   votingNodeInfo: VotingNodeInfoData;
