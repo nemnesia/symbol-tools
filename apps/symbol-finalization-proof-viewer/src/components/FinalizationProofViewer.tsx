@@ -80,7 +80,11 @@ function FinalizationProofViewer({ networkName }: { networkName: 'mainnet' | 'te
           try {
             return new URL(node.endpoint).hostname === 'pasomi.net';
           } catch {
-            return node.endpoint.includes('pasomi.net');
+            try {
+              return new URL(`http://${node.endpoint}`).hostname === 'pasomi.net';
+            } catch {
+              return false;
+            }
           }
         });
 
