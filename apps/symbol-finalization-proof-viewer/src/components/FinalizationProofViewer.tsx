@@ -7,6 +7,45 @@ import '../App.css';
 import ChainInfoCard from './ChainInfoCard';
 import VotingNodeList from './VotingNodeList';
 
+const PASOMI_NODE_INFO_URL = 'https://pasomi.net:3001/node/info';
+
+const fetchPasomiMainnetNode = async (): Promise<Node | null> => {
+  try {
+    const response = await fetch(PASOMI_NODE_INFO_URL);
+    if (!response.ok) {
+      return null;
+    }
+
+    const nodeInfo = (await response.json()) as {
+      publicKey?: string;
+      nodePublicKey?: string;
+      host?: string;
+      port?: number;
+      friendlyName?: string;
+      version?: number;
+      roles?: number;
+    };
+
+    if (!nodeInfo.publicKey || !nodeInfo.host || !nodeInfo.port) {
+      return null;
+    }
+
+    return {
+      mainPublicKey: nodeInfo.publicKey,
+      nodePublicKey: nodeInfo.nodePublicKey,
+      endpoint: `http://${nodeInfo.host}:${nodeInfo.port}`,
+      name: nodeInfo.friendlyName ?? nodeInfo.host,
+      version: String(nodeInfo.version ?? ''),
+      height: 0,
+      finalizedHeight: 0,
+      balance: 0,
+      roles: nodeInfo.roles ?? 4,
+    };
+  } catch {
+    return null;
+  }
+};
+
 function FinalizationProofViewer({ networkName }: { networkName: 'mainnet' | 'testnet' }) {
   const [, setHeight] = useState('0');
   const [votingNodes, setVotingNodes] = useState<Node[]>([]);
@@ -34,9 +73,26 @@ function FinalizationProofViewer({ networkName }: { networkName: 'mainnet' | 'te
       const isMainNet = networkName === 'mainnet';
       const symbolNodeWatchApi = createSymbolNodeWatchApi(isMainNet);
       const nodes = await symbolNodeWatchApi.getSymbolPeerNodes();
-      const votingNodes: Node[] = nodes.filter((node) => (node.roles ?? 0) & 4);
+      let votingNodes: Node[] = nodes.filter((node) => (node.roles ?? 0) & 4);
+
+      if (isMainNet) {
+        const hasPasomi = votingNodes.some((node) => {
+          try {
+            return new URL(node.endpoint).hostname === 'pasomi.net';
+          } catch {
+            return node.endpoint.includes('pasomi.net');
+          }
+        });
+
+        if (!hasPasomi) {
+          const pasomiNode = await fetchPasomiMainnetNode();
+          if (pasomiNode && (pasomiNode.roles ?? 0) & 4) {
+            votingNodes = [...votingNodes, pasomiNode];
+          }
+        }
+      }
+
       setVotingNodes(votingNodes);
-      console.log('votingNodes', votingNodes);
     };
 
     setVotingNodes([]);
