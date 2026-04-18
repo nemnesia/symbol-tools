@@ -39,7 +39,7 @@ const fetchPasomiMainnetNode = async (): Promise<Node | null> => {
       height: 0,
       finalizedHeight: 0,
       balance: 0,
-      roles: nodeInfo.roles ?? 4,
+      roles: nodeInfo.roles,
     };
   } catch {
     return null;
