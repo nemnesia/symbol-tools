@@ -70,33 +70,37 @@ function FinalizationProofViewer({ networkName }: { networkName: 'mainnet' | 'te
    */
   useEffect(() => {
     const fetchVotingNodes = async () => {
-      const isMainNet = networkName === 'mainnet';
-      const symbolNodeWatchApi = createSymbolNodeWatchApi(isMainNet);
-      const nodes = await symbolNodeWatchApi.getSymbolPeerNodes();
-      let votingNodes: Node[] = nodes.filter((node) => (node.roles ?? 0) & 4);
+      try {
+        const isMainNet = networkName === 'mainnet';
+        const symbolNodeWatchApi = createSymbolNodeWatchApi(isMainNet);
+        const nodes = await symbolNodeWatchApi.getSymbolPeerNodes();
+        let votingNodes: Node[] = nodes.filter((node) => (node.roles ?? 0) & 4);
 
-      if (isMainNet) {
-        const hasPasomi = votingNodes.some((node) => {
-          try {
-            return new URL(node.endpoint).hostname === 'pasomi.net';
-          } catch {
+        if (isMainNet) {
+          const hasPasomi = votingNodes.some((node) => {
             try {
-              return new URL(`http://${node.endpoint}`).hostname === 'pasomi.net';
+              return new URL(node.endpoint).hostname === 'pasomi.net';
             } catch {
-              return false;
+              try {
+                return new URL(`http://${node.endpoint}`).hostname === 'pasomi.net';
+              } catch {
+                return false;
+              }
+            }
+          });
+
+          if (!hasPasomi) {
+            const pasomiNode = await fetchPasomiMainnetNode();
+            if (pasomiNode && (pasomiNode.roles ?? 0) & 4) {
+              votingNodes = [...votingNodes, pasomiNode];
             }
           }
-        });
-
-        if (!hasPasomi) {
-          const pasomiNode = await fetchPasomiMainnetNode();
-          if (pasomiNode && (pasomiNode.roles ?? 0) & 4) {
-            votingNodes = [...votingNodes, pasomiNode];
-          }
         }
-      }
 
-      setVotingNodes(votingNodes);
+        setVotingNodes(votingNodes);
+      } catch {
+        setVotingNodes([]);
+      }
     };
 
     setVotingNodes([]);
