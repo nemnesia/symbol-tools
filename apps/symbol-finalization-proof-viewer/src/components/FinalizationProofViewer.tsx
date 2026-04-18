@@ -7,6 +7,56 @@ import '../App.css';
 import ChainInfoCard from './ChainInfoCard';
 import VotingNodeList from './VotingNodeList';
 
+const PASOMI_NODE_INFO_URL = 'https://pasomi.net:3001/node/info';
+const PASOMI_NODE_INFO_TIMEOUT_MS = 5000;
+
+const fetchPasomiMainnetNode = async (): Promise<Node | null> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), PASOMI_NODE_INFO_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(PASOMI_NODE_INFO_URL, { signal: controller.signal });
+    if (!response.ok) {
+      return null;
+    }
+
+    const nodeInfo = (await response.json()) as {
+      publicKey?: string;
+      nodePublicKey?: string;
+      host?: string;
+      port?: number;
+      friendlyName?: string;
+      version?: number;
+      roles?: number;
+    };
+
+    if (!nodeInfo.publicKey || !nodeInfo.host || !nodeInfo.port) {
+      return null;
+    }
+
+    return {
+      mainPublicKey: nodeInfo.publicKey,
+      nodePublicKey: nodeInfo.nodePublicKey,
+      endpoint: `http://${nodeInfo.host}:${nodeInfo.port}`,
+      name: nodeInfo.friendlyName ?? nodeInfo.host,
+      version: String(nodeInfo.version ?? ''),
+      height: 0,
+      finalizedHeight: 0,
+      balance: 0,
+      roles: nodeInfo.roles,
+    };
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      console.warn(`Timed out while fetching pasomi mainnet node info (${PASOMI_NODE_INFO_TIMEOUT_MS}ms)`);
+    } else {
+      console.warn('Failed to fetch pasomi mainnet node info:', error);
+    }
+    return null;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
 function FinalizationProofViewer({ networkName }: { networkName: 'mainnet' | 'testnet' }) {
   const [, setHeight] = useState('0');
   const [votingNodes, setVotingNodes] = useState<Node[]>([]);
@@ -31,12 +81,38 @@ function FinalizationProofViewer({ networkName }: { networkName: 'mainnet' | 'te
    */
   useEffect(() => {
     const fetchVotingNodes = async () => {
-      const isMainNet = networkName === 'mainnet';
-      const symbolNodeWatchApi = createSymbolNodeWatchApi(isMainNet);
-      const nodes = await symbolNodeWatchApi.getSymbolPeerNodes();
-      const votingNodes: Node[] = nodes.filter((node) => (node.roles ?? 0) & 4);
-      setVotingNodes(votingNodes);
-      console.log('votingNodes', votingNodes);
+      try {
+        const isMainNet = networkName === 'mainnet';
+        const symbolNodeWatchApi = createSymbolNodeWatchApi(isMainNet);
+        const nodes = await symbolNodeWatchApi.getSymbolPeerNodes();
+        let votingNodes: Node[] = nodes.filter((node) => (node.roles ?? 0) & 4);
+
+        if (isMainNet) {
+          const hasPasomi = votingNodes.some((node) => {
+            try {
+              return new URL(node.endpoint).hostname === 'pasomi.net';
+            } catch {
+              try {
+                return new URL(`http://${node.endpoint}`).hostname === 'pasomi.net';
+              } catch {
+                return false;
+              }
+            }
+          });
+
+          if (!hasPasomi) {
+            const pasomiNode = await fetchPasomiMainnetNode();
+            if (pasomiNode && (pasomiNode.roles ?? 0) & 4) {
+              votingNodes = [...votingNodes, pasomiNode];
+            }
+          }
+        }
+
+        setVotingNodes(votingNodes);
+      } catch (error) {
+        console.error('Failed to fetch voting nodes:', error);
+        setVotingNodes([]);
+      }
     };
 
     setVotingNodes([]);
