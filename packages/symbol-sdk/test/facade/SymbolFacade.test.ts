@@ -20,6 +20,16 @@ const network = Network.TESTNET;
 const facade = new SymbolFacade(network);
 
 describe('SymbolFacadeのテスト', () => {
+  it('static getterでクラス型を取得できる', () => {
+    expect(facade.static).toBe(SymbolFacade);
+  });
+
+  it('now()でNetworkTimestampを取得できる', () => {
+    const timestamp = facade.now();
+    expect(timestamp).toBeDefined();
+    expect(typeof timestamp.addSeconds).toBe('function');
+  });
+
   it('公開鍵からSymbolPublicAccountを生成できる', () => {
     const account = facade.createPublicAccount(TEST_PUBLIC_KEY);
     expect(account).toBeInstanceOf(SymbolPublicAccount);
@@ -33,6 +43,13 @@ describe('SymbolFacadeのテスト', () => {
     expect(account.keyPair).toBeInstanceOf(KeyPair);
     expect(account.publicKey).toEqual(account.keyPair.publicKey);
     expect(account.address).toBeDefined();
+  });
+
+  it('SymbolAccountからmessageEncoderを生成できる', () => {
+    const account = facade.createAccount(TEST_PRIVATE_KEY);
+    const encoder = account.messageEncoder();
+    expect(encoder).toBeDefined();
+    expect(encoder.publicKey).toEqual(account.publicKey);
   });
 
   it('型付きディスクリプタからトランザクションを生成できる', () => {
@@ -51,6 +68,21 @@ describe('SymbolFacadeのテスト', () => {
     expect(tx.signerPublicKey).toEqual(TEST_PUBLIC_KEY);
     expect(tx.deadline).toBeDefined();
     expect(tx.fee).toBeDefined();
+  });
+
+  it('型付きディスクリプタから埋め込みトランザクションを生成できる', () => {
+    const descriptor = {
+      toMap: () => ({
+        type: 'transfer_transaction_v1',
+        recipientAddress: facade.createAccount(TEST_PRIVATE_KEY).address,
+        mosaics: [],
+        message: new Uint8Array(),
+      }),
+    };
+
+    const embedded = facade.createEmbeddedTransactionFromTypedDescriptor(descriptor, TEST_PUBLIC_KEY);
+    expect(embedded).toBeDefined();
+    expect(embedded.signerPublicKey).toEqual(TEST_PUBLIC_KEY);
   });
 
   it('トランザクションの署名と検証ができる', () => {
@@ -83,6 +115,103 @@ describe('SymbolFacadeのテスト', () => {
     const tx = facade.createTransactionFromTypedDescriptor(descriptor, account.publicKey, 100, 60);
     const hash = facade.hashTransaction(tx);
     expect(hash).toBeInstanceOf(Hash256);
+  });
+
+  it('cosignTransactionHashはdetached/attachedの両形式を生成できる', () => {
+    const keyPair = new KeyPair(TEST_PRIVATE_KEY);
+    const transactionHash = Hash256.zero();
+
+    const attached = SymbolFacade.cosignTransactionHash(keyPair, transactionHash, false);
+    const detached = SymbolFacade.cosignTransactionHash(keyPair, transactionHash, true);
+
+    expect(attached).toBeDefined();
+    expect(detached).toBeDefined();
+  });
+
+  it('SymbolAccountのcosignTransactionHashもdetached/attached両形式を生成できる', () => {
+    const account = facade.createAccount(TEST_PRIVATE_KEY);
+    const transactionHash = Hash256.zero();
+
+    const attached = account.cosignTransactionHash(transactionHash, false);
+    const detached = account.cosignTransactionHash(transactionHash, true);
+
+    expect(attached).toBeDefined();
+    expect(detached).toBeDefined();
+  });
+
+  it('cosignatures指定がcosignatureCountを上回る場合は追加枠を確保しない', () => {
+    const localFacade = new SymbolFacade(network);
+    const originalCreate = localFacade.transactionFactory.create.bind(localFacade.transactionFactory);
+    localFacade.transactionFactory.create = (() => ({ size: 100, fee: undefined })) as any;
+
+    const descriptor = {
+      toMap: () => ({
+        type: 'transfer_transaction_v1',
+        cosignatures: [{}, {}],
+      }),
+    };
+
+    const tx = localFacade.createTransactionFromTypedDescriptor(descriptor, TEST_PUBLIC_KEY, 100, 60, 1);
+    expect(tx.fee.value).toBe(10000n);
+
+    localFacade.transactionFactory.create = originalCreate as any;
+  });
+
+  it('aggregate version 2/3で署名ペイロード長が変わる', () => {
+    const aggregateTx = SymbolTransactionFactory.deserialize(
+      utils.hexToUint8(
+        '0801000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000' +
+          '00000000000000000000000000000000000000000000D04AB232742BB4AB3A1368BD4615E4E6D0224AB71A016BAF8520A332' +
+          'C97787370000000002684142C08F000000000000D53BD545230000007A1801B2EEB095EAC6703CF90A640E0D5FF7E9A7ED41' +
+          '0915EFA9A7954923043160000000000000006000000000000000A09AA5F47A6759802FF955F8DC2D2A14A5C99D23BE97F864' +
+          '127FF9383455A4F0000000000168544168AD8BAAB80B1DC684542EC175259711AB2C41D2FEA8D50F0000010000000000EEAF' +
+          'F441BA994BE7081BF40500000000'
+      )
+    );
+
+    const version2Bytes = aggregateTx.serialize();
+    const version3Bytes = new Uint8Array(version2Bytes);
+    version3Bytes[108] = 3;
+
+    const payloadV2 = facade.extractSigningPayload({ serialize: () => version2Bytes } as any);
+    const payloadV3 = facade.extractSigningPayload({ serialize: () => version3Bytes } as any);
+
+    expect(payloadV3.length).toBe(payloadV2.length + 4);
+  });
+
+  it('hashEmbeddedTransactionsで埋め込みトランザクション群をハッシュ化できる', () => {
+    const account = facade.createAccount(TEST_PRIVATE_KEY);
+    const descriptor = {
+      toMap: () => ({
+        type: 'transfer_transaction_v1',
+        recipientAddress: account.address,
+        mosaics: [],
+        message: new Uint8Array(),
+      }),
+    };
+
+    const embedded = facade.createEmbeddedTransactionFromTypedDescriptor(descriptor, account.publicKey);
+    const hash = SymbolFacade.hashEmbeddedTransactions([embedded]);
+    expect(hash).toBeInstanceOf(Hash256);
+  });
+
+  it('bip32Pathを生成できる', () => {
+    const mainFacade = new SymbolFacade('mainnet');
+    const testFacade = new SymbolFacade('testnet');
+
+    expect(mainFacade.bip32Path(5)).toEqual([44, 4343, 5, 0, 0]);
+    expect(testFacade.bip32Path(5)).toEqual([44, 1, 5, 0, 0]);
+  });
+
+  it('bip32NodeToKeyPairで鍵ペアを生成できる', () => {
+    const bip32Node = {
+      privateKey: {
+        bytes: new Uint8Array(32).fill(3),
+      },
+    } as any;
+
+    const keyPair = SymbolFacade.bip32NodeToKeyPair(bip32Node);
+    expect(keyPair).toBeInstanceOf(KeyPair);
   });
 
   describe('SDK互換性', () => {

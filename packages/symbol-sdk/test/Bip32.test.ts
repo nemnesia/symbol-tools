@@ -262,6 +262,14 @@ describe('Bip32', () => {
       expect(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(mnemonic)).toBe(true);
     });
 
+    it('未知の言語指定時は英語wordlistへフォールバックする', () => {
+      const bip32 = new Bip32('ed25519', 'unknown-language');
+      const mnemonic = bip32.random();
+
+      expect(mnemonic.split(' ').length).toBe(24);
+      expect(/^[a-z ]+$/.test(mnemonic)).toBe(true);
+    });
+
     it('生成したニーモニックからルートノードを作成できる', () => {
       const bip32 = new Bip32();
       const mnemonic = bip32.random();

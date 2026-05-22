@@ -68,10 +68,10 @@
     "node": "20.19.6"
   },
   "dependencies": {
-    "@noble/hashes": "^2.0.1",
-    "@scure/bip39": "^2.0.1"
+    "@noble/hashes": "^2.2.0",
+    "@scure/bip39": "^2.2.0"
   },
   "devDependencies": {
-    "eslint-plugin-n": "^17.23.1"
+    "eslint-plugin-n": "^18.0.1"
   }
 }

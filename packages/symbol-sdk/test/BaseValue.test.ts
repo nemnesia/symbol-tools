@@ -24,6 +24,15 @@ describe('BaseValue', () => {
       expect(value.value).toBe(9007199254740991n);
     });
 
+    it('8バイトでnumber入力をBigIntとして扱える', () => {
+      const value = new BaseValue(8, 42);
+      expect(value.value).toBe(42n);
+    });
+
+    it('8バイトで整数以外の入力はエラー', () => {
+      expect(() => new BaseValue(8, 3.14 as unknown as number)).toThrow(RangeError);
+    });
+
     it('範囲外の値でエラー', () => {
       expect(() => new BaseValue(1, 256)).toThrow(RangeError);
       expect(() => new BaseValue(1, -1)).toThrow(RangeError);
@@ -58,6 +67,11 @@ describe('BaseValue', () => {
     it('BigInt値を変換', () => {
       const value = new BaseValue(8, 0xabcdef1234567890n);
       expect(value.toString()).toBe('0xABCDEF1234567890');
+    });
+
+    it('8バイト符号付き負数を2の補数で変換', () => {
+      const value = new BaseValue(8, -1n, true);
+      expect(value.toString()).toBe('0xFFFFFFFFFFFFFFFF');
     });
 
     it('0を変換', () => {
