@@ -6,6 +6,7 @@ import {
   generateMosaicId,
   generateNamespaceId,
   generateNamespacePath,
+  isMosaicAlias,
   isValidNamespaceName,
 } from '../../src/symbol/idGenerator.js';
 
@@ -72,25 +73,50 @@ describe('idGeneratorのテスト', () => {
 
       expect(id1).toBe(id2);
     });
+
+    it('名前に名前空間区切り文字が含まれていると失敗する', () => {
+      expect(() => {
+        generateNamespaceId('symbol.xym');
+      }).toThrow("'name' cannot contain '.'");
+    });
+  });
+
+  describe('isMosaicAlias', () => {
+    it('モザイクIDがエイリアスの場合のみtrueを返す', () => {
+      // Assert: high-bit unset => false
+      expect(isMosaicAlias(0x7fffffffffffffffn)).to.equal(false);
+      expect(isMosaicAlias(0x0fffffffffffffffn)).to.equal(false);
+
+      // - high-bit set => true
+      expect(isMosaicAlias(0x8fffffffffffffffn)).to.equal(true);
+      expect(isMosaicAlias(0xffffffffffffffffn)).to.equal(true);
+      expect(isMosaicAlias(generateMosaicAliasId('cat.token'))).to.equal(true);
+    });
   });
 
   describe('isValidNamespaceName', () => {
-    it('有効な名前空間名を受け入れる', () => {
-      expect(isValidNamespaceName('test')).toBe(true);
-      expect(isValidNamespaceName('test123')).toBe(true);
-      expect(isValidNamespaceName('test_name')).toBe(true);
-      expect(isValidNamespaceName('test-name')).toBe(true);
-      expect(isValidNamespaceName('a')).toBe(true);
-      expect(isValidNamespaceName('123test')).toBe(true); // 数字で始まるのも有効
+    it('すべての文字が英数字の場合、trueを返す', () => {
+      ['a', 'be', 'cat', 'doom', '09az09', 'az09az'].forEach((name) => {
+        expect(isValidNamespaceName(name), `name: ${name}`).toBe(true);
+      });
     });
 
-    it('無効な名前空間名を拒否する', () => {
-      expect(isValidNamespaceName('')).toBe(false);
-      expect(isValidNamespaceName('Test')).toBe(false); // 大文字
-      expect(isValidNamespaceName('_test')).toBe(false); // アンダースコアで始まる
-      expect(isValidNamespaceName('-test')).toBe(false); // ハイフンで始まる
-      expect(isValidNamespaceName('test@name')).toBe(false); // 無効な文字
-      expect(isValidNamespaceName('test.name')).toBe(false); // ドット
+    it('名前に区切り文字が含まれている場合、trueを返す', () => {
+      ['al-ce', 'al_ce', 'alice-', 'alice_'].forEach((name) => {
+        expect(isValidNamespaceName(name), `name: ${name}`).toBe(true);
+      });
+    });
+
+    it('名前が区切り文字で始まる場合、falseを返す', () => {
+      ['-alice', '_alice'].forEach((name) => {
+        expect(isValidNamespaceName(name), `name: ${name}`).toBe(false);
+      });
+    });
+
+    it('無効な文字が含まれている場合、falseを返す', () => {
+      ['al.ce', 'alIce', 'al ce', 'al@ce', 'al#ce'].forEach((name) => {
+        expect(isValidNamespaceName(name), `name: ${name}`).toBe(false);
+      });
     });
   });
 
