@@ -52,7 +52,7 @@ export class MosaicIdDescriptor {
      */
     constructor(namespaceId: NamespaceIdDescriptor, name?: Uint8Array | string | undefined);
     rawDescriptor: {
-        namespaceId: any;
+        namespaceId: object;
     };
     /**
      * Builds a representation of this descriptor that can be passed to a factory function.
@@ -73,7 +73,7 @@ export class MosaicDescriptor {
      */
     constructor(mosaicId: MosaicIdDescriptor, amount: models.Amount);
     rawDescriptor: {
-        mosaicId: any;
+        mosaicId: object;
         amount: models.Amount;
     };
     /**
@@ -94,7 +94,7 @@ export class SizePrefixedMosaicDescriptor {
      */
     constructor(mosaic: MosaicDescriptor);
     rawDescriptor: {
-        mosaic: any;
+        mosaic: object;
     };
     /**
      * Builds a representation of this descriptor that can be passed to a factory function.
@@ -119,7 +119,7 @@ export class MosaicLevyDescriptor {
     rawDescriptor: {
         transferFeeType: models.MosaicTransferFeeType;
         recipientAddress: Address;
-        mosaicId: any;
+        mosaicId: object;
         fee: models.Amount;
     };
     /**
@@ -159,7 +159,7 @@ export class SizePrefixedMosaicPropertyDescriptor {
      */
     constructor(property: MosaicPropertyDescriptor);
     rawDescriptor: {
-        property: any;
+        property: object;
     };
     /**
      * Builds a representation of this descriptor that can be passed to a factory function.
@@ -184,7 +184,7 @@ export class MosaicDefinitionDescriptor {
     constructor(ownerPublicKey: PublicKey, id: MosaicIdDescriptor, description?: Uint8Array | string | undefined, properties?: SizePrefixedMosaicPropertyDescriptor[] | undefined, levy?: MosaicLevyDescriptor | undefined);
     rawDescriptor: {
         ownerPublicKey: PublicKey;
-        id: any;
+        id: object;
     };
     /**
      * Builds a representation of this descriptor that can be passed to a factory function.
@@ -207,7 +207,7 @@ export class MosaicDefinitionTransactionV1Descriptor {
     constructor(mosaicDefinition: MosaicDefinitionDescriptor, rentalFeeSink: Address, rentalFee: models.Amount);
     rawDescriptor: {
         type: string;
-        mosaicDefinition: any;
+        mosaicDefinition: object;
         rentalFeeSink: Address;
         rentalFee: models.Amount;
     };
@@ -232,7 +232,7 @@ export class MosaicSupplyChangeTransactionV1Descriptor {
     constructor(mosaicId: MosaicIdDescriptor, action: models.MosaicSupplyChangeAction, delta: models.Amount);
     rawDescriptor: {
         type: string;
-        mosaicId: any;
+        mosaicId: object;
         action: models.MosaicSupplyChangeAction;
         delta: models.Amount;
     };
@@ -276,7 +276,7 @@ export class SizePrefixedMultisigAccountModificationDescriptor {
      */
     constructor(modification: MultisigAccountModificationDescriptor);
     rawDescriptor: {
-        modification: any;
+        modification: object;
     };
     /**
      * Builds a representation of this descriptor that can be passed to a factory function.
@@ -383,7 +383,7 @@ export class SizePrefixedCosignatureV1Descriptor {
      */
     constructor(cosignature: CosignatureV1Descriptor);
     rawDescriptor: {
-        cosignature: any;
+        cosignature: object;
     };
     /**
      * Builds a representation of this descriptor that can be passed to a factory function.
