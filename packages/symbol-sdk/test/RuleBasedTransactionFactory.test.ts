@@ -65,6 +65,15 @@ class TestEntity {
   message = '';
 
   data = new EmbeddedBytes();
+
+  metadata = {
+    title: '',
+    nested: {
+      note: '',
+    },
+    entries: [{ label: '' }],
+    optional: null,
+  };
 }
 
 const createFactory = (overrides?: Map<Function, Function>) => {
@@ -153,5 +162,40 @@ describe('RuleBasedTransactionFactoryのテスト', () => {
     expect(entity.message).toEqual(new TextEncoder().encode('hello'));
     expect(entity.data).toBeInstanceOf(EmbeddedBytes);
     expect(entity.data.bytes).toEqual(new Uint8Array([7, 8]));
+  });
+
+  it('createFromFactoryはネストした文字列も再帰的に自動エンコードできる', () => {
+    const factory = createFactory();
+    factory.addPodParser('TestPod', TestPod);
+    factory.addEnumParser('TestEnum');
+    factory.addFlagsParser('TestFlags');
+    factory.addArrayParser('TestPod');
+
+    const descriptor = {
+      type: 'entity_v1',
+      amount: 1,
+      mode: 'red',
+      flags: 'alpha',
+      list: [1],
+      message: 'root',
+      data: new EmbeddedBytes(new Uint8Array([1, 2])),
+      metadata: {
+        title: 'top',
+        nested: {
+          note: 'deep',
+        },
+        entries: [{ label: 'a' }, { label: 'b' }],
+        optional: null,
+      },
+    };
+
+    const entity = factory.createFromFactory(() => new TestEntity(), descriptor) as TestEntity;
+
+    expect(entity.message).toEqual(new TextEncoder().encode('root'));
+    expect(entity.metadata.title).toEqual(new TextEncoder().encode('top'));
+    expect(entity.metadata.nested.note).toEqual(new TextEncoder().encode('deep'));
+    expect(entity.metadata.entries[0].label).toEqual(new TextEncoder().encode('a'));
+    expect(entity.metadata.entries[1].label).toEqual(new TextEncoder().encode('b'));
+    expect(entity.metadata.optional).toBeNull();
   });
 });

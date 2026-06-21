@@ -18,6 +18,9 @@ describe('index exportsのテスト', () => {
     expect(nem.NemFacade).toBeDefined();
     expect(nem.Network).toBeDefined();
     expect(nem.TransactionFactory).toBeDefined();
+    expect(nem.calculateMosaicRentalFee).toBeDefined();
+    expect(nem.calculateNamespaceRentalFee).toBeDefined();
+    expect(nem.calculateTransactionFee).toBeDefined();
     expect(nem.models).toBeDefined();
     expect(nem.descriptors).toBeDefined();
   });
@@ -26,6 +29,7 @@ describe('index exportsのテスト', () => {
     expect(symbol.SymbolFacade).toBeDefined();
     expect(symbol.Network).toBeDefined();
     expect(symbol.SymbolTransactionFactory).toBeDefined();
+    expect(symbol.calculateTransactionFee).toBeDefined();
     expect(symbol.generateNamespaceId).toBeDefined();
     expect(symbol.proveMerkle).toBeDefined();
     expect(symbol.models).toBeDefined();
