@@ -1,8 +1,8 @@
-import { NemAccount, NemFacade } from 'symbol-sdk/nem';
 import { describe, expect, it } from 'vitest';
 
 import { Bip32, Bip32Node } from '../src/Bip32.js';
 import { PrivateKey } from '../src/CryptoTypes.js';
+import { NemAccount, NemFacade } from '../src/nem/index.js';
 import { SymbolAccount, SymbolFacade } from '../src/symbol/index.js';
 
 describe('Bip32Node', () => {
@@ -260,6 +260,14 @@ describe('Bip32', () => {
       expect(typeof mnemonic).toBe('string');
       // 日本語の文字が含まれているかチェック
       expect(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(mnemonic)).toBe(true);
+    });
+
+    it('未知の言語指定時は英語wordlistへフォールバックする', () => {
+      const bip32 = new Bip32('ed25519', 'unknown-language');
+      const mnemonic = bip32.random();
+
+      expect(mnemonic.split(' ').length).toBe(24);
+      expect(/^[a-z ]+$/.test(mnemonic)).toBe(true);
     });
 
     it('生成したニーモニックからルートノードを作成できる', () => {

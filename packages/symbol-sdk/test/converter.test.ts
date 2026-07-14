@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { hexToUint8, isHexString, uint8ToHex } from '../src/utils/converter.js';
+import {
+  bytesToBigInt,
+  bytesToBigIntUnaligned,
+  bytesToInt,
+  bytesToIntUnaligned,
+  hexToUint8,
+  intToBytes,
+  isHexString,
+  tryParseUint,
+  uint8ToHex,
+} from '../src/utils/converter.js';
 
 describe('converter', () => {
   describe('hexToUint8', () => {
@@ -57,6 +67,52 @@ describe('converter', () => {
     it('不正な文字を含むとfalse', () => {
       expect(isHexString('XY')).toBe(false);
       expect(isHexString('0G')).toBe(false);
+    });
+  });
+
+  describe('tryParseUint', () => {
+    it('0と通常数値をパースできる', () => {
+      expect(tryParseUint('0')).toBe(0);
+      expect(tryParseUint('12345')).toBe(12345);
+    });
+
+    it('先頭ゼロ・非数字・オーバーフローを拒否する', () => {
+      expect(tryParseUint('0123')).toBeUndefined();
+      expect(tryParseUint('12a3')).toBeUndefined();
+      expect(tryParseUint('9007199254740992')).toBeUndefined();
+    });
+  });
+
+  describe('bytes/int conversions', () => {
+    it('aligned int and bigintを変換できる', () => {
+      expect(bytesToInt(new Uint8Array([0x34, 0x12]), 2, false)).toBe(0x1234);
+      expect(bytesToInt(new Uint8Array([0xff]), 1, true)).toBe(-1);
+
+      const big = bytesToBigInt(new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0]), 8, false);
+      expect(big).toBe(1n);
+    });
+
+    it('unaligned int and bigintを変換できる', () => {
+      expect(bytesToIntUnaligned(new Uint8Array([0x78, 0x56, 0x34, 0x12]), 4, false)).toBe(0x12345678);
+      expect(bytesToIntUnaligned(new Uint8Array([0xfe]), 1, true)).toBe(-2);
+
+      const big = bytesToBigIntUnaligned(new Uint8Array([2, 0, 0, 0, 0, 0, 0, 0]), 8, false);
+      expect(big).toBe(2n);
+    });
+
+    it('unsupported sizeを拒否する', () => {
+      expect(() => bytesToInt(new Uint8Array([1, 2, 3]), 3, false)).toThrowError('unsupported int size 3');
+      expect(() => bytesToBigInt(new Uint8Array([1, 2, 3, 4]), 4, false)).toThrowError('unsupported int size 4');
+      expect(() => bytesToIntUnaligned(new Uint8Array([1, 2, 3]), 3, false)).toThrowError('unsupported int size 3');
+      expect(() => bytesToBigIntUnaligned(new Uint8Array([1, 2, 3, 4]), 4, false)).toThrowError(
+        'unsupported int size 4'
+      );
+    });
+
+    it('intToBytes converts number and bigint', () => {
+      expect(intToBytes(0x1234, 2, false)).toEqual(new Uint8Array([0x34, 0x12]));
+      expect(intToBytes(-1, 1, true)).toEqual(new Uint8Array([0xff]));
+      expect(intToBytes(3n, 8, false)).toEqual(new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0]));
     });
   });
 });

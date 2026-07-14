@@ -108,6 +108,29 @@ describe('MessageEncoder', () => {
       expect(encoded[0]).toBe(1);
       expect(encoded.length).toBeGreaterThan(1);
     });
+
+    it('先頭バイトが未対応形式ならデコード失敗を返す', async () => {
+      const encoder = createEncoder();
+      const result = await encoder.tryDecode(null as any, new Uint8Array([2, 3, 4]));
+
+      expect(result.isDecoded).toBe(false);
+    });
+
+    it('delegationマーカー先頭だが不一致時はデコード失敗を返す', async () => {
+      const encoder = createEncoder();
+      const result = await encoder.tryDecode(null as any, new Uint8Array([0xfe, 0x00, 0x01, 0x02, 0x03]));
+
+      expect(result.isDecoded).toBe(false);
+    });
+
+    it('delegationマーカー経路で短いデータはデコード失敗を返す', async () => {
+      const encoder = createEncoder();
+      const marker = new Uint8Array([0xfe, 0x2a, 0x80, 0x61, 0x57, 0x73, 0x01, 0xe2]);
+      const payload = new Uint8Array([...marker, ...new Uint8Array(32), 1]);
+
+      const result = await encoder.tryDecode(null as any, payload);
+      expect(result.isDecoded).toBe(false);
+    });
   });
 
   describe('encodePersistentHarvestingDelegation', () => {
@@ -189,6 +212,16 @@ describe('MessageEncoder', () => {
 
       expect(result.isDecoded).toBe(true);
       expect(result.message).toEqual(message);
+    });
+
+    it('tryDecodeDeprecatedで非hex文字列の場合は通常経路へフォールバックする', async () => {
+      const encoder = createEncoder();
+      const recipientKeyPair = new KeyPair(
+        new PrivateKey('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+      );
+      const result = await encoder.tryDecodeDeprecated(recipientKeyPair.publicKey, new Uint8Array([1, 0xff, 0xff]));
+
+      expect(result.isDecoded).toBe(false);
     });
   });
 

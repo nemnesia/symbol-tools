@@ -1,6 +1,6 @@
 {
   "name": "@nemnesia/symbol-sdk",
-  "version": "3.3.0-pure.1",
+  "version": "3.3.2-pure.1",
   "description": "JavaScript SDK for interacting with the Symbol and NEM blockchains.",
   "keywords": [
     "symbol",
@@ -55,8 +55,8 @@
     "test:coverage": "vitest run --coverage",
     "test:coverage:ui": "vitest --ui --coverage",
     "prepublishOnly": "sh ./scripts/create_types.sh && npm test",
-    "publish:dryrun": "npm publish --dry-run",
-    "publish:release": "npm publish"
+    "publish:dryrun": "npm publish --dry-run --tag latest",
+    "publish:release": "npm publish --tag latest"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -68,10 +68,10 @@
     "node": "20.19.6"
   },
   "dependencies": {
-    "@noble/hashes": "^2.0.1",
-    "@scure/bip39": "^2.0.1"
+    "@noble/hashes": "^2.2.0",
+    "@scure/bip39": "^2.2.0"
   },
   "devDependencies": {
-    "eslint-plugin-n": "^17.23.1"
+    "eslint-plugin-n": "^18.0.1"
   }
 }

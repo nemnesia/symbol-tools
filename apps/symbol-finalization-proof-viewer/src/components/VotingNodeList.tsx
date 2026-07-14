@@ -1,25 +1,11 @@
 import { Node } from '@nemnesia/nodewatch-openapi-typescript-fetch-client';
 import { useEffect, useState } from 'react';
 
+import { VotingNodeInfoData } from '../types/votingNode';
 import { hexToBase32 } from '../utils/hexToBase32';
 import { formatStringNumber, formatXymString } from '../utils/numberFormat';
 import { findAccountByPublicKey, findChainInfo, findFinalizationProofAtEpoch } from '../utils/restClient';
 import VotingNodeCard from './VotingNodeCard';
-
-type VotingNodeInfoData = {
-  host: string;
-  publicKey: string;
-  address: string;
-  amount: string;
-  votingPublicKeys?: {
-    votingPublicKey?: string;
-    startEpoch?: number;
-    endEpoch?: number;
-    progress?: number;
-    stage0Signature?: string;
-    stage1Signature?: string;
-  }[];
-};
 
 interface VotingNodeListProps {
   votingNodes: Node[];
@@ -83,15 +69,24 @@ function VotingNodeList({
       // ソート関数
       const sortNodeInfos = (infos: VotingNodeInfoData[]) => {
         return infos.sort((a, b) => {
-          // votingPublicKeysが空のデータを一番下にする
-          if (a.votingPublicKeys!.length === 0 && b.votingPublicKeys!.length > 0) {
-            return 1;
-          } else if (a.votingPublicKeys!.length > 0 && b.votingPublicKeys!.length === 0) {
+          // 投票キーを持たないノードは常に最下段にする
+          const aHasVotingKeys = (a.votingPublicKeys?.length ?? 0) > 0;
+          const bHasVotingKeys = (b.votingPublicKeys?.length ?? 0) > 0;
+          if (aHasVotingKeys && !bHasVotingKeys) {
             return -1;
+          } else if (!aHasVotingKeys && bHasVotingKeys) {
+            return 1;
           }
 
-          // votingPublicKeysが空でない場合は、amountでソート
-          return parseInt(b.amount) - parseInt(a.amount);
+          // 投票中のノードを先頭にする
+          if (a.isVoting && !b.isVoting) {
+            return -1;
+          } else if (!a.isVoting && b.isVoting) {
+            return 1;
+          }
+
+          // 同順位はホスト名で昇順
+          return a.host.localeCompare(b.host);
         });
       };
 
@@ -102,6 +97,7 @@ function VotingNodeList({
           publicKey: votingNode.mainPublicKey,
           address: '-',
           amount: '0 XYM',
+          isVoting: false,
           votingPublicKeys: [],
         };
 
@@ -163,6 +159,10 @@ function VotingNodeList({
             stage1Signature: signatureMap.get('stage1'),
           };
         });
+
+        votingNodeInfoData.isVoting = votingNodeInfoData.votingPublicKeys.some(
+          (key) => key.stage0Signature !== '-' || key.stage1Signature !== '-'
+        );
 
         // ソート
         votingNodeInfoData.votingPublicKeys.sort((a, b) => {

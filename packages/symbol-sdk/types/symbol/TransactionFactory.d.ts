@@ -29,6 +29,12 @@ export default class TransactionFactory {
      */
     static attachSignature(transaction: sc.Transaction, signature: Signature): string;
     /**
+     * Generates a JSON representation of transaction that can be sent to a node.
+     * @param {sc.Transaction} transaction Transaction object.
+     * @returns {string} JSON transaction payload.
+     */
+    static toJson(transaction: sc.Transaction): string;
+    /**
      * Tries to coerce an sdk type to a model type.
      * @param {object} value Value to convert.
      * @returns {sc.Address|undefined} Converted value or undefined.
