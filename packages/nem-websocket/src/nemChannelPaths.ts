@@ -1,14 +1,14 @@
 /**
- * NEMチャネルタイプ / NEM Channel types:
- * - newBlock: 生成されたブロックの通知 / Generated Block Notification
- * - blocks: 生成されたブロックの全情報 / All information about the generated block
- * - account: アカウントの状態更新通知 / Account Status Update Notification
- * - accountMosaic: アカウントのモザイク保有量更新通知 / Account Mosaic Balance Update Notification
- * - accountMosaicDef: アカウントのモザイク情報量更新通知 / Account Mosaic Information Update Notification
- * - accountNamespace: アカウントのネームスペース情報量更新通知 / Account Namespace Information Update Notification
- * - unconfirmed: 未承認トランザクション通知 / Unconfirmed Transaction Notification
- * - transactions: 承認トランザクション通知 / Confirmed Transaction Notification
- * - recenttransactions: 直近トランザクション通知 / Recent Transaction Notification
+ * NEMチャネルタイプ
+ * - newBlock: 生成されたブロックの通知
+ * - blocks: 生成されたブロックの全情報
+ * - account: アカウントの状態更新通知
+ * - accountMosaic: アカウントのモザイク保有量更新通知
+ * - accountMosaicDef: アカウントのモザイク情報量更新通知
+ * - accountNamespace: アカウントのネームスペース情報量更新通知
+ * - unconfirmed: 未承認トランザクション通知
+ * - transactions: 承認トランザクション通知
+ * - recenttransactions: 直近トランザクション通知
  */
 export type NemChannel =
   | 'newBlock'
@@ -22,7 +22,7 @@ export type NemChannel =
   | 'recenttransactions';
 
 /**
- * NEMチャネルパス定義 / NEM Channel Path Definitions
+ * NEMチャネルパス定義
  */
 export const nemChannelPaths: Record<
   NemChannel,
@@ -30,10 +30,7 @@ export const nemChannelPaths: Record<
 > = {
   newBlock: { subscribe: '/blocks/new' },
   blocks: { subscribe: '/blocks' },
-  account: {
-    subscribe: (address?: string) => `/account/${address}`,
-    publish: '/w/api/account/get',
-  },
+  account: { subscribe: (address?: string) => `/account/${address}`, publish: '/w/api/account/get' },
   accountMosaic: {
     subscribe: (address?: string) => `/account/mosaic/owned/${address}`,
     publish: '/w/api/account/mosaic/owned',

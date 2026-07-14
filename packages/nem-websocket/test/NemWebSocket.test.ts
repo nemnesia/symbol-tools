@@ -29,7 +29,7 @@ const defaultOptions: NemWebSocketOptions = {
   ssl: false,
 };
 
-describe('NemWebSocketMonitor', () => {
+describe('NemWebSocket', () => {
   let monitor: NemWebSocket;
   let clientMock: any;
 
@@ -38,19 +38,28 @@ describe('NemWebSocketMonitor', () => {
     clientMock = monitor.client;
   });
 
-  it('エラーなくインスタンス化されるべきである / should instantiate without error', () => {
+  it('エラーなくインスタンス化されるべきである', () => {
     expect(monitor).toBeInstanceOf(NemWebSocket);
   });
 
-  it('エラーコールバックが登録され、エラー時に呼び出されるべきである / should register error callback and call it on error', () => {
+  it('エラーコールバックが登録され、エラー時に呼び出されるべきである', () => {
     const cb = vi.fn();
     monitor.onError(cb);
     // @ts-ignore
-    monitor.errorCallbacks[0]({ type: 'error' });
+    monitor.errorCallbacks[0]({
+      type: 'network',
+      severity: 'recoverable',
+      host: 'localhost',
+      reconnecting: false,
+      reconnectAttempts: 0,
+      originalError: new Error('error'),
+      timestamp: Date.now(),
+      message: 'error',
+    });
     expect(cb).toHaveBeenCalled();
   });
 
-  it('クローズコールバックが登録され、クローズ時に呼び出されるべきである / should register close callback and call it on close', () => {
+  it('クローズコールバックが登録され、クローズ時に呼び出されるべきである', () => {
     const cb = vi.fn();
     monitor.onClose(cb);
     // @ts-ignore
@@ -58,14 +67,14 @@ describe('NemWebSocketMonitor', () => {
     expect(cb).toHaveBeenCalled();
   });
 
-  it('addressが必要だが提供されていない場合、例外がスローされるべきである / should throw if address is required but not provided', () => {
+  it('addressが必要だが提供されていない場合、例外がスローされるべきである', () => {
     // nemChannelPathsのaccountはfunction型
     expect(() => {
       monitor.on('account', vi.fn());
     }).toThrow();
   });
 
-  it('接続されていない場合、pendingSubscribesにプッシュされるべきである / should push to pendingSubscribes if not connected', () => {
+  it('接続されていない場合、pendingSubscribesにプッシュされるべきである', () => {
     // @ts-ignore
     monitor._isConnected = false;
     monitor.on('blocks', vi.fn());
@@ -73,7 +82,7 @@ describe('NemWebSocketMonitor', () => {
     expect(monitor.pendingSubscribes.length).toBe(1);
   });
 
-  it('接続されている場合、subscribeが呼び出されるべきである / should call subscribe if connected', () => {
+  it('接続されている場合、subscribeが呼び出されるべきである', () => {
     // @ts-ignore
     monitor._isConnected = true;
     const spy = vi.spyOn(clientMock, 'subscribe');
@@ -81,13 +90,13 @@ describe('NemWebSocketMonitor', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('unsubscribeが呼び出されるべきである / should call unsubscribe on off', () => {
+  it('unsubscribeが呼び出されるべきである', () => {
     const spy = vi.spyOn(clientMock, 'unsubscribe');
     monitor.off('blocks');
     expect(spy).toHaveBeenCalled();
   });
 
-  it('接続時にすべてのpendingSubscribesが実行されるべきである / should execute all pendingSubscribes on connect', () => {
+  it('接続時にすべてのpendingSubscribesが実行されるべきである', () => {
     // @ts-ignore
     monitor._isConnected = false;
     const cb = vi.fn();
@@ -102,7 +111,7 @@ describe('NemWebSocketMonitor', () => {
     expect(monitor.pendingSubscribes.length).toBe(0);
   });
 
-  it('サブスクライブされたメッセージを受信したときにコールバックが呼び出されるべきである / should call callback when subscribed message received', () => {
+  it('サブスクライブされたメッセージを受信したときにコールバックが呼び出されるべきである', () => {
     // @ts-ignore
     monitor._isConnected = true;
     const cb = vi.fn();
@@ -114,7 +123,7 @@ describe('NemWebSocketMonitor', () => {
     expect(cb).toHaveBeenCalledWith('test-message');
   });
 
-  it('クライアントからのエラーおよびクローズイベントが伝播されるべきである / should propagate error and close events from client', () => {
+  it('クライアントからのエラーおよびクローズイベントが伝播されるべきである', () => {
     const errorCb = vi.fn();
     const closeCb = vi.fn();
     monitor.onError(errorCb);
@@ -125,7 +134,39 @@ describe('NemWebSocketMonitor', () => {
     expect(closeCb).toHaveBeenCalled();
   });
 
-  describe('NemWebSocketMonitor extra behavior', () => {
+  it('エラーコールバックが未登録の場合は警告が出力されるべきである', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    monitor.client.onWebSocketError({ type: 'error' } as any);
+    expect(warnSpy).toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
+  it('接続時にuidが設定され、取得できるべきである', () => {
+    // @ts-ignore
+    monitor.client.onConnect({ headers: { session: 'session-1' } });
+    expect(monitor.uid).toBe('session-1');
+  });
+
+  it('フレームにuidがない場合、フォールバックが設定されるべきである', () => {
+    // @ts-ignore
+    monitor.client.onConnect({ headers: {} });
+    expect(monitor.uid).toBe('localhost:7778');
+  });
+
+  it('isConnectedは接続状態を返すべきである', () => {
+    // @ts-ignore
+    monitor._isConnected = false;
+    expect(monitor.isConnected).toBe(false);
+    // @ts-ignore
+    monitor._isConnected = true;
+    expect(monitor.isConnected).toBe(true);
+  });
+
+  it('clientが取得できるべきである', () => {
+    expect(monitor.client).toBeDefined();
+  });
+
+  describe('追加の挙動', () => {
     let monitor: NemWebSocket;
     let clientMock: any;
 
@@ -134,12 +175,12 @@ describe('NemWebSocketMonitor', () => {
       clientMock = monitor.client;
     });
 
-    it('SSL=true でインスタンス化でき、例外をスローしない / can be instantiated with ssl=true without throwing', () => {
+    it('SSL=true でインスタンス化でき、例外をスローしない', () => {
       const options: NemWebSocketOptions = { host: 'example', timeout: 1234, ssl: true };
       expect(() => new NemWebSocket(options)).not.toThrow();
     });
 
-    it('切断すると、すべてのサブスクリプションが解除され、クライアントが無効化されます / disconnect unsubscribes all subscriptions and deactivates client', () => {
+    it('切断すると、すべてのサブスクリプションが解除され、クライアントが無効化されます', () => {
       // @ts-ignore
       monitor._isConnected = true;
       const unsubSpy = vi.fn();
@@ -155,9 +196,22 @@ describe('NemWebSocketMonitor', () => {
       // @ts-ignore
       expect(monitor.subscriptions.size).toBe(0);
     });
+
+    it('closeはdisconnectのエイリアスとして動作するべきである', () => {
+      // @ts-ignore
+      monitor._isConnected = true;
+      // @ts-ignore
+      monitor._uid = 'uid-1';
+      clientMock.deactivate = vi.fn();
+
+      monitor.close();
+
+      expect(clientMock.deactivate).toHaveBeenCalled();
+      expect(monitor.uid).toBeNull();
+    });
   });
 
-  describe('Reconnection functionality', () => {
+  describe('再接続機能', () => {
     beforeEach(() => {
       vi.useFakeTimers();
     });
@@ -166,7 +220,7 @@ describe('NemWebSocketMonitor', () => {
       vi.useRealTimers();
     });
 
-    it('自動再接続が有効な場合、切断時に再接続を試みるべきである / should attempt reconnect on close when autoReconnect is enabled', () => {
+    it('自動再接続が有効な場合、切断時に再接続を試みるべきである', () => {
       const options: NemWebSocketOptions = {
         host: 'localhost',
         timeout: 1000,
@@ -189,7 +243,7 @@ describe('NemWebSocketMonitor', () => {
       expect(reconnectCallback).toHaveBeenCalledWith(1);
     });
 
-    it('maxReconnectAttemptsに達したら再接続を停止するべきである / should stop reconnecting after maxReconnectAttempts', () => {
+    it('maxReconnectAttemptsに達したら再接続を停止するべきである', () => {
       const options: NemWebSocketOptions = {
         host: 'localhost',
         timeout: 1000,
@@ -222,7 +276,7 @@ describe('NemWebSocketMonitor', () => {
       expect(reconnectMonitor.reconnectAttempts).toBe(2);
     });
 
-    it('手動切断時は再接続しないべきである / should not reconnect on manual disconnect', () => {
+    it('手動切断時は再接続しないべきである', () => {
       const options: NemWebSocketOptions = {
         host: 'localhost',
         timeout: 1000,
@@ -243,7 +297,7 @@ describe('NemWebSocketMonitor', () => {
       expect(reconnectCallback).not.toHaveBeenCalled();
     });
 
-    it('再接続成功時にactiveSubscriptionsを復元するべきである / should restore activeSubscriptions on reconnect', () => {
+    it('再接続成功時にactiveSubscriptionsを復元するべきである', () => {
       // @ts-ignore
       monitor._isConnected = true;
 
@@ -268,27 +322,51 @@ describe('NemWebSocketMonitor', () => {
       // activeSubscriptionsの復元を確認
       expect(subscribeSpy).toHaveBeenCalled();
     });
+
+    it('手動切断フラグが立っている場合は再接続を開始しないべきである', () => {
+      const options: NemWebSocketOptions = {
+        host: 'localhost',
+        timeout: 1000,
+        ssl: false,
+        autoReconnect: true,
+        reconnectInterval: 1000,
+      };
+      const reconnectMonitor = new NemWebSocket(options);
+      const reconnectCallback = vi.fn();
+      reconnectMonitor.onReconnect(reconnectCallback);
+
+      // @ts-ignore
+      reconnectMonitor.isManualDisconnect = true;
+      // @ts-ignore
+      reconnectMonitor.client.onWebSocketClose({ type: 'close' });
+
+      vi.advanceTimersByTime(1000);
+
+      expect(reconnectCallback).not.toHaveBeenCalled();
+    });
   });
 
-  describe('Connection callbacks', () => {
-    it('onConnectコールバックが接続時に呼び出されるべきである / should call onConnect callback on connection', () => {
+  describe('接続コールバック', () => {
+    it('onConnectコールバックが接続時に呼び出されるべきである', () => {
       const connectCallback = vi.fn();
       monitor.onConnect(connectCallback);
 
       // @ts-ignore
       monitor.client.onConnect();
 
-      expect(connectCallback).toHaveBeenCalledWith(monitor.client);
+      expect(connectCallback).toHaveBeenCalledWith('localhost:7778');
     });
 
-    it('既に接続済みの場合、onConnectは即座に呼び出されるべきである / should call onConnect immediately if already connected', () => {
+    it('既に接続済みの場合、onConnectは即座に呼び出されるべきである', () => {
       // @ts-ignore
       monitor._isConnected = true;
+      // @ts-ignore
+      monitor._uid = 'uid-1';
 
       const connectCallback = vi.fn();
       monitor.onConnect(connectCallback);
 
-      expect(connectCallback).toHaveBeenCalledWith(monitor.client);
+      expect(connectCallback).toHaveBeenCalledWith('uid-1');
     });
   });
 });

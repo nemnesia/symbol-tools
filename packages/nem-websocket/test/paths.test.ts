@@ -5,7 +5,7 @@ import { nemChannelPaths } from '../src/nemChannelPaths.js';
 
 describe('Channel path definitions', () => {
   describe('Nem', () => {
-    it('nemChannelPaths: subscribe関数はアドレス付きで正しいパスを生成する / nemChannelPaths: function subscribe produces correct path with address', () => {
+    it('nemChannelPaths: subscribe関数はアドレス付きで正しいパスを生成する', () => {
       const res =
         typeof nemChannelPaths.account.subscribe === 'function'
           ? nemChannelPaths.account.subscribe('ABC123')
@@ -13,7 +13,7 @@ describe('Channel path definitions', () => {
       expect(res).toBe('/account/ABC123');
     });
 
-    it('nemChannelPaths: accountMosaic およびその他の関数パスは期待される文字列を生成する / nemChannelPaths: accountMosaic and other function paths produce expected strings', () => {
+    it('nemChannelPaths: accountMosaic およびその他の関数パスは期待される文字列を生成する', () => {
       expect(
         typeof nemChannelPaths.accountMosaic.subscribe === 'function'
           ? nemChannelPaths.accountMosaic.subscribe('ADDR')
@@ -46,12 +46,12 @@ describe('Channel path definitions', () => {
       ).toBe('/recenttransactions/ADDR');
     });
 
-    it('nemChannelPaths: 定数のsubscribeパスは正しい / nemChannelPaths: constant subscribe paths are correct', () => {
+    it('nemChannelPaths: 定数のsubscribeパスは正しい', () => {
       expect(nemChannelPaths.newBlock.subscribe).toBe('/blocks/new');
       expect(nemChannelPaths.blocks.subscribe).toBe('/blocks');
     });
 
-    it('indexはモニターと型をエクスポートする / index exports monitors and types', () => {
+    it('indexはモニターと型をエクスポートする', () => {
       expect(index.NemWebSocket).toBeDefined();
     });
   });
