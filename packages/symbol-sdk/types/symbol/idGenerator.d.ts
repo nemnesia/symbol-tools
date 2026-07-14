@@ -13,6 +13,12 @@ export function generateMosaicId(ownerAddress: Address, nonce: number): bigint;
  */
 export function generateNamespaceId(name: string, parentNamespaceId?: bigint): bigint;
 /**
+ * Determines if mosaicId is an alias.
+ * @param {bigint} mosaicId Mosaic id to check.
+ * @returns {boolean} true if the specified mosaic id is an alias.
+ */
+export function isMosaicAlias(mosaicId: bigint): boolean;
+/**
  * Returns true if a name is a valid namespace name.
  * @param {string} name Namespace name to check.
  * @returns {boolean} true if the specified name is valid.

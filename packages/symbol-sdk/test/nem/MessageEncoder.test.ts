@@ -1,10 +1,10 @@
-import { utils } from 'symbol-sdk';
-import { models } from 'symbol-sdk/nem';
 import { describe, expect, it } from 'vitest';
 
 import { PrivateKey, PublicKey } from '../../src/CryptoTypes.js';
+import { utils } from '../../src/index.js';
 import { KeyPair } from '../../src/nem/KeyPair.js';
 import MessageEncoder from '../../src/nem/MessageEncoder.js';
+import { models } from '../../src/nem/index.js';
 import { Message, MessageType } from '../../src/nem/models.js';
 
 // テスト用の固定キーペア
@@ -47,6 +47,41 @@ describe('MessageEncoder', () => {
     message.message = new Uint8Array([1, 2, 3]);
 
     await expect(encoder.tryDecode(recipientKeyPair.publicKey, message)).rejects.toThrow('invalid message format');
+  });
+
+  it('破損した暗号文では復号エラーを投げる', async () => {
+    const encoder = createEncoder();
+    const recipientKeyPair = new KeyPair(TEST_PRIVATE_KEY_2);
+    const message = new Uint8Array([11, 22, 33, 44]);
+
+    const encoded = await encoder.encode(recipientKeyPair.publicKey, message);
+    encoded.message[encoded.message.length - 1] ^= 0xff;
+
+    const recipientEncoder = new MessageEncoder(recipientKeyPair);
+    await expect(recipientEncoder.tryDecode(encoder.publicKey, encoded)).rejects.toThrow();
+  });
+
+  it('deprecated形式でエンコードできる', async () => {
+    const encoder = createEncoder();
+    const recipientKeyPair = new KeyPair(TEST_PRIVATE_KEY_2);
+    const message = new Uint8Array([99, 88, 77, 66]);
+
+    const encoded = await encoder.encodeDeprecated(recipientKeyPair.publicKey, message);
+
+    expect(encoded.messageType).toBe(MessageType.ENCRYPTED);
+    expect(encoded.message.length).toBeGreaterThan(message.length);
+  });
+
+  it('短すぎる暗号文では復号エラーを投げる', async () => {
+    const encoder = createEncoder();
+    const recipientKeyPair = new KeyPair(TEST_PRIVATE_KEY_2);
+    const message = new Message();
+    message.messageType = MessageType.ENCRYPTED;
+    message.message = new Uint8Array([1, 2, 3]);
+
+    await expect(encoder.tryDecode(recipientKeyPair.publicKey, message)).rejects.toThrow(
+      'The provided data is too small'
+    );
   });
 
   describe('SDK互換性', () => {

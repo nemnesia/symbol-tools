@@ -53,6 +53,11 @@ export class Address extends ByteArray {
      * @returns {NamespaceId|undefined} Namespace id if this adresss is an alias, undefined otherwise.
      */
     toNamespaceId(): NamespaceId | undefined;
+    /**
+     * Determines if this address is an alias.
+     * @returns {boolean} true if this address is an alias.
+     */
+    isAlias(): boolean;
 }
 /**
  * Represents a Symbol network.

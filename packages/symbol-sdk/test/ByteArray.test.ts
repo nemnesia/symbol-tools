@@ -31,4 +31,9 @@ describe('ByteArray', () => {
     const arr = new ByteArray(2, '0a0b');
     expect(arr.toString()).toBe('0A0B');
   });
+
+  it('toJson()はtoString()と同じ値を返す', () => {
+    const arr = new ByteArray(2, 'beef');
+    expect(arr.toJson()).toBe('BEEF');
+  });
 });
