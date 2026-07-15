@@ -1,6 +1,6 @@
 {
   "name": "@nemnesia/symbol-sdk",
-  "version": "3.3.2-pure.1",
+  "version": "3.3.2-pure.2",
   "description": "JavaScript SDK for interacting with the Symbol and NEM blockchains.",
   "keywords": [
     "symbol",
