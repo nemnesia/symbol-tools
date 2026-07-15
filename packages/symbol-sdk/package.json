@@ -40,6 +40,11 @@
       "types": "./types/index.d.ts",
       "default": "./src/index.js"
     },
+    "./nem": {
+      "import": "./src/nem/index.js",
+      "types": "./types/nem/index.d.ts",
+      "default": "./src/nem/index.js"
+    },
     "./symbol": {
       "import": "./src/symbol/index.js",
       "types": "./types/symbol/index.d.ts",
