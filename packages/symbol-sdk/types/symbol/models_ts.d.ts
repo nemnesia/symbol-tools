@@ -384,7 +384,7 @@ export class HashLockTransactionV1Descriptor {
     constructor(mosaic: UnresolvedMosaicDescriptor, duration: models.BlockDuration, hash: Hash256);
     rawDescriptor: {
         type: string;
-        mosaic: object;
+        mosaic: any;
         duration: models.BlockDuration;
         hash: Hash256;
     };
@@ -415,7 +415,7 @@ export class SecretLockTransactionV1Descriptor {
         type: string;
         recipientAddress: Address;
         secret: Hash256;
-        mosaic: object;
+        mosaic: any;
         duration: models.BlockDuration;
         hashAlgorithm: models.LockHashAlgorithm;
     };
@@ -609,7 +609,7 @@ export class MosaicSupplyRevocationTransactionV1Descriptor {
     rawDescriptor: {
         type: string;
         sourceAddress: Address;
-        mosaic: object;
+        mosaic: any;
     };
     /**
      * Builds a representation of this descriptor that can be passed to a factory function.
