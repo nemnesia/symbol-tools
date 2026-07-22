@@ -48,8 +48,9 @@
     "publish:release": "npm run build && npm publish"
   },
   "dependencies": {
+    "@types/ws": "^8.5.16",
     "isomorphic-ws": "^5.0.0",
-    "ws": "^8.19.0"
+    "ws": "^8.21.1"
   },
   "publishConfig": {
     "access": "public"
