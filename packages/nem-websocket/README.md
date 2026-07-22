@@ -137,9 +137,7 @@ interface NemWebSocketError {
   - `connection`: 接続エラー
   - `unknown`: その他のエラー
 
-- **severity**: エラーの重大度
-  - `fatal`: 致命的エラー（自動再接続しません）
-  - `recoverable`: 回復可能エラー（自動再接続します）
+- **severity**: エラーの重大度。現行実装では下位 WebSocket のエラーを `recoverable` として通知します。`fatal` は将来の分類のために予約されています。
 
 - **reconnecting**: 現在再接続中かどうか
 - **reconnectAttempts**: 現在の再接続試行回数

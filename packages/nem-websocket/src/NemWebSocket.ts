@@ -11,7 +11,10 @@ import { nemChannelPaths } from './nemChannelPaths.js';
 import type { NemChannel } from './nemChannelPaths.js';
 
 /**
- * NEMウェブソケットモニタークラス
+ * NEM NIS1 ノードの STOMP WebSocket クライアント。
+ *
+ * インスタンス生成時に接続を開始します。接続前に登録した購読は、接続成功時に自動で登録されます。
+ * 異常切断時は、`autoReconnect` が有効であれば購読を復元して再接続を試みます。
  */
 export class NemWebSocket {
   private _client!: Client;
@@ -33,7 +36,7 @@ export class NemWebSocket {
   /**
    * コンストラクタ
    *
-   * @param options NEMウェブソケットオプション
+   * @param options 接続先と再接続動作を指定するオプション
    */
   constructor(options: NemWebSocketOptions) {
     this.options = {
@@ -220,20 +223,26 @@ export class NemWebSocket {
 
   /**
    * クライアントインスタンスを取得
+   *
+   * 高度な STOMP 操作が必要な場合に使用します。直接接続を停止・変更すると、このクラスが管理する接続状態と一致しなくなる可能性があります。
    */
   public get client(): Client {
     return this._client;
   }
 
   /**
-   * UID (STOMP session ID or fallback identifier)
+   * 現在の接続の識別子。
+   *
+   * STOMP のセッション ID、サーバー識別子、または `host:port` のフォールバック値です。未接続時は `null` です。
    */
   public get uid(): string | null {
     return this._uid;
   }
 
   /**
-   * 接続状態を取得
+   * STOMP 接続が確立済みかどうか。
+   *
+   * WebSocket の切断を検知すると `false` になり、次回の接続成功時に `true` になります。
    */
   public get isConnected(): boolean {
     return this._isConnected;
@@ -242,7 +251,9 @@ export class NemWebSocket {
   /**
    * WebSocket接続完了イベント登録
    *
-   * @param callback 接続時に呼ばれるコールバック
+   * 接続成功ごとに callback を呼び出します。すでに接続済みの場合は、その場で一度呼び出します。
+   *
+   * @param callback 接続識別子を受け取るコールバック
    */
   public onConnect(callback: (uid: string) => void): void {
     this.connectCallbacks.push(callback);
@@ -255,7 +266,9 @@ export class NemWebSocket {
   /**
    * WebSocket再接続イベント登録
    *
-   * @param callback 再接続試行時に呼ばれるコールバック
+   * 再接続をスケジュールする直前に callback を呼び出します。接続成功の通知ではありません。
+   *
+   * @param callback 1 始まりの再接続試行回数を受け取るコールバック
    */
   public onReconnect(callback: (attemptCount: number) => void): void {
     this.reconnectCallbacks.push(callback);
@@ -264,17 +277,21 @@ export class NemWebSocket {
   /**
    * チャネルサブスクメソッド
    *
-   * @param channel チャネル名
-   * @param callback コールバック関数
+   * アドレスを必要としないチャネルに callback を登録します。同じ callback を同じチャネルへ複数回登録しても一度だけ登録されます。
+   *
+   * @param channel アドレスを必要としないチャネル名
+   * @param callback メッセージ本文を受け取るコールバック
    */
   on(channel: NemChannel, callback: (message: string) => void): void;
 
   /**
    * チャネルサブスクメソッド
    *
-   * @param channel チャネル名
-   * @param address アドレス
-   * @param callback コールバック関数
+   * アドレスを必要とするチャネルに callback を登録します。
+   *
+   * @param channel アドレスを必要とするチャネル名
+   * @param address NEM アドレス
+   * @param callback メッセージ本文を受け取るコールバック
    */
   on(channel: NemChannel, address: string, callback: (message: string) => void): void;
 
@@ -333,7 +350,9 @@ export class NemWebSocket {
   /**
    * WebSocketエラーイベント登録
    *
-   * @param callback エラー時に呼ばれるコールバック
+   * 下位 WebSocket のエラーを構造化して callback に通知します。
+   *
+   * @param callback 構造化エラーを受け取るコールバック
    */
   public onError(callback: (err: NemWebSocketError) => void): void {
     this.errorCallbacks.push(callback);
@@ -342,7 +361,9 @@ export class NemWebSocket {
   /**
    * WebSocketクローズイベント登録
    *
-   * @param callback クローズ時に呼ばれるコールバック
+   * WebSocket が閉じたときに callback を呼び出します。最後に登録した callback だけが保持されます。
+   *
+   * @param callback クローズイベントを受け取るコールバック
    */
   public onClose(callback: (event: WebSocket.CloseEvent) => void): void {
     this.onCloseCallback = callback;
@@ -351,15 +372,19 @@ export class NemWebSocket {
   /**
    * チャネルアンサブスクメソッド
    *
-   * @param channel チャネル名
+   * 指定チャネルのすべての callback とサブスクリプションを解除します。
+   *
+   * @param channel アドレスを必要としないチャネル名
    */
   off(channel: NemChannel): void;
 
   /**
    * チャネルアンサブスクメソッド
    *
-   * @param channel チャネル名
-   * @param address アドレス
+   * 指定アドレスのチャネルに登録されたすべての callback とサブスクリプションを解除します。
+   *
+   * @param channel アドレスを必要とするチャネル名
+   * @param address NEM アドレス
    */
   off(channel: NemChannel, address: string): void;
 
@@ -394,7 +419,9 @@ export class NemWebSocket {
   }
 
   /**
-   * WebSocket接続を切断
+   * WebSocket 接続を終了し、すべての callback と購読を破棄します。
+   *
+   * この操作は終端的です。自動再接続は行われず、同じインスタンスを再接続することはできません。
    */
   disconnect(): void {
     // 手動切断フラグを立てる
@@ -424,7 +451,7 @@ export class NemWebSocket {
   }
 
   /**
-   * WebSocket接続を切断（disconnectのエイリアス）
+   * `disconnect()` のエイリアス。
    */
   close(): void {
     this.disconnect();
