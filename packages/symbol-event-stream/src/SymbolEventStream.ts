@@ -5,26 +5,54 @@ type ErrorCallback = (error: SymbolWebSocketError) => void;
 type ConnectCallback = (nodeUrl: string, uid: string) => void;
 type DisconnectCallback = (nodeUrl: string) => void;
 
-interface NodeConnectionStatus {
+/**
+ * 管理対象ノードの現在の接続状態。
+ */
+export interface NodeConnectionStatus {
+  /** ノードのホスト名または IP アドレス。 */
   nodeUrl: string;
+  /** 内部 WebSocket が OPEN 状態かどうか。 */
   connected: boolean;
+  /** Gateway から受信した接続 UID。接続完了前・切断中は `null`。 */
   uid: string | null;
 }
 
-interface SymbolEventStreamOptions {
-  /** ノードのURLリスト */
+/**
+ * {@link SymbolEventStream} の接続・重複排除設定。
+ */
+export interface SymbolEventStreamOptions {
+  /**
+   * 接続候補となるノードのホスト名または IP アドレス。プロトコル・ポート・パスは含めません。
+   * 少なくとも 1 つ指定します。
+   */
   nodeUrls: string[];
-  /** 接続数 */
+  /**
+   * 同時に維持する接続数。正の安全な整数を指定します。
+   * `nodeUrls` の件数を超える場合は、すべての候補ノードへ接続します。
+   */
   connections: number;
-  /** SSL使用有無 */
+  /** SSL を使用するかどうか。 @defaultValue true */
   ssl?: boolean;
-  /** 重複排除キャッシュの最大サイズ（デフォルト: 10000） */
+  /**
+   * 重複排除キャッシュの最大エントリ数。正の安全な整数を指定します。
+   * @defaultValue 10000
+   */
   maxCacheSize?: number;
-  /** 重複排除キャッシュのTTL（ミリ秒、デフォルト: 60000 = 1分） */
+  /**
+   * 重複排除キャッシュの有効期間（ミリ秒）。正の有限数を指定します。
+   * @defaultValue 60000
+   */
   cacheTtl?: number;
-  /** ノード切り替え前の最大再接続試行回数（デフォルト: 5） */
+  /**
+   * ノード切り替えを試みる再接続回数。正の安全な整数を指定します。
+   * 代替ノードがない場合は、現在の接続で再接続を継続します。
+   * @defaultValue 5
+   */
   maxReconnectBeforeSwitching?: number;
-  /** ブラックリストのTTL（ミリ秒、デフォルト: 300000 = 5分） */
+  /**
+   * 切り替え元ノードを候補から除外する期間（ミリ秒）。正の有限数を指定します。
+   * @defaultValue 300000
+   */
   blacklistTtl?: number;
 }
 
@@ -38,7 +66,13 @@ interface BlacklistedNode {
 }
 
 /**
- * Symbolイベントストリームクラス
+ * 複数の Symbol ノードからイベントを受信するストリーム。
+ *
+ * @remarks
+ * インスタンス生成時に指定数の接続を開始します。同じチャネル・アドレス購読に同じ ID
+ * （`meta.hash`、`hash`、`uid`）の通知が複数ノードから届いた場合は、`cacheTtl` の間は
+ * 1 回だけ配信します。別チャネルまたは別アドレス購読の通知は重複として扱いません。
+ * {@link close} 後に接続を再開することはできません。再利用する場合は新しいインスタンスを作成してください。
  */
 export class SymbolEventStream {
   private sockets: SymbolWebSocket[] = [];
@@ -67,9 +101,10 @@ export class SymbolEventStream {
   private closed = false;
 
   /**
-   * コンストラクタ
+   * 接続を開始します。
    *
-   * @param options オプション
+   * @param options 接続・重複排除の設定。
+   * @throws {Error} `nodeUrls` が空、または数値設定が指定範囲外の場合。
    */
   constructor(options: SymbolEventStreamOptions) {
     const {
@@ -84,6 +119,21 @@ export class SymbolEventStream {
 
     if (nodeUrls.length === 0) {
       throw new Error('nodeUrls must not be empty');
+    }
+    if (!Number.isSafeInteger(connections) || connections < 1) {
+      throw new Error('connections must be a positive integer');
+    }
+    if (!Number.isSafeInteger(maxCacheSize) || maxCacheSize < 1) {
+      throw new Error('maxCacheSize must be a positive integer');
+    }
+    if (!Number.isFinite(cacheTtl) || cacheTtl <= 0) {
+      throw new Error('cacheTtl must be a positive finite number');
+    }
+    if (!Number.isSafeInteger(maxReconnectBeforeSwitching) || maxReconnectBeforeSwitching < 1) {
+      throw new Error('maxReconnectBeforeSwitching must be a positive integer');
+    }
+    if (!Number.isFinite(blacklistTtl) || blacklistTtl <= 0) {
+      throw new Error('blacklistTtl must be a positive finite number');
     }
 
     this.maxCacheSize = maxCacheSize;
@@ -165,18 +215,18 @@ export class SymbolEventStream {
     const oldNode = this.socketNodeMap.get(oldWs);
     if (!oldNode) return;
 
-    // 古いノードをブラックリストに追加
-    this.blacklistedNodes.set(oldNode, {
-      nodeUrl: oldNode,
-      timestamp: Date.now(),
-    });
-
     // 利用可能なノードを取得（ブラックリスト以外で未使用のノード）
     const availableNodes = this.getAvailableNodes();
     if (availableNodes.length === 0) {
       // 利用可能なノードがない場合は何もしない（既存の接続を維持）
       return;
     }
+
+    // 実際に切り替えるノードだけをブラックリストに追加
+    this.blacklistedNodes.set(oldNode, {
+      nodeUrl: oldNode,
+      timestamp: Date.now(),
+    });
 
     // 新しいノードを選択
     const newNode = availableNodes[Math.floor(Math.random() * availableNodes.length)];
@@ -246,18 +296,19 @@ export class SymbolEventStream {
   }
 
   /**
-   * イベント購読（全アドレス）
+   * アドレスを指定せずにイベントを購読します。
    *
-   * @param channel チャネル
-   * @param callback コールバック
+   * @param channel 購読する Symbol 通知チャネル。
+   * @param callback 通知ごとに呼び出すコールバック。
    */
   public on(channel: SymbolChannel, callback: EventCallback): void;
 
   /**
-   * イベント購読（特定のアドレス）
-   * @param channel チャネル
-   * @param address アドレス
-   * @param callback コールバック
+   * アドレスを指定してイベントを購読します。
+   *
+   * @param channel 購読する Symbol 通知チャネル。
+   * @param address チャネルを絞り込む Symbol アドレス。
+   * @param callback 通知ごとに呼び出すコールバック。
    */
   public on(channel: SymbolChannel, address: string, callback: EventCallback): void;
 
@@ -289,18 +340,23 @@ export class SymbolEventStream {
   }
 
   /**
-   * イベント解除（特定のコールバックまたは全て）
+   * アドレスを指定しない購読を解除します。
    *
-   * @param channel チャネル
-   * @param callback コールバック
+   * @remarks
+   * `callback` を省略すると、そのチャネルに登録されたすべてのコールバックを解除します。
+   * 最後のコールバックを解除した時点で、すべての内部接続からも購読を解除します。
+   *
+   * @param channel 購読を解除する Symbol 通知チャネル。
+   * @param callback 解除するコールバック。省略時はすべて解除します。
    */
   public off(channel: SymbolChannel, callback?: EventCallback): void;
 
   /**
-   * イベント解除（特定のアドレスとコールバックまたは全て）
-   * @param channel チャネル
-   * @param address アドレス
-   * @param callback コールバック
+   * アドレスを指定した購読を解除します。
+   *
+   * @param channel 購読を解除する Symbol 通知チャネル。
+   * @param address 購読時に指定した Symbol アドレス。
+   * @param callback 解除するコールバック。省略時はそのアドレスのすべてを解除します。
    */
   public off(channel: SymbolChannel, address: string, callback?: EventCallback): void;
 
@@ -340,18 +396,22 @@ export class SymbolEventStream {
   }
 
   /**
-   * エラー購読
+   * WebSocket エラーのコールバックを登録します。
    *
-   * @param callback エラーコールバック
+   * @param callback 構造化された WebSocket エラーを受け取るコールバック。
    */
   public onError(callback: ErrorCallback): void {
     this.errorCallbacks.add(callback);
   }
 
   /**
-   * 接続イベント購読
+   * ノード接続完了時のコールバックを登録します。
    *
-   * @param callback 接続時のコールバック（ノードURLとUIDを受け取る）
+   * @remarks
+   * 初回接続と自動再接続の両方で呼び出されます。登録時点ですでに Gateway UID を受信済みの
+   * ノードについても、直ちに 1 回呼び出されます。
+   *
+   * @param callback ノードのホスト名と Gateway UID を受け取るコールバック。
    */
   public onConnect(callback: ConnectCallback): void {
     this.connectCallbacks.add(callback);
@@ -368,9 +428,13 @@ export class SymbolEventStream {
   }
 
   /**
-   * 切断イベント購読
+   * ノード切断時のコールバックを登録します。
    *
-   * @param callback 切断時のコールバック（ノードURLを受け取る）
+   * @remarks
+   * 予期しない切断と、ノード切り替えのための切断で呼び出されます。{@link close} による
+   * 明示的な終了時は、登録済みコールバックを破棄します。
+   *
+   * @param callback 切断したノードのホスト名を受け取るコールバック。
    */
   public onDisconnect(callback: DisconnectCallback): void {
     this.disconnectCallbacks.add(callback);
@@ -386,8 +450,11 @@ export class SymbolEventStream {
     const id = this.extractId(message);
 
     if (id) {
+      // 同一イベントを複数ノードから受ける場合だけを重複として扱う。
+      // 別チャネル・別アドレス購読で同じトランザクション hash を受ける場合は配信する。
+      const cacheKey = `${key}\u0000${id}`;
       const now = Date.now();
-      const cached = this.seenIds.get(id);
+      const cached = this.seenIds.get(cacheKey);
 
       // TTL内に同じIDが存在する場合はスキップ
       if (cached && now - cached.timestamp < this.cacheTtl) {
@@ -395,7 +462,7 @@ export class SymbolEventStream {
       }
 
       // 新規または期限切れのIDを記録
-      this.seenIds.set(id, { timestamp: now });
+      this.seenIds.set(cacheKey, { timestamp: now });
 
       // サイズ制限チェック（最大サイズを超えたら古いものから削除）
       if (this.seenIds.size > this.maxCacheSize) {
@@ -473,7 +540,10 @@ export class SymbolEventStream {
   }
 
   /**
-   * 全てのWebSocket接続とリソースをクリーンアップ
+   * すべての接続と登録済みコールバックを破棄します。
+   *
+   * @remarks
+   * このメソッドは冪等です。終了後に接続・購読を再開することはできません。
    */
   public close(): void {
     if (this.closed) return;
@@ -504,28 +574,40 @@ export class SymbolEventStream {
   }
 
   /**
-   * アクティブな接続数を取得
+   * 管理中の WebSocket 接続数を取得します。
+   *
+   * @remarks
+   * 接続完了済みの数ではありません。実際に OPEN 状態の接続数は {@link getConnectedNodes} の
+   * 長さで確認してください。
+   *
+   * @returns 管理中の WebSocket 接続数。
    */
   public getActiveConnectionCount(): number {
     return this.sockets.length;
   }
 
   /**
-   * クローズ状態を確認
+   * このストリームが終了済みかどうかを確認します。
+   *
+   * @returns {@link close} が呼ばれた後は `true`。
    */
   public getIsClosed(): boolean {
     return this.closed;
   }
 
   /**
-   * 少なくとも1つのノードに接続されているかを確認
+   * 少なくとも 1 つの内部 WebSocket が OPEN 状態かどうかを確認します。
+   *
+   * @returns 1 つ以上の WebSocket が OPEN 状態なら `true`。
    */
   public isConnected(): boolean {
     return this.sockets.some((ws) => ws.isConnected);
   }
 
   /**
-   * 接続中のノードURLリストを取得
+   * OPEN 状態のノード一覧を取得します。
+   *
+   * @returns 接続中のノードのホスト名または IP アドレス。
    */
   public getConnectedNodes(): string[] {
     const connectedNodes: string[] = [];
@@ -541,7 +623,9 @@ export class SymbolEventStream {
   }
 
   /**
-   * 全ノードの接続状態を取得
+   * 管理中の全ノードの接続状態を取得します。
+   *
+   * @returns ノードごとの接続状態と Gateway UID。
    */
   public getConnectionStatus(): NodeConnectionStatus[] {
     return this.sockets.map((ws) => ({
@@ -552,7 +636,9 @@ export class SymbolEventStream {
   }
 
   /**
-   * ブラックリストに登録されているノード一覧を取得
+   * 一時的に切り替え候補から除外されているノード一覧を取得します。
+   *
+   * @returns ブラックリストの有効期限内にあるノードのホスト名または IP アドレス。
    */
   public getBlacklistedNodes(): string[] {
     return Array.from(this.blacklistedNodes.keys());
