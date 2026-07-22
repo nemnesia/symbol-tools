@@ -178,9 +178,11 @@ describe('SymbolWebSocketMonitor', () => {
     // @ts-ignore
     monitor.isFirstMessage = false;
     // @ts-ignore
-    monitor.eventCallbacks.block = [() => {
-      throw new Error('callback failed');
-    }];
+    monitor.eventCallbacks.block = [
+      () => {
+        throw new Error('callback failed');
+      },
+    ];
 
     // @ts-ignore
     expect(() => monitor.client.onmessage({ data: JSON.stringify({ topic: 'block' }) })).toThrow('callback failed');

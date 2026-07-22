@@ -197,7 +197,9 @@ export class SymbolWebSocket {
       }
 
       const channel =
-        typeof data === 'object' && data !== null && 'topic' in data && typeof data.topic === 'string' ? data.topic : null;
+        typeof data === 'object' && data !== null && 'topic' in data && typeof data.topic === 'string'
+          ? data.topic
+          : null;
       if (channel && this.eventCallbacks[channel]) {
         this.eventCallbacks[channel].forEach((cb) => cb(data));
       }
