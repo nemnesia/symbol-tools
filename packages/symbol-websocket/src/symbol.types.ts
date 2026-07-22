@@ -59,6 +59,7 @@ export interface SymbolWebSocketOptions {
   /**
    * 接続タイムアウト（ミリ秒）
    * @default 10000
+   * @remarks 0 を指定するとタイムアウトを無効化します。
    */
   timeout?: number;
   /**

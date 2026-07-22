@@ -244,6 +244,9 @@ importers:
       '@nemnesia/nem-websocket':
         specifier: workspace:*
         version: link:../nem-websocket
+      '@nemnesia/symbol-websocket':
+        specifier: workspace:*
+        version: link:../symbol-websocket
       symbol-sdk:
         specifier: workspace:@nemnesia/symbol-sdk@3.3.2-pure.2
         version: link:../symbol-sdk

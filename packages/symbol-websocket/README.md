@@ -27,8 +27,8 @@ const ws = new SymbolWebSocket({
 });
 
 // チャネルにサブスクライブ
-ws.on('confirmedAdded', (message) => {
-  console.log('New confirmed transaction:', message);
+ws.on('block', (message) => {
+  console.log('New block:', message);
 });
 
 // エラーイベントの登録（構造化エラー情報を受け取る）
@@ -80,9 +80,9 @@ new SymbolWebSocket(options: SymbolWebSocketOptions);
 
 #### メソッド
 
-- `on(channel: SymbolChannel, callback: (message: WebSocket.MessageEvent) => void): void`
+- `on<K extends SymbolChannel>(channel: K, callback: (message: SymbolNotificationMap[K]) => void): void`
   - 指定したチャネルにサブスクライブします。
-- `on(channel: SymbolChannel, address: string, callback: (message: WebSocket.MessageEvent) => void): void`
+- `on<K extends SymbolChannel>(channel: K, address: string, callback: (message: SymbolNotificationMap[K]) => void): void`
   - アドレスを指定してチャネルにサブスクライブします。
 - `off(channel: SymbolChannel): void`
   - 指定したチャネルのサブスクリプションを解除します。

@@ -22,7 +22,7 @@ export class SymbolWebSocket {
   private _uid: string | null = null;
   private isFirstMessage = true;
   private eventCallbacks: { [event: string]: ((message: unknown) => void)[] } = {};
-  private pendingSubscribes: { subscribePath: string; callback: (message: unknown) => void }[] = [];
+  private pendingSubscribes: Set<string> = new Set();
   private errorCallbacks: ((err: SymbolWebSocketError) => void)[] = [];
   private onCloseCallback: (event: WebSocket.CloseEvent) => void = () => {};
   private connectCallbacks: ((uid: string) => void)[] = [];
@@ -47,6 +47,7 @@ export class SymbolWebSocket {
       autoReconnect: true,
       maxReconnectAttempts: Infinity,
       reconnectInterval: 3000,
+      timeout: 10000,
       ...options,
     };
 
@@ -57,6 +58,8 @@ export class SymbolWebSocket {
    * WebSocket接続を作成
    */
   private createConnection(): void {
+    this.clearConnectionTimeout();
+
     const endPointHost = this.options.host;
     const ssl = this.options.ssl ?? true;
 
@@ -64,12 +67,18 @@ export class SymbolWebSocket {
     const endPointPort = ssl ? '3001' : '3000';
 
     // クライアントを作成
-    this._client = new WebSocket(`${protocol}://${endPointHost}:${endPointPort}/ws`);
+    const client = new WebSocket(`${protocol}://${endPointHost}:${endPointPort}/ws`);
+    this._client = client;
 
     // 接続タイムアウトを設定
     if (this.options.timeout) {
       this.connectionTimeoutTimer = setTimeout(() => {
-        if (this._client.readyState === WS_CONNECTING || !this._uid) {
+        if (this._client !== client) {
+          return;
+        }
+
+        this.connectionTimeoutTimer = null;
+        if (client.readyState === WS_CONNECTING || !this._uid) {
           const timeoutError = new Error(`WebSocket connection timeout after ${this.options.timeout}ms`);
           const contextualError = this.createContextualError('timeout', 'fatal', timeoutError, 'Connection timeout');
           this.isFatalError = true;
@@ -78,13 +87,20 @@ export class SymbolWebSocket {
           } else {
             console.warn('[SymbolWebSocket]', contextualError);
           }
-          this._client.close();
+          client.close();
         }
       }, this.options.timeout);
     }
 
     // クライアント接続時の処理
-    this._client.onclose = (event: WebSocket.CloseEvent) => {
+    client.onclose = (event: WebSocket.CloseEvent) => {
+      if (this._client !== client) {
+        return;
+      }
+
+      this.clearConnectionTimeout();
+      this._uid = null;
+      this.isFirstMessage = true;
       this.onCloseCallback(event);
 
       // 手動切断でない場合、かつfatalエラーでない場合は再接続を試みる
@@ -97,7 +113,11 @@ export class SymbolWebSocket {
     };
 
     // エラー発生時の処理
-    this._client.onerror = (err: WebSocket.ErrorEvent) => {
+    client.onerror = (err: WebSocket.ErrorEvent) => {
+      if (this._client !== client) {
+        return;
+      }
+
       const contextualError = this.createContextualError(
         'network',
         'recoverable',
@@ -112,43 +132,14 @@ export class SymbolWebSocket {
     };
 
     // メッセージ受信時の処理
-    this._client.onmessage = (message: WebSocket.MessageEvent) => {
+    client.onmessage = (message: WebSocket.MessageEvent) => {
+      if (this._client !== client) {
+        return;
+      }
+
+      let data: unknown;
       try {
-        const data = JSON.parse(message.data.toString());
-        if (this.isFirstMessage) {
-          if (data.uid) {
-            this._uid = data.uid;
-            // 再接続成功時はカウンターをリセット
-            this.reconnectAttempts = 0;
-
-            // 接続タイムアウトタイマーをクリア
-            if (this.connectionTimeoutTimer) {
-              clearTimeout(this.connectionTimeoutTimer);
-              this.connectionTimeoutTimer = null;
-            }
-
-            // 接続コールバックを呼び出す
-            this.connectCallbacks.forEach((cb) => cb(this._uid!));
-
-            // 再接続時は既存のサブスクリプションを復元
-            this.activeSubscriptions.forEach((subscribePath) => {
-              this._client.send(JSON.stringify({ uid: this._uid, subscribe: subscribePath }));
-            });
-
-            // pending subscribeをすべて送信
-            this.pendingSubscribes.forEach(({ subscribePath }) => {
-              this._client.send(JSON.stringify({ uid: this._uid, subscribe: subscribePath }));
-              this.activeSubscriptions.add(subscribePath);
-            });
-            this.pendingSubscribes = [];
-          }
-          this.isFirstMessage = false;
-          return;
-        }
-        const channel = data.topic;
-        if (channel && this.eventCallbacks[channel]) {
-          this.eventCallbacks[channel].forEach((cb) => cb(data));
-        }
+        data = JSON.parse(message.data.toString());
       } catch (e) {
         if (this.errorCallbacks.length > 0) {
           const error = e instanceof Error ? e : new Error(String(e));
@@ -162,8 +153,57 @@ export class SymbolWebSocket {
         } else {
           throw e;
         }
+        return;
+      }
+
+      if (this.isFirstMessage) {
+        const uid =
+          typeof data === 'object' && data !== null && 'uid' in data && typeof data.uid === 'string' ? data.uid : null;
+        if (!uid) {
+          return;
+        }
+
+        this._uid = uid;
+        // 再接続成功時はカウンターをリセット
+        this.reconnectAttempts = 0;
+        this.clearConnectionTimeout();
+
+        // 接続コールバックを呼び出す
+        this.connectCallbacks.forEach((cb) => cb(uid));
+
+        // 再接続時は既存のサブスクリプションを復元
+        this.activeSubscriptions.forEach((subscribePath) => {
+          client.send(JSON.stringify({ uid, subscribe: subscribePath }));
+        });
+
+        // 保留中のサブスクリプションを送信
+        this.pendingSubscribes.forEach((subscribePath) => {
+          if (!this.activeSubscriptions.has(subscribePath)) {
+            client.send(JSON.stringify({ uid, subscribe: subscribePath }));
+            this.activeSubscriptions.add(subscribePath);
+          }
+        });
+        this.pendingSubscribes.clear();
+        this.isFirstMessage = false;
+        return;
+      }
+
+      const channel =
+        typeof data === 'object' && data !== null && 'topic' in data && typeof data.topic === 'string' ? data.topic : null;
+      if (channel && this.eventCallbacks[channel]) {
+        this.eventCallbacks[channel].forEach((cb) => cb(data));
       }
     };
+  }
+
+  /**
+   * 接続タイムアウトタイマーを解除
+   */
+  private clearConnectionTimeout(): void {
+    if (this.connectionTimeoutTimer) {
+      clearTimeout(this.connectionTimeoutTimer);
+      this.connectionTimeoutTimer = null;
+    }
   }
 
   /**
@@ -199,7 +239,7 @@ export class SymbolWebSocket {
   private attemptReconnect(): void {
     const maxAttempts = this.options.maxReconnectAttempts ?? Infinity;
 
-    if (this.reconnectAttempts >= maxAttempts) {
+    if (this.reconnectTimer || this.reconnectAttempts >= maxAttempts) {
       return;
     }
 
@@ -209,10 +249,16 @@ export class SymbolWebSocket {
     this.reconnectCallbacks.forEach((cb) => cb(this.reconnectAttempts));
 
     const interval = this.options.reconnectInterval ?? 3000;
+    const disconnectedClient = this._client;
     this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
+      if (this.isManualDisconnect || this._client !== disconnectedClient) {
+        return;
+      }
+
       // 古いWebSocketを明示的にclose
-      if (this._client.readyState === WS_OPEN || this._client.readyState === WS_CONNECTING) {
-        this._client.close();
+      if (disconnectedClient.readyState === WS_OPEN || disconnectedClient.readyState === WS_CONNECTING) {
+        disconnectedClient.close();
       }
 
       this.isFirstMessage = true;
@@ -333,14 +379,14 @@ export class SymbolWebSocket {
     this.eventCallbacks[subscribePath].push(actualCallback);
 
     // サブスクライブメッセージ送信
-    if (!this._uid) {
-      // uid未取得なら保留
-      this.pendingSubscribes.push({ subscribePath, callback: actualCallback });
+    if (!this._uid || this._client.readyState !== WS_OPEN) {
+      // 接続未完了・再接続待機中なら保留
+      this.pendingSubscribes.add(subscribePath);
       return;
     }
 
     // サブスクライブを実行
-    if (this._client.readyState === WS_OPEN) {
+    if (!this.activeSubscriptions.has(subscribePath)) {
       this._client.send(JSON.stringify({ uid: this._uid, subscribe: subscribePath }));
       this.activeSubscriptions.add(subscribePath);
     }
@@ -380,6 +426,7 @@ export class SymbolWebSocket {
     // コールバックをクリーンアップ
     delete this.eventCallbacks[subscribePath];
     this.activeSubscriptions.delete(subscribePath);
+    this.pendingSubscribes.delete(subscribePath);
 
     // アンサブスクライブを実行
     if (this._uid && this._client.readyState === WS_OPEN) {
@@ -401,14 +448,11 @@ export class SymbolWebSocket {
     }
 
     // 接続タイムアウトタイマーをクリア
-    if (this.connectionTimeoutTimer) {
-      clearTimeout(this.connectionTimeoutTimer);
-      this.connectionTimeoutTimer = null;
-    }
+    this.clearConnectionTimeout();
 
     // すべてのコールバックをクリーンアップ
     this.eventCallbacks = {};
-    this.pendingSubscribes = [];
+    this.pendingSubscribes.clear();
     this.errorCallbacks = [];
     this.connectCallbacks = [];
     this.reconnectCallbacks = [];
