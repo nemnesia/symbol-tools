@@ -11,10 +11,12 @@ export type HexString = string;
 export type UInt64String = string;
 
 /**
- * Symbol通知メッセージのエンベロープ型。
+ * Symbol Gateway から届く、パース済み通知メッセージのエンベロープ型。
  */
 export interface SymbolNotificationEnvelope<TTopic extends string, TData> {
+  /** 購読パスと一致する通知トピック。 */
   topic: TTopic;
+  /** トピック固有の通知データ。 */
   data: TData;
 }
 
@@ -120,7 +122,7 @@ export interface StatusData {
 }
 
 /**
- * Symbol通知データマップの型。
+ * 通知チャネルとそのデータ型の対応表。
  */
 export type SymbolNotificationDataMap = {
   block: BlockInfoNotificationData;
@@ -134,6 +136,9 @@ export type SymbolNotificationDataMap = {
   status: StatusData;
 };
 
+/**
+ * 通知チャネルと、そのチャネルで受け取る通知エンベロープ型の対応表。
+ */
 export type SymbolNotificationMap = {
   [K in SymbolChannel]: SymbolNotificationEnvelope<K, SymbolNotificationDataMap[K]>;
 };

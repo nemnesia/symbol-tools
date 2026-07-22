@@ -1,6 +1,6 @@
 {
   "name": "@nemnesia/symbol-websocket",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Symbol ブロックチェーンのリアルタイムデータを監視する TypeScript ライブラリ",
   "keywords": [
     "symbol",
@@ -48,8 +48,9 @@
     "publish:release": "npm run build && npm publish"
   },
   "dependencies": {
+    "@types/ws": "^8.5.16",
     "isomorphic-ws": "^5.0.0",
-    "ws": "^8.19.0"
+    "ws": "^8.21.1"
   },
   "publishConfig": {
     "access": "public"
