@@ -1,6 +1,6 @@
 {
   "name": "@nemnesia/nem-websocket",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "NEM ブロックチェーンのリアルタイムデータを監視する TypeScript ライブラリ",
   "keywords": [
     "nem",
@@ -48,9 +48,9 @@
     "publish:release": "npm run build && npm publish"
   },
   "dependencies": {
-    "@stomp/stompjs": "^7.2.1",
+    "@stomp/stompjs": "^7.3.0",
     "isomorphic-ws": "^5.0.0",
-    "ws": "^8.19.0"
+    "ws": "^8.21.1"
   },
   "publishConfig": {
     "access": "public"

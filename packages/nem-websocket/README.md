@@ -21,6 +21,10 @@ yarn add @nemnesia/nem-websocket
 npm install @nemnesia/nem-websocket
 ```
 
+### モジュール形式
+
+このパッケージは ESM 専用です。`tsx` で実行するプロジェクトでは、呼び出し元の `package.json` に `"type": "module"` を設定するか、エントリーファイルを `.mts` 拡張子にしてください。CommonJS の `require()` はサポートしていません。
+
 ## 使用方法
 
 ```typescript
@@ -69,8 +73,8 @@ new NemWebSocket(options: NemWebSocketOptions);
 
 - `options`: 接続設定。
   - `host`: 接続先ホスト。
-  - `ssl`: SSL を使用するかどうか。
-  - `timeout`: 接続タイムアウト（ミリ秒）。
+  - `ssl`: SSL を使用するかどうか（デフォルト: `false`）。
+  - `timeout`: 接続タイムアウト（ミリ秒、デフォルト: `5000`）。
   - `autoReconnect`: 自動再接続を有効にするか（デフォルト: `true`）。
   - `maxReconnectAttempts`: 最大再接続試行回数（デフォルト: `Infinity`）。
   - `reconnectInterval`: 再接続の間隔（ミリ秒、デフォルト: `3000`）。
@@ -91,9 +95,9 @@ new NemWebSocket(options: NemWebSocketOptions);
 - `on(channel: NemChannel, address: string, callback: (message: string) => void): void`
   - アドレスを指定してチャネルにサブスクライブします。
 - `off(channel: NemChannel): void`
-  - 指定したチャネルのサブスクリプションを解除します。
+  - 指定したチャネルに登録されたすべてのコールバックとサブスクリプションを解除します。
 - `off(channel: NemChannel, address: string): void`
-  - アドレスを指定してチャネルのサブスクリプションを解除します。
+  - アドレスを指定したチャネルに登録されたすべてのコールバックとサブスクリプションを解除します。
 - `onConnect(callback: (uid: string) => void): void`
   - WebSocket 接続完了時のコールバックを登録します。
 - `onReconnect(callback: (attemptCount: number) => void): void`
@@ -133,9 +137,7 @@ interface NemWebSocketError {
   - `connection`: 接続エラー
   - `unknown`: その他のエラー
 
-- **severity**: エラーの重大度
-  - `fatal`: 致命的エラー（自動再接続しません）
-  - `recoverable`: 回復可能エラー（自動再接続します）
+- **severity**: エラーの重大度。現行実装では下位 WebSocket のエラーを `recoverable` として通知します。`fatal` は将来の分類のために予約されています。
 
 - **reconnecting**: 現在再接続中かどうか
 - **reconnectAttempts**: 現在の再接続試行回数
@@ -146,6 +148,7 @@ interface NemWebSocketError {
 
 - 再接続は自動的に行われます（デフォルト有効）。
 - 再接続時は既存のサブスクリプションが自動的に復元されます。
+- 接続が切断されると、`isConnected` は `false`、`uid` は `null` になります。
 - `autoReconnect: false`を設定することで自動再接続を無効化できます。
 
 ## ライセンス

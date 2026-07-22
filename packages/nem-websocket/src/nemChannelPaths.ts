@@ -22,7 +22,9 @@ export type NemChannel =
   | 'recenttransactions';
 
 /**
- * NEMチャネルパス定義
+ * NEM チャネルの STOMP 購読先定義。
+ *
+ * アドレスを受け取る `subscribe` 関数には有効な NEM アドレスを渡す必要があります。通常はパスを直接組み立てず、`NemWebSocket` の `on` と `off` を使用してください。
  */
 export const nemChannelPaths: Record<
   NemChannel,
