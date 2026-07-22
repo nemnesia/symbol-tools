@@ -58,12 +58,12 @@ export interface NemWebSocketOptions {
   host: string;
   /**
    * 接続タイムアウト（ミリ秒）
-   * @default 10000
+   * @default 5000
    */
   timeout?: number;
   /**
    * SSLを使用する
-   * @default true
+   * @default false
    */
   ssl?: boolean;
   /**

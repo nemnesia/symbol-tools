@@ -238,8 +238,11 @@ importers:
 
   packages/test-package:
     dependencies:
+      '@nemnesia/nem-websocket':
+        specifier: workspace:*
+        version: link:../nem-websocket
       symbol-sdk:
-        specifier: workspace:@nemnesia/symbol-sdk@3.3.1-pure.1
+        specifier: workspace:@nemnesia/symbol-sdk@3.3.2-pure.2
         version: link:../symbol-sdk
 
 packages:

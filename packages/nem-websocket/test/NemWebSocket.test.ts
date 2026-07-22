@@ -74,12 +74,13 @@ describe('NemWebSocket', () => {
     }).toThrow();
   });
 
-  it('接続されていない場合、pendingSubscribesにプッシュされるべきである', () => {
+  it('接続されていない場合、購読は接続時まで保持されるべきである', () => {
     // @ts-ignore
     monitor._isConnected = false;
-    monitor.on('blocks', vi.fn());
+    const callback = vi.fn();
+    monitor.on('blocks', callback);
     // @ts-ignore
-    expect(monitor.pendingSubscribes.length).toBe(1);
+    expect(monitor.activeSubscriptions.get('/blocks')).toEqual(new Set([callback]));
   });
 
   it('接続されている場合、subscribeが呼び出されるべきである', () => {
@@ -91,24 +92,72 @@ describe('NemWebSocket', () => {
   });
 
   it('unsubscribeが呼び出されるべきである', () => {
-    const spy = vi.spyOn(clientMock, 'unsubscribe');
+    // @ts-ignore
+    monitor._isConnected = true;
+    monitor.on('blocks', vi.fn());
+    const unsubscribe = clientMock.subscribe.mock.results[0].value.unsubscribe;
     monitor.off('blocks');
-    expect(spy).toHaveBeenCalled();
+    expect(unsubscribe).toHaveBeenCalled();
   });
 
-  it('接続時にすべてのpendingSubscribesが実行されるべきである', () => {
+  it('接続時に未接続中の購読が実行されるべきである', () => {
     // @ts-ignore
     monitor._isConnected = false;
     const cb = vi.fn();
     monitor.on('blocks', cb);
     // @ts-ignore
-    expect(monitor.pendingSubscribes.length).toBe(1);
+    expect(monitor.activeSubscriptions.get('/blocks')).toEqual(new Set([cb]));
     // onConnectを呼ぶ
     // @ts-ignore
     monitor.client.onConnect();
-    // pendingSubscribesが空になっていること
+    expect(clientMock.subscribe).toHaveBeenCalledWith('/blocks', expect.any(Function));
+  });
+
+  it('未接続中に解除した購読は接続時に登録されないべきである', () => {
+    const cb = vi.fn();
+    monitor.on('blocks', cb);
+    monitor.off('blocks');
+
     // @ts-ignore
-    expect(monitor.pendingSubscribes.length).toBe(0);
+    monitor.client.onConnect();
+
+    expect(clientMock.subscribe).not.toHaveBeenCalled();
+  });
+
+  it('WebSocket切断後は接続状態とUIDをリセットするべきである', () => {
+    // @ts-ignore
+    monitor._isConnected = true;
+    // @ts-ignore
+    monitor._uid = 'session-1';
+    // @ts-ignore
+    monitor.isManualDisconnect = true;
+    monitor.on('blocks', vi.fn());
+
+    // @ts-ignore
+    monitor.client.onWebSocketClose({ type: 'close' });
+
+    expect(monitor.isConnected).toBe(false);
+    expect(monitor.uid).toBeNull();
+    // @ts-ignore
+    expect(monitor.subscriptions.size).toBe(0);
+    expect(() => monitor.on('blocks', vi.fn())).not.toThrow();
+  });
+
+  it('同じチャネルの複数コールバックをすべて解除するべきである', () => {
+    // @ts-ignore
+    monitor._isConnected = true;
+    monitor.on('blocks', vi.fn());
+    monitor.on('blocks', vi.fn());
+
+    const firstUnsubscribe = clientMock.subscribe.mock.results[0].value.unsubscribe;
+    const secondUnsubscribe = clientMock.subscribe.mock.results[1].value.unsubscribe;
+    monitor.off('blocks');
+    // @ts-ignore
+    monitor.client.onConnect();
+
+    expect(firstUnsubscribe).toHaveBeenCalled();
+    expect(secondUnsubscribe).toHaveBeenCalled();
+    expect(clientMock.subscribe).toHaveBeenCalledTimes(2);
   });
 
   it('サブスクライブされたメッセージを受信したときにコールバックが呼び出されるべきである', () => {
@@ -185,7 +234,7 @@ describe('NemWebSocket', () => {
       monitor._isConnected = true;
       const unsubSpy = vi.fn();
       // @ts-ignore
-      monitor.subscriptions.set('/test', { unsubscribe: unsubSpy });
+      monitor.subscriptions.set('/test', new Map([[vi.fn(), { unsubscribe: unsubSpy }]]));
       // ensure client has deactivate
       clientMock.deactivate = vi.fn();
 
@@ -302,14 +351,8 @@ describe('NemWebSocket', () => {
       monitor._isConnected = true;
 
       const cb1 = vi.fn();
-      const cb2 = vi.fn();
-
       // 既にサブスクライブ済み
       monitor.on('blocks', cb1);
-      // @ts-ignore
-      const subscribePath = 'blocks';
-      // @ts-ignore
-      monitor.activeSubscriptions.set(subscribePath, cb2);
 
       const subscribeSpy = vi.spyOn(monitor.client, 'subscribe');
 

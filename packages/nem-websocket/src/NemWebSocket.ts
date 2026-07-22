@@ -17,8 +17,7 @@ export class NemWebSocket {
   private _client!: Client;
   private _isConnected = false;
   private _uid: string | null = null;
-  private subscriptions: Map<string, StompSubscription> = new Map();
-  private pendingSubscribes: { subscribePath: string; callback: (message: string) => void }[] = [];
+  private subscriptions: Map<string, Map<(message: string) => void, StompSubscription>> = new Map();
   private errorCallbacks: ((err: NemWebSocketError) => void)[] = [];
   private onCloseCallback: (event: WebSocket.CloseEvent) => void = () => {};
   private connectCallbacks: ((uid: string) => void)[] = [];
@@ -29,7 +28,7 @@ export class NemWebSocket {
   private reconnectAttempts = 0;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private isManualDisconnect = false;
-  private activeSubscriptions: Map<string, (message: string) => void> = new Map();
+  private activeSubscriptions: Map<string, Set<(message: string) => void>> = new Map();
 
   /**
    * コンストラクタ
@@ -59,14 +58,18 @@ export class NemWebSocket {
     const endPointPort = ssl ? '7779' : '7778';
 
     // クライアントを作成
-    this._client = new Client({
+    const client = new Client({
       connectionTimeout: timeout,
       reconnectDelay: 0, // 手動で再接続を管理
       webSocketFactory: () => new WebSocket(`${protocol}://${endPointHost}:${endPointPort}/w/messages/websocket`),
     });
+    this._client = client;
 
     // クライアントエラー時の処理
-    this._client.onWebSocketError = (event: WebSocket.ErrorEvent) => {
+    client.onWebSocketError = (event: WebSocket.ErrorEvent) => {
+      if (this._client !== client) {
+        return;
+      }
       const contextualError = this.createContextualError(
         'network',
         'recoverable',
@@ -81,7 +84,13 @@ export class NemWebSocket {
     };
 
     // クライアントクローズ時の処理
-    this._client.onWebSocketClose = (event: WebSocket.CloseEvent) => {
+    client.onWebSocketClose = (event: WebSocket.CloseEvent) => {
+      if (this._client !== client) {
+        return;
+      }
+      this._isConnected = false;
+      this._uid = null;
+      this.subscriptions.clear();
       this.onCloseCallback(event);
 
       // 手動切断でない場合は再接続を試みる
@@ -91,7 +100,10 @@ export class NemWebSocket {
     };
 
     // クライアント接続時の処理
-    this._client.onConnect = (frame?: IFrame) => {
+    client.onConnect = (frame?: IFrame) => {
+      if (this._client !== client) {
+        return;
+      }
       this._isConnected = true;
       // 再接続成功時はカウンターをリセット
       this.reconnectAttempts = 0;
@@ -103,29 +115,58 @@ export class NemWebSocket {
       this.connectCallbacks.forEach((cb) => cb(this._uid!));
 
       // 再接続時は既存のサブスクリプションを復元
-      this.activeSubscriptions.forEach((callback, subscribePath) => {
-        const subscription = this._client.subscribe(subscribePath, (message) => callback(message.body));
-        this.subscriptions.set(subscribePath, subscription);
+      this.subscriptions.clear();
+      this.activeSubscriptions.forEach((callbacks, subscribePath) => {
+        callbacks.forEach((callback) => this.subscribe(subscribePath, callback));
       });
-
-      // 保留中のsubscribeをすべて実行
-      this.pendingSubscribes.forEach(({ subscribePath, callback }) => {
-        const subscription = this._client.subscribe(subscribePath, (message) => callback(message.body));
-        this.subscriptions.set(subscribePath, subscription);
-        this.activeSubscriptions.set(subscribePath, callback);
-      });
-      this.pendingSubscribes = [];
     };
 
     // クライアント切断時の処理
-    this._client.onDisconnect = () => {
+    client.onDisconnect = () => {
+      if (this._client !== client) {
+        return;
+      }
       this._isConnected = false;
+      this._uid = null;
       // サブスクリプションをクリア（再接続時に復元される）
       this.subscriptions.clear();
     };
 
     // クライアントをアクティブ化
-    this._client.activate();
+    client.activate();
+  }
+
+  /**
+   * アクティブな購読を登録する
+   *
+   * @returns 新しく登録された場合はtrue
+   */
+  private addActiveSubscription(subscribePath: string, callback: (message: string) => void): boolean {
+    let callbacks = this.activeSubscriptions.get(subscribePath);
+    if (!callbacks) {
+      callbacks = new Set();
+      this.activeSubscriptions.set(subscribePath, callbacks);
+    }
+
+    if (callbacks.has(callback)) {
+      return false;
+    }
+
+    callbacks.add(callback);
+    return true;
+  }
+
+  /**
+   * STOMPサブスクリプションを作成して追跡する
+   */
+  private subscribe(subscribePath: string, callback: (message: string) => void): void {
+    const subscription = this._client.subscribe(subscribePath, (message) => callback(message.body));
+    let subscriptions = this.subscriptions.get(subscribePath);
+    if (!subscriptions) {
+      subscriptions = new Map();
+      this.subscriptions.set(subscribePath, subscriptions);
+    }
+    subscriptions.set(callback, subscription);
   }
 
   /**
@@ -159,6 +200,10 @@ export class NemWebSocket {
       return;
     }
 
+    if (this.reconnectTimer) {
+      return;
+    }
+
     this.reconnectAttempts++;
 
     // 再接続コールバックを呼び出す
@@ -166,7 +211,10 @@ export class NemWebSocket {
 
     const interval = this.options.reconnectInterval ?? 3000;
     this.reconnectTimer = setTimeout(() => {
-      this.createConnection();
+      this.reconnectTimer = null;
+      if (!this.isManualDisconnect) {
+        this.createConnection();
+      }
     }, interval);
   }
 
@@ -260,16 +308,26 @@ export class NemWebSocket {
       throw new Error(`Subscribe path could not be determined for channel: ${channel}`);
     }
 
-    // 接続されていない場合、保留中のサブスクライブに追加
+    if (!this.addActiveSubscription(subscribePath, actualCallback)) {
+      return;
+    }
+
+    // 接続されていない場合、接続時にアクティブな購読を復元する
     if (!this._isConnected) {
-      this.pendingSubscribes.push({ subscribePath, callback: actualCallback });
       return;
     }
 
     // サブスクライブを実行
-    const subscription = this._client.subscribe(subscribePath, (message) => actualCallback(message.body));
-    this.subscriptions.set(subscribePath, subscription);
-    this.activeSubscriptions.set(subscribePath, actualCallback);
+    try {
+      this.subscribe(subscribePath, actualCallback);
+    } catch (error) {
+      const callbacks = this.activeSubscriptions.get(subscribePath);
+      callbacks?.delete(actualCallback);
+      if (callbacks?.size === 0) {
+        this.activeSubscriptions.delete(subscribePath);
+      }
+      throw error;
+    }
   }
 
   /**
@@ -314,6 +372,10 @@ export class NemWebSocket {
   off(channel: NemChannel, address?: string): void {
     const channelPath = nemChannelPaths[channel];
 
+    if (typeof channelPath.subscribe === 'function' && !address) {
+      throw new Error(`Address parameter is required for channel: ${channel}`);
+    }
+
     // サブスクライブパスを決定
     const subscribePath =
       typeof channelPath.subscribe === 'function' ? channelPath.subscribe(address) : channelPath.subscribe;
@@ -322,19 +384,10 @@ export class NemWebSocket {
     }
 
     // アンサブスクライブを実行
-    const subscription = this.subscriptions.get(subscribePath);
-    if (subscription) {
-      subscription.unsubscribe();
+    const subscriptions = this.subscriptions.get(subscribePath);
+    if (subscriptions) {
+      subscriptions.forEach((subscription) => subscription.unsubscribe());
       this.subscriptions.delete(subscribePath);
-    } else {
-      // もしsubscriptionが見つからなければ、クライアントのunsubscribeを呼ぶフォールバックを行う
-      // テストや一部のクライアント実装で期待される動作を満たすため
-      // (実際のSTOMPクライアントのAPIに依存するため副作用は最小限にする)
-      if (typeof this._client.unsubscribe === 'function') {
-        // 一部のクライアント実装はサブスクリプションIDやパスを受け取るため、パスを渡す
-        // テストでは呼び出しが発生することを確認するため十分
-        this._client.unsubscribe(subscribePath);
-      }
     }
     // activeSubscriptionsからも削除
     this.activeSubscriptions.delete(subscribePath);
@@ -354,12 +407,11 @@ export class NemWebSocket {
     }
 
     // すべてのサブスクリプションを解除
-    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+    this.subscriptions.forEach((subscriptions) => subscriptions.forEach((subscription) => subscription.unsubscribe()));
     this.subscriptions.clear();
     this.activeSubscriptions.clear();
 
     // すべてのコールバックをクリーンアップ
-    this.pendingSubscribes = [];
     this.errorCallbacks = [];
     this.connectCallbacks = [];
     this.reconnectCallbacks = [];
