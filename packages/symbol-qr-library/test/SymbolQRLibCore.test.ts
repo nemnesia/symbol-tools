@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { SymbolQRLibCore } from '../src/core/SymbolQRLibCore.js';
+import { beforeEach, describe, expect, it } from 'vitest';
+
 import { QRCodeType } from '../src/SymbolQRJson.type.js';
+import { SymbolQRLibCore } from '../src/core/SymbolQRLibCore.js';
 
 describe('SymbolQRLibCore', () => {
   let symbolQRLibCore: SymbolQRLibCore;
@@ -70,6 +71,12 @@ describe('SymbolQRLibCore', () => {
       expect('ciphertext' in result.data).toBe(true);
       expect('salt' in result.data).toBe(true);
       expect('v' in result.data && result.data.v).toBe(2);
+      expect(result.data).toMatchObject({
+        version: 1,
+        kdf: 'argon2id',
+        kdfParams: { memoryCost: 32768, timeCost: 2, parallelism: 1 },
+        cipher: 'aes-256-gcm',
+      });
     });
   });
 

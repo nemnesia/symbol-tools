@@ -18,11 +18,22 @@ export interface Argon2idParams {
 }
 
 /**
- * シンプルな暗号化データフォーマット
- * nonce(12byte) + tag(16byte) + ciphertext を base64連結し ciphertext に格納
- * salt はKDF用。ciphertextとsaltのみで復号可能。
+ * バージョン付き暗号化データフォーマット。
+ *
+ * `version`、KDF とそのパラメータ、暗号方式は AES-GCM の AAD として認証される。
+ * `ciphertext` は nonce(12 byte) + tag(16 byte) + ciphertext の base64 連結値。
  */
 export interface EncryptedData {
+  version: 1;
+  kdf: KdfType;
+  kdfParams: Argon2idParams;
+  cipher: CipherType;
   salt: string; // base64 (KDF用)
   ciphertext: string; // base64 (nonce+tag+ciphertext 連結)
+}
+
+/** v1 より前に出力された、メタデータを持たないデータの読み取り専用形式。 */
+export interface LegacyEncryptedData {
+  salt: string;
+  ciphertext: string;
 }

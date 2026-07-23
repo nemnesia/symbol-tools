@@ -1,3 +1,6 @@
+import { gcm } from '@noble/ciphers/aes.js';
+import { argon2idAsync } from '@noble/hashes/argon2.js';
+import { randomBytes, utf8ToBytes } from '@noble/hashes/utils.js';
 import { describe, expect, it } from 'vitest';
 
 import { decrypt, encrypt } from '../src/index.js';
@@ -89,5 +92,29 @@ describe('互換性テスト', () => {
     const result = new TextDecoder().decode(decrypted);
 
     expect(result).toBe(multilineText);
+  });
+
+  it('v1 より前の形式を移行目的で復号できる', async () => {
+    const salt = randomBytes(16);
+    const nonce = randomBytes(12);
+    const legacyPlaintext = new TextEncoder().encode('legacy encrypted value');
+    const legacyPassword = 'legacy-password';
+    const key = await argon2idAsync(utf8ToBytes(legacyPassword), salt, {
+      m: 32768,
+      t: 2,
+      p: 1,
+      dkLen: 32,
+    });
+    const ciphertextWithTag = gcm(key, nonce).encrypt(legacyPlaintext);
+    const combined = new Uint8Array(nonce.length + ciphertextWithTag.length);
+    combined.set(nonce);
+    combined.set(ciphertextWithTag.slice(-16), nonce.length);
+    combined.set(ciphertextWithTag.slice(0, -16), nonce.length + 16);
+
+    const decrypted = await decrypt(
+      { salt: Buffer.from(salt).toString('base64'), ciphertext: Buffer.from(combined).toString('base64') },
+      legacyPassword
+    );
+    expect(decrypted).toEqual(legacyPlaintext);
   });
 });

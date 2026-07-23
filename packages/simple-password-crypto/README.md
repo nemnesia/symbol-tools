@@ -3,14 +3,14 @@
 [![npm version](https://img.shields.io/npm/v/@nemnesia/simple-password-crypto.svg)](https://www.npmjs.com/package/@nemnesia/simple-password-crypto)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-パスワードベースで安全にデータを暗号化・復号するライブラリ（Node.js/ブラウザ/React Native対応）
+パスワードベースでデータを暗号化・復号するライブラリです。Node.js と、Web Crypto (`crypto.getRandomValues`) を提供するブラウザ／React Native 環境に対応します。
 
 ## ✨ 特徴
 
 - 🔐 **現代的な暗号化**: Argon2id + AES-256-GCM
 - 🎯 **シンプルなAPI**: encrypt/decrypt の2つの関数のみ
 - 🛡️ **セキュリティ重視**: ベストプラクティスに従った実装
-- 🌐 **マルチプラットフォーム対応**: Node.js、ブラウザ、React Nativeで動作
+- 🌐 **マルチプラットフォーム対応**: Node.js、ブラウザ、React Native（CSPRNG を提供する環境）で動作
 - 💻 **TPM不要**: ソフトウェアベースの暗号化
 - ⚡ **依存関係が少ない**: @noble/ciphers と @noble/hashes のみ
 
@@ -43,7 +43,7 @@ const plaintext = Buffer.from('秘密のデータ');
 const password = '強力なパスワード';
 
 const encrypted = await encrypt(plaintext, password);
-// encrypted: { salt: string, ciphertext: string }
+// encrypted: { version, kdf, kdfParams, cipher, salt, ciphertext }
 
 const decrypted = await decrypt(encrypted, password);
 console.log(new TextDecoder().decode(decrypted)); // '秘密のデータ'
@@ -86,6 +86,14 @@ import { decrypt, encrypt } from '@nemnesia/simple-password-crypto';
 
 ```typescript
 interface EncryptedData {
+  version: 1;
+  kdf: 'argon2id';
+  kdfParams: {
+    memoryCost: 32768;
+    timeCost: 2;
+    parallelism: 1;
+  };
+  cipher: 'aes-256-gcm';
   salt: string; // Base64（16 バイト）
   ciphertext: string; // Base64（ノンス[12] + タグ[16] + 暗号文）
 }
@@ -96,8 +104,8 @@ interface EncryptedData {
 ### 鍵導出関数（KDF）
 
 - **Argon2id**: メモリハード関数、サイドチャネル攻撃に強い
-  - メモリ: 64MB（65536 KB）
-  - 繰り返し回数: 3回
+  - メモリ: 32 MiB（32768 KiB）
+  - 繰り返し回数: 2回
   - 並列度: 1
   - 実装: `@noble/hashes/argon2`（全環境で純粋 JS 実装を使用）
 
@@ -112,7 +120,10 @@ interface EncryptedData {
 ## 🗂️ データフォーマット詳細
 
 - `salt`: Argon2id 用ソルト（毎回ランダム生成、16 バイト、Base64）
+- `version`、`kdf`、`kdfParams`、`cipher`: 形式識別子。AES-GCM の AAD として認証される
 - `ciphertext`: AES-GCM のノンス（12 バイト）+ タグ（16 バイト）+ 暗号文の連結（Base64）
+
+復号は旧 `{ salt, ciphertext }` 形式も移行目的で読み取れます。ただし旧形式にはメタデータ認証がないため、復号後すぐに新形式で再暗号化してください。
 
 ## 🎯 用途
 
@@ -125,8 +136,8 @@ interface EncryptedData {
 
 ✅ ノンス再利用の防止（毎回ランダム生成）  
 ✅ 認証付き暗号（改ざん検出）  
-✅ タイミング攻撃対策（エラーメッセージの統一）  
-✅ 適切なパラメータ設定（メモリ: 64MB、繰り返し: 3回、並列度: 1）
+✅ 認証済みメタデータ（KDF・暗号方式・バージョンの改ざん検出）
+✅ OWASP の Argon2id 最低推奨値を満たす KDF 設定（メモリ: 32 MiB、繰り返し: 2回、並列度: 1）
 
 ## ❌ セキュリティ保証の対象外
 
@@ -148,9 +159,10 @@ interface EncryptedData {
 
 💡 **推奨事項**:
 
-- UI ブロックを避けるため、暗号化・復号処理中はローディング表示を実装してください
+- KDF はイベントループへ処理を譲る非同期実装ですが、端末性能に応じて時間がかかります。UI ではローディング表示を実装してください
 - ブラウザ: Web Worker での実行を検討してください
 - React Native: バックグラウンドスレッドでの実行を検討してください
+- React Native: `crypto.getRandomValues` を提供する安全な polyfill を初期化してください
 
 ## 🧪 テスト
 

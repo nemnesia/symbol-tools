@@ -6,6 +6,10 @@ import type { EncryptedData } from '../src/index.js';
 describe('エラーハンドリング', () => {
   // テスト用: nonce(12) + tag(16) + ciphertext(4)
   const validEncryptedData: EncryptedData = {
+    version: 1,
+    kdf: 'argon2id',
+    kdfParams: { memoryCost: 32768, timeCost: 2, parallelism: 1 },
+    cipher: 'aes-256-gcm',
     salt: 'dGVzdHNhbHQ=',
     ciphertext: Buffer.from(
       new Uint8Array([
@@ -27,6 +31,24 @@ describe('エラーハンドリング', () => {
       salt: 'invalid!!!base64',
     };
     await expect(decrypt(invalidData, 'password')).rejects.toThrow('Decryption failed');
+  });
+
+  it('非正規または不正なbase64データを拒否する', async () => {
+    await expect(decrypt({ ...validEncryptedData, salt: 'dGVzdHNhbHQ' }, 'password')).rejects.toThrow(
+      'Decryption failed'
+    );
+    await expect(decrypt({ ...validEncryptedData, salt: 'dGVzdHNhbHQ===' }, 'password')).rejects.toThrow(
+      'Decryption failed'
+    );
+  });
+
+  it('認証済みメタデータの改ざんを拒否する', async () => {
+    await expect(
+      decrypt({ ...validEncryptedData, version: 2 } as unknown as EncryptedData, 'password')
+    ).rejects.toThrow('Decryption failed');
+    await expect(
+      decrypt({ ...validEncryptedData, kdfParams: { memoryCost: 65536, timeCost: 2, parallelism: 1 } }, 'password')
+    ).rejects.toThrow('Decryption failed');
   });
 
   it('改ざんされた暗号文でエラーを返す', async () => {

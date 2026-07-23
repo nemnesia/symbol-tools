@@ -27,12 +27,11 @@ describe('セキュリティ特性', () => {
     expect(encrypted1.ciphertext).not.toBe(encrypted3.ciphertext);
   });
 
-  it('内部的にKDFパラメータが正しく設定されている', async () => {
-    // 新形式ではKDFパラメータは固定値として内部で使用される
-    // （外部に公開されないため、暗号化・復号が成功すれば正しく動作している）
+  it('KDFパラメータをバージョン付きデータに記録する', async () => {
     const encrypted = await encrypt(plaintext, password);
-    expect(encrypted.salt).toBeDefined();
-    expect(encrypted.ciphertext).toBeDefined();
+    expect(encrypted.kdf).toBe('argon2id');
+    expect(encrypted.kdfParams).toEqual({ memoryCost: 32768, timeCost: 2, parallelism: 1 });
+    expect(encrypted.cipher).toBe('aes-256-gcm');
   });
 
   it('暗号化データに平文が含まれていない', async () => {

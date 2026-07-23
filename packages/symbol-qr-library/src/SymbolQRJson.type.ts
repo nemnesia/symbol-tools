@@ -1,3 +1,8 @@
+import type {
+  LegacyEncryptedData as LegacyPasswordEncryptedData,
+  EncryptedData as PasswordEncryptedData,
+} from '@nemnesia/simple-password-crypto';
+
 /**
  * QRコードタイプ列挙型
  */
@@ -26,10 +31,13 @@ export interface SymbolQRJsonBase {
 /**
  * 暗号化データインターフェース
  */
-export interface EncryptedData {
+export interface EncryptedData extends PasswordEncryptedData {
   v: number;
-  ciphertext: string;
-  salt: string;
+}
+
+/** QR v2 で保存済みの、メタデータを持たない暗号化データ。 */
+export interface LegacyEncryptedData extends LegacyPasswordEncryptedData {
+  v: number;
 }
 
 /**
@@ -50,6 +58,7 @@ export interface AddContactJson extends SymbolQRJsonBase {
 export interface ExportAccountJson extends SymbolQRJsonBase {
   data:
     | EncryptedData
+    | LegacyEncryptedData
     | {
         privateKey: string;
       };
@@ -78,6 +87,7 @@ export interface RequestCosignatureJson extends RequestTransactionJson {}
 export interface ExportMnemonicJson extends SymbolQRJsonBase {
   data:
     | EncryptedData
+    | LegacyEncryptedData
     | {
         plainMnemonic: string;
       };
