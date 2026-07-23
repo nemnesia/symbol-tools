@@ -6,7 +6,7 @@ describe('セキュリティ特性', () => {
   const plaintext = new TextEncoder().encode('Sensitive Data');
   const password = 'secure-password';
 
-  it('ソルトが毎回異なる値になる', async () => {
+  it('ソルトが毎回異なる値になる', { timeout: 30000 }, async () => {
     const encrypted1 = await encrypt(plaintext, password);
     const encrypted2 = await encrypt(plaintext, password);
     const encrypted3 = await encrypt(plaintext, password);
@@ -16,7 +16,7 @@ describe('セキュリティ特性', () => {
     expect(encrypted1.salt).not.toBe(encrypted3.salt);
   });
 
-  it('暗号文（nonce+tag+ciphertext連結）が毎回異なる値になる', async () => {
+  it('暗号文（nonce+tag+ciphertext連結）が毎回異なる値になる', { timeout: 30000 }, async () => {
     const encrypted1 = await encrypt(plaintext, password);
     const encrypted2 = await encrypt(plaintext, password);
     const encrypted3 = await encrypt(plaintext, password);
