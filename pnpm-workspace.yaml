@@ -12,5 +12,8 @@ ignoredBuiltDependencies:
   - '@openapitools/openapi-generator-cli'
   - argon2
 
+minimumReleaseAgeExclude:
+  - '@nemnesia/symbol-websocket@0.2.2'
+
 onlyBuiltDependencies:
   - esbuild

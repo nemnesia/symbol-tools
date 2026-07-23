@@ -84,6 +84,24 @@ describe('SymbolEventStream', () => {
       }).toThrow('nodeUrls must not be empty');
     });
 
+    it.each([
+      [{ connections: 0 }, 'connections must be a positive integer'],
+      [{ connections: -1 }, 'connections must be a positive integer'],
+      [{ maxCacheSize: 0 }, 'maxCacheSize must be a positive integer'],
+      [{ cacheTtl: 0 }, 'cacheTtl must be a positive finite number'],
+      [{ cacheTtl: Number.POSITIVE_INFINITY }, 'cacheTtl must be a positive finite number'],
+      [{ maxReconnectBeforeSwitching: 0 }, 'maxReconnectBeforeSwitching must be a positive integer'],
+      [{ blacklistTtl: 0 }, 'blacklistTtl must be a positive finite number'],
+    ])('不正なオプション %o の場合、エラーをスローするべきである', (options, message) => {
+      expect(() => {
+        new SymbolEventStream({
+          nodeUrls: ['node1.example.com'],
+          connections: 1,
+          ...options,
+        });
+      }).toThrow(message);
+    });
+
     it('SSLがデフォルトでtrueであるべきである', () => {
       new SymbolEventStream({
         nodeUrls: ['node1.example.com'],
@@ -376,6 +394,40 @@ describe('SymbolEventStream', () => {
       wsCallback({ data: { uid: 'unique-id' }, topic: 'block' });
 
       expect(callback).toHaveBeenCalledTimes(2);
+    });
+
+    it('別チャネルで同じhashを持つメッセージはそれぞれ配信されるべきである', () => {
+      const unconfirmedCallback = vi.fn();
+      const confirmedCallback = vi.fn();
+      stream.on('unconfirmedAdded', unconfirmedCallback);
+      stream.on('confirmedAdded', confirmedCallback);
+
+      const unconfirmedWsCallback = mockInstances[0].on.mock.calls[0][1];
+      const confirmedWsCallback = mockInstances[0].on.mock.calls[1][1];
+      const message = { data: { meta: { hash: 'transaction-hash' } } };
+
+      unconfirmedWsCallback(message);
+      confirmedWsCallback(message);
+
+      expect(unconfirmedCallback).toHaveBeenCalledTimes(1);
+      expect(confirmedCallback).toHaveBeenCalledTimes(1);
+    });
+
+    it('別アドレス購読で同じhashを持つメッセージはそれぞれ配信されるべきである', () => {
+      const firstAddressCallback = vi.fn();
+      const secondAddressCallback = vi.fn();
+      stream.on('confirmedAdded', 'first-address', firstAddressCallback);
+      stream.on('confirmedAdded', 'second-address', secondAddressCallback);
+
+      const firstAddressWsCallback = mockInstances[0].on.mock.calls[0][2];
+      const secondAddressWsCallback = mockInstances[0].on.mock.calls[1][2];
+      const message = { data: { meta: { hash: 'transaction-hash' } } };
+
+      firstAddressWsCallback(message);
+      secondAddressWsCallback(message);
+
+      expect(firstAddressCallback).toHaveBeenCalledTimes(1);
+      expect(secondAddressCallback).toHaveBeenCalledTimes(1);
     });
 
     it('期限切れキャッシュが定期的にクリーンアップされるべきである', () => {
@@ -799,6 +851,7 @@ describe('SymbolEventStream', () => {
 
       // 新しいWebSocketは作成されない
       expect(mockInstances.length).toBe(initialCount);
+      expect(stream.getBlacklistedNodes()).toEqual([]);
 
       stream.close();
     });
