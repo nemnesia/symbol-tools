@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from '@nemnesia/simple-password-crypto';
+import type { EncryptedData as PasswordEncryptedData } from '@nemnesia/simple-password-crypto';
 
 import {
   AddContactJson,
@@ -70,6 +71,8 @@ export class SymbolQRLibCore {
    */
   public createExportAccountJson(ciphertext: string, salt: string): ExportAccountJson;
 
+  public createExportAccountJson(data: PasswordEncryptedData): ExportAccountJson;
+
   /**
    * アカウントエクスポート用QRコードJSONを生成します。
    *
@@ -77,9 +80,14 @@ export class SymbolQRLibCore {
    * @param salt ソルト（暗号化データの場合のみ指定）
    * @returns アカウントエクスポートQRコードJSON
    */
-  public createExportAccountJson(privateKeyOrCiphertext: string, salt?: string): ExportAccountJson {
+  public createExportAccountJson(
+    privateKeyOrCiphertext: string | PasswordEncryptedData,
+    salt?: string
+  ): ExportAccountJson {
     let _data: EncryptedData | { privateKey: string };
-    if (salt) {
+    if (typeof privateKeyOrCiphertext !== 'string') {
+      _data = { v: SymbolQRLibCore.CRYPTO_VERSION, ...privateKeyOrCiphertext };
+    } else if (salt) {
       _data = {
         v: SymbolQRLibCore.CRYPTO_VERSION,
         ciphertext: privateKeyOrCiphertext,
@@ -109,7 +117,7 @@ export class SymbolQRLibCore {
   public async createEncryptedExportAccountJson(privateKey: string, password: string): Promise<ExportAccountJson> {
     const plainText = new TextEncoder().encode(privateKey);
     const encrypted = await encrypt(plainText, password);
-    return this.createExportAccountJson(encrypted.ciphertext, encrypted.salt);
+    return this.createExportAccountJson(encrypted);
   }
 
   /**
@@ -188,6 +196,8 @@ export class SymbolQRLibCore {
    */
   public createExportMnemonicQRJson(ciphertext: string, salt: string): ExportMnemonicJson;
 
+  public createExportMnemonicQRJson(data: PasswordEncryptedData): ExportMnemonicJson;
+
   /**
    * ニーモニックエクスポート用QRコードJSONを生成します。
    *
@@ -195,9 +205,14 @@ export class SymbolQRLibCore {
    * @param salt ソルト
    * @returns ニーモニックエクスポートQRコードJSON
    */
-  public createExportMnemonicQRJson(mnemonicOrCiphertext: string, salt?: string): ExportMnemonicJson {
+  public createExportMnemonicQRJson(
+    mnemonicOrCiphertext: string | PasswordEncryptedData,
+    salt?: string
+  ): ExportMnemonicJson {
     let _data: EncryptedData | { plainMnemonic: string };
-    if (salt) {
+    if (typeof mnemonicOrCiphertext !== 'string') {
+      _data = { v: SymbolQRLibCore.CRYPTO_VERSION, ...mnemonicOrCiphertext };
+    } else if (salt) {
       _data = {
         v: SymbolQRLibCore.CRYPTO_VERSION,
         ciphertext: mnemonicOrCiphertext,
@@ -228,7 +243,7 @@ export class SymbolQRLibCore {
   public async createEncryptedExportMnemonicQRJson(mnemonic: string, password: string): Promise<ExportMnemonicJson> {
     const plainText = new TextEncoder().encode(mnemonic);
     const encrypted = await encrypt(plainText, password);
-    return this.createExportMnemonicQRJson(encrypted.ciphertext, encrypted.salt);
+    return this.createExportMnemonicQRJson(encrypted);
   }
 
   /**

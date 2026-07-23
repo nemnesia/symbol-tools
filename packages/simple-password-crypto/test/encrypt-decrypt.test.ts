@@ -19,6 +19,12 @@ describe('encrypt/decrypt', () => {
     // 新形式: saltとciphertextのみ
     expect(typeof encrypted.salt).toBe('string');
     expect(typeof encrypted.ciphertext).toBe('string');
+    expect(encrypted).toMatchObject({
+      version: 1,
+      kdf: 'argon2id',
+      kdfParams: { memoryCost: 32768, timeCost: 2, parallelism: 1 },
+      cipher: 'aes-256-gcm',
+    });
 
     // saltは16バイト（base64エンコード後）
     const saltBytes = Buffer.from(encrypted.salt, 'base64');

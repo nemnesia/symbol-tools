@@ -1,70 +1,73 @@
 import { gcm } from '@noble/ciphers/aes.js';
-import { argon2id } from '@noble/hashes/argon2.js';
-import { randomBytes, utf8ToBytes } from '@noble/hashes/utils.js';
+import { argon2idAsync } from '@noble/hashes/argon2.js';
+import { clean, randomBytes, utf8ToBytes } from '@noble/hashes/utils.js';
 
+import { toBase64 } from './base64.js';
+import {
+  ARGON2ID_PARAMS,
+  CIPHER,
+  ENCRYPTED_DATA_VERSION,
+  KDF,
+  MAX_PLAINTEXT_LENGTH,
+  NONCE_LENGTH,
+  SALT_LENGTH,
+  TAG_LENGTH,
+  metadataToAad,
+} from './constants.js';
 import type { EncryptedData } from './types.js';
 
-/**
- * Argon2id パラメータ（固定値）
- */
-const ARGON2_PARAMS = {
-  m: 32768, // memoryCost: 32MB（高速化）
-  t: 2, // timeCost（高速化）
-  p: 1, // parallelism
-} as const;
-
-/**
- * AES-GCM nonce 長（96ビット、推奨値）
- */
-const AES_NONCE_LENGTH = 12;
-
-/**
- * Argon2id KDFでパスワードから鍵を導出する
- *
- * @param {string} password - パスワード
- * @param {Uint8Array} salt - ソルト
- * @returns {Promise<Uint8Array>} 32バイトの鍵
- */
 async function deriveKey(password: string, salt: Uint8Array): Promise<Uint8Array> {
   const passwordBytes = utf8ToBytes(password);
-  return argon2id(passwordBytes, salt, {
-    ...ARGON2_PARAMS,
-    dkLen: 32,
-  });
+  try {
+    return await argon2idAsync(passwordBytes, salt, {
+      m: ARGON2ID_PARAMS.memoryCost,
+      t: ARGON2ID_PARAMS.timeCost,
+      p: ARGON2ID_PARAMS.parallelism,
+      dkLen: 32,
+    });
+  } finally {
+    clean(passwordBytes);
+  }
 }
 
 /**
- * Argon2id + AES-256-GCM でデータを暗号化する
+ * パスワードから Argon2id で鍵を導出し、AES-256-GCM で平文を暗号化します。
  *
- * @param {Uint8Array} plaintext - 暗号化するデータ
- * @param {string} password - 暗号化用パスワード
- * @returns {Promise<EncryptedData>} 暗号化データ（メタ情報含む）
- * @throws {Error} 暗号化に失敗した場合
+ * 新規データはバージョン付き形式で出力されます。バージョン、KDF、KDF パラメータ、
+ * 暗号方式は追加認証データ（AAD）として認証されます。
+ *
+ * @param plaintext - 暗号化する 16 MiB 以下のバイト列
+ * @param password - 鍵導出に使用するパスワード
+ * @returns JSON に安全に保存できる、バージョン付き暗号化データ
+ * @throws {TypeError} 引数の型が不正な場合
+ * @throws {RangeError} 平文が 16 MiB を超える場合
  */
 export async function encrypt(plaintext: Uint8Array, password: string): Promise<EncryptedData> {
-  const salt = randomBytes(16);
+  if (!(plaintext instanceof Uint8Array)) throw new TypeError('plaintext must be a Uint8Array');
+  if (plaintext.length > MAX_PLAINTEXT_LENGTH) throw new RangeError('plaintext is too large');
+  if (typeof password !== 'string') throw new TypeError('password must be a string');
+
+  const salt = randomBytes(SALT_LENGTH);
   const key = await deriveKey(password, salt);
-  const nonce = randomBytes(AES_NONCE_LENGTH);
+  const nonce = randomBytes(NONCE_LENGTH);
+  let ciphertextWithTag: Uint8Array;
+  try {
+    ciphertextWithTag = gcm(key, nonce, metadataToAad()).encrypt(plaintext);
+  } finally {
+    clean(key);
+  }
 
-  const aes = gcm(key, nonce);
-  const ciphertextWithTag = aes.encrypt(plaintext); // ciphertext + tag (GCM)
-  const tagLength = 16;
-  // ciphertextWithTag = ciphertext + tag
-  // 連結形式: [nonce(12)][tag(16)][ciphertext]
-  const combined = new Uint8Array(nonce.length + tagLength + (ciphertextWithTag.length - tagLength));
-  combined.set(nonce, 0);
-  combined.set(ciphertextWithTag.slice(-tagLength), nonce.length); // tag
-  combined.set(ciphertextWithTag.slice(0, -tagLength), nonce.length + tagLength); // ciphertext
-
-  const toBase64 = (bytes: Uint8Array): string => {
-    if (typeof Buffer !== 'undefined') {
-      return Buffer.from(bytes).toString('base64');
-    }
-    const binary = String.fromCharCode(...bytes);
-    return btoa(binary);
-  };
+  const combined = new Uint8Array(nonce.length + ciphertextWithTag.length);
+  combined.set(nonce);
+  // Store tag before ciphertext to retain the historical binary layout.
+  combined.set(ciphertextWithTag.slice(-TAG_LENGTH), nonce.length);
+  combined.set(ciphertextWithTag.slice(0, -TAG_LENGTH), nonce.length + TAG_LENGTH);
 
   return {
+    version: ENCRYPTED_DATA_VERSION,
+    kdf: KDF,
+    kdfParams: { ...ARGON2ID_PARAMS },
+    cipher: CIPHER,
     salt: toBase64(salt),
     ciphertext: toBase64(combined),
   };

@@ -1,83 +1,118 @@
 import { gcm } from '@noble/ciphers/aes.js';
-import { argon2id } from '@noble/hashes/argon2.js';
-import { utf8ToBytes } from '@noble/hashes/utils.js';
+import { argon2idAsync } from '@noble/hashes/argon2.js';
+import { clean, utf8ToBytes } from '@noble/hashes/utils.js';
 
-import type { EncryptedData } from './types.js';
+import { fromBase64 } from './base64.js';
+import {
+  ARGON2ID_PARAMS,
+  CIPHER,
+  ENCRYPTED_DATA_VERSION,
+  KDF,
+  MAX_CIPHERTEXT_BASE64_LENGTH,
+  MAX_COMBINED_LENGTH,
+  NONCE_LENGTH,
+  SALT_LENGTH,
+  TAG_LENGTH,
+  metadataToAad,
+} from './constants.js';
+import type { Argon2idParams, EncryptedData, LegacyEncryptedData } from './types.js';
 
-/**
- * Argon2id KDFでパスワードから鍵を導出する
- *
- * @param {string} password - パスワード
- * @param {Uint8Array} salt - ソルト
- * @param {{ memoryCost: number; timeCost: number; parallelism: number }} params - Argon2idパラメータ
- * @returns {Promise<Uint8Array>} 32バイトの鍵
- */
-async function deriveKey(
-  password: string,
-  salt: Uint8Array,
-  params: { memoryCost: number; timeCost: number; parallelism: number }
-): Promise<Uint8Array> {
+function hasExpectedParameters(params: unknown): params is Argon2idParams {
+  if (typeof params !== 'object' || params === null) return false;
+  const candidate = params as Argon2idParams;
+  return (
+    candidate.memoryCost === ARGON2ID_PARAMS.memoryCost &&
+    candidate.timeCost === ARGON2ID_PARAMS.timeCost &&
+    candidate.parallelism === ARGON2ID_PARAMS.parallelism
+  );
+}
+
+function isVersionedData(data: EncryptedData | LegacyEncryptedData): data is EncryptedData {
+  return 'version' in data;
+}
+
+function validateData(data: EncryptedData | LegacyEncryptedData): void {
+  if (
+    typeof data !== 'object' ||
+    data === null ||
+    typeof data.salt !== 'string' ||
+    typeof data.ciphertext !== 'string'
+  ) {
+    throw new Error('Invalid encrypted data');
+  }
+  if (data.ciphertext.length > MAX_CIPHERTEXT_BASE64_LENGTH) throw new Error('Invalid encrypted data');
+
+  if (isVersionedData(data)) {
+    if (
+      data.version !== ENCRYPTED_DATA_VERSION ||
+      data.kdf !== KDF ||
+      data.cipher !== CIPHER ||
+      !hasExpectedParameters(data.kdfParams)
+    ) {
+      throw new Error('Invalid encrypted data');
+    }
+  }
+}
+
+async function deriveKey(password: string, salt: Uint8Array): Promise<Uint8Array> {
   const passwordBytes = utf8ToBytes(password);
-  return argon2id(passwordBytes, salt, {
-    m: params.memoryCost,
-    t: params.timeCost,
-    p: params.parallelism,
-    dkLen: 32,
-  });
+  try {
+    return await argon2idAsync(passwordBytes, salt, {
+      m: ARGON2ID_PARAMS.memoryCost,
+      t: ARGON2ID_PARAMS.timeCost,
+      p: ARGON2ID_PARAMS.parallelism,
+      dkLen: 32,
+    });
+  } finally {
+    clean(passwordBytes);
+  }
 }
 
 /**
- * パスワードで暗号化データを復号する
+ * 暗号化データをパスワードで復号します。
  *
- * @param {EncryptedData} data - メタデータを含む暗号化データ
- * @param {string} password - 復号用パスワード
- * @returns {Promise<Uint8Array>} 復号された平文
- * @throws {Error} 復号に失敗した場合（パスワード誤り、データ破損、非対応フォーマット）
- * @note エラーメッセージは情報漏洩を防ぐため意図的に一般的な内容にしています
+ * バージョン付き形式ではメタデータを AAD として検証します。旧 `{ salt, ciphertext }`
+ * 形式も移行目的で読み取れますが、メタデータの認証は行えません。旧形式を復号した後は
+ * `encrypt` で再暗号化してください。
+ *
+ * 失敗理由（パスワード誤り、改ざん、形式不正）は区別せず同じエラーを返します。
+ *
+ * @param data - `encrypt` の戻り値、または移行対象の旧形式データ
+ * @param password - 鍵導出に使用したパスワード
+ * @returns 復号した平文
+ * @throws {Error} 復号できない、または入力が不正な場合。メッセージは常に `Decryption failed`
  */
-export async function decrypt(data: EncryptedData, password: string): Promise<Uint8Array> {
-  // 新形式: salt, ciphertextのみ
-
+export async function decrypt(data: EncryptedData | LegacyEncryptedData, password: string): Promise<Uint8Array> {
   try {
-    const fromBase64 = (base64: string): Uint8Array => {
-      if (typeof Buffer !== 'undefined') {
-        return new Uint8Array(Buffer.from(base64, 'base64'));
-      }
-      const binary = atob(base64);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) {
-        bytes[i] = binary.charCodeAt(i);
-      }
-      return bytes;
-    };
+    if (typeof password !== 'string') throw new Error('Invalid password');
+    validateData(data);
 
-    // base64データをデコード
     const salt = fromBase64(data.salt);
     const combined = fromBase64(data.ciphertext);
-
-    // 分割: [nonce(12)][tag(16)][ciphertext]
-    const nonceLength = 12;
-    const tagLength = 16;
-    if (combined.length < nonceLength + tagLength) {
-      throw new Error('Decryption failed: invalid data');
+    if (
+      salt.length !== SALT_LENGTH ||
+      combined.length < NONCE_LENGTH + TAG_LENGTH ||
+      combined.length > MAX_COMBINED_LENGTH
+    ) {
+      throw new Error('Invalid encrypted data');
     }
-    const nonce = combined.slice(0, nonceLength);
-    const tag = combined.slice(nonceLength, nonceLength + tagLength);
-    const ciphertext = combined.slice(nonceLength + tagLength);
 
-    // 鍵導出パラメータは固定値
-    const key = await deriveKey(password, salt, { memoryCost: 32768, timeCost: 2, parallelism: 1 });
-
-    // タグと暗号文を結合（GCMのdecryptはciphertext+tag）
+    const nonce = combined.slice(0, NONCE_LENGTH);
+    const tag = combined.slice(NONCE_LENGTH, NONCE_LENGTH + TAG_LENGTH);
+    const ciphertext = combined.slice(NONCE_LENGTH + TAG_LENGTH);
     const ciphertextWithTag = new Uint8Array(ciphertext.length + tag.length);
     ciphertextWithTag.set(ciphertext);
     ciphertextWithTag.set(tag, ciphertext.length);
 
-    const aes = gcm(key, nonce);
-    const decrypted = aes.decrypt(ciphertextWithTag);
-    return decrypted;
+    const key = await deriveKey(password, salt);
+    const aad = isVersionedData(data) ? metadataToAad() : undefined;
+    try {
+      return gcm(key, nonce, aad).decrypt(ciphertextWithTag);
+    } finally {
+      clean(key);
+    }
   } catch {
-    // 情報漏洩を防ぐため一般的なエラーメッセージを返す
+    // Do not distinguish wrong passwords, unauthenticated data or malformed data.
     throw new Error('Decryption failed');
   }
 }
