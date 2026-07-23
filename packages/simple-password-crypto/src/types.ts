@@ -1,15 +1,11 @@
-/**
- * KDF (鍵導出関数) の種類
- */
+/** 鍵導出関数の識別子。 */
 export type KdfType = 'argon2id';
 
-/**
- * 暗号アルゴリズムの種類
- */
+/** 認証付き暗号方式の識別子。 */
 export type CipherType = 'aes-256-gcm';
 
 /**
- * Argon2id KDF パラメータ
+ * Argon2id の鍵導出パラメータ。値は KiB 単位のメモリコスト、反復回数、並列度です。
  */
 export interface Argon2idParams {
   memoryCost: number;
@@ -32,7 +28,11 @@ export interface EncryptedData {
   ciphertext: string; // base64 (nonce+tag+ciphertext 連結)
 }
 
-/** v1 より前に出力された、メタデータを持たないデータの読み取り専用形式。 */
+/**
+ * v1 より前に出力された、メタデータを持たない読み取り専用形式。
+ *
+ * この形式を新たに生成しないでください。復号後に `EncryptedData` 形式へ移行します。
+ */
 export interface LegacyEncryptedData {
   salt: string;
   ciphertext: string;

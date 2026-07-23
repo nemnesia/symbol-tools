@@ -30,6 +30,18 @@ async function deriveKey(password: string, salt: Uint8Array): Promise<Uint8Array
   }
 }
 
+/**
+ * パスワードから Argon2id で鍵を導出し、AES-256-GCM で平文を暗号化します。
+ *
+ * 新規データはバージョン付き形式で出力されます。バージョン、KDF、KDF パラメータ、
+ * 暗号方式は追加認証データ（AAD）として認証されます。
+ *
+ * @param plaintext - 暗号化する 16 MiB 以下のバイト列
+ * @param password - 鍵導出に使用するパスワード
+ * @returns JSON に安全に保存できる、バージョン付き暗号化データ
+ * @throws {TypeError} 引数の型が不正な場合
+ * @throws {RangeError} 平文が 16 MiB を超える場合
+ */
 export async function encrypt(plaintext: Uint8Array, password: string): Promise<EncryptedData> {
   if (!(plaintext instanceof Uint8Array)) throw new TypeError('plaintext must be a Uint8Array');
   if (plaintext.length > MAX_PLAINTEXT_LENGTH) throw new RangeError('plaintext is too large');

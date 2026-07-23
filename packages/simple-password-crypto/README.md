@@ -5,16 +5,16 @@
 
 パスワードベースでデータを暗号化・復号するライブラリです。Node.js と、Web Crypto (`crypto.getRandomValues`) を提供するブラウザ／React Native 環境に対応します。
 
-## ✨ 特徴
+## 特徴
 
-- 🔐 **現代的な暗号化**: Argon2id + AES-256-GCM
-- 🎯 **シンプルなAPI**: encrypt/decrypt の2つの関数のみ
-- 🛡️ **セキュリティ重視**: ベストプラクティスに従った実装
-- 🌐 **マルチプラットフォーム対応**: Node.js、ブラウザ、React Native（CSPRNG を提供する環境）で動作
-- 💻 **TPM不要**: ソフトウェアベースの暗号化
-- ⚡ **依存関係が少ない**: @noble/ciphers と @noble/hashes のみ
+- **現代的な暗号化**: Argon2id + AES-256-GCM
+- **シンプルなAPI**: encrypt/decrypt の2つの関数のみ
+- **セキュリティ重視**: ベストプラクティスに従った実装
+- **マルチプラットフォーム対応**: Node.js、ブラウザ、React Native（CSPRNG を提供する環境）で動作
+- **TPM不要**: ソフトウェアベースの暗号化
+- **依存関係が少ない**: @noble/ciphers と @noble/hashes のみ
 
-## 📥 インストール
+## インストール
 
 ```bash
 npm install @nemnesia/simple-password-crypto
@@ -32,7 +32,7 @@ pnpm add @nemnesia/simple-password-crypto
 yarn add @nemnesia/simple-password-crypto
 ```
 
-## 🚀 使い方
+## 使い方
 
 ### TypeScript/JavaScript での例
 
@@ -67,7 +67,7 @@ import { decrypt, encrypt } from '@nemnesia/simple-password-crypto';
 
 ---
 
-## 🛠️ API リファレンス
+## API リファレンス
 
 ### `async encrypt(plaintext: Uint8Array, password: string): Promise<EncryptedData>`
 
@@ -99,7 +99,7 @@ interface EncryptedData {
 }
 ```
 
-## 🔐 暗号方式
+## 暗号方式
 
 ### 鍵導出関数（KDF）
 
@@ -117,7 +117,7 @@ interface EncryptedData {
   - タグ: 128 ビット
   - 実装: `@noble/ciphers`（全環境共通）
 
-## 🗂️ データフォーマット詳細
+## データフォーマット詳細
 
 - `salt`: Argon2id 用ソルト（毎回ランダム生成、16 バイト、Base64）
 - `version`、`kdf`、`kdfParams`、`cipher`: 形式識別子。AES-GCM の AAD として認証される
@@ -125,27 +125,27 @@ interface EncryptedData {
 
 復号は旧 `{ salt, ciphertext }` 形式も移行目的で読み取れます。ただし旧形式にはメタデータ認証がないため、復号後すぐに新形式で再暗号化してください。
 
-## 🎯 用途
+## 用途
 
 - ウォレット秘密鍵の保護
 - ユーザープロファイルの暗号化
 - パスワード管理
 - セキュアなローカルストレージ
 
-## 🚨 セキュリティ保証
+## セキュリティ保証
 
-✅ ノンス再利用の防止（毎回ランダム生成）  
-✅ 認証付き暗号（改ざん検出）  
-✅ 認証済みメタデータ（KDF・暗号方式・バージョンの改ざん検出）
-✅ OWASP の Argon2id 最低推奨値を満たす KDF 設定（メモリ: 32 MiB、繰り返し: 2回、並列度: 1）
+- ノンス再利用の防止（毎回ランダム生成）
+- 認証付き暗号（改ざん検出）
+- 認証済みメタデータ（KDF・暗号方式・バージョンの改ざん検出）
+- OWASP の Argon2id 最低推奨値を満たす KDF 設定（メモリ: 32 MiB、繰り返し: 2回、並列度: 1）
 
-## ❌ セキュリティ保証の対象外
+## セキュリティ保証の対象外
 
 - 物理的攻撃（メモリダンプ、コールドブート攻撃）
 - TPM/HSM レベルのハードウェアセキュリティ
 - 弱いパスワードに対する保護
 
-## 📊 パフォーマンス
+## パフォーマンス
 
 ### 全環境（@noble/hashes）
 
@@ -154,17 +154,17 @@ interface EncryptedData {
 | 暗号化 | 約 2〜3 秒       |
 | 復号   | 約 2〜3 秒       |
 
-⚠️ **パフォーマンスに関する注意**:  
+**パフォーマンスに関する注意**:
 このライブラリは純粋 JavaScript で実装された `@noble/hashes` を使用します。Argon2id のメモリハード特性により、処理に数秒かかります。これはブルートフォース攻撃対策として意図的な設計です。
 
-💡 **推奨事項**:
+**推奨事項**:
 
 - KDF はイベントループへ処理を譲る非同期実装ですが、端末性能に応じて時間がかかります。UI ではローディング表示を実装してください
 - ブラウザ: Web Worker での実行を検討してください
 - React Native: バックグラウンドスレッドでの実行を検討してください
 - React Native: `crypto.getRandomValues` を提供する安全な polyfill を初期化してください
 
-## 🧪 テスト
+## テスト
 
 ```bash
 pnpm test              # テスト実行
@@ -172,11 +172,11 @@ pnpm test:coverage     # カバレッジ
 pnpm test:watch        # ウォッチモード
 ```
 
-## 📝 ライセンス
+## ライセンス
 
 MIT
 
-## 🔗 関連リンク
+## 関連リンク
 
 - [Argon2](https://github.com/P-H-C/phc-winner-argon2)
 - [AES-GCM](https://tools.ietf.org/html/rfc5288)

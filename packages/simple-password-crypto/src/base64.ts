@@ -5,7 +5,12 @@ function valueOf(character: string): number {
   return BASE64_ALPHABET.indexOf(character);
 }
 
-/** A strict, runtime-independent RFC 4648 base64 encoder. */
+/**
+ * 実行環境固有 API に依存せず、RFC 4648 の標準 Base64 へエンコードします。
+ *
+ * @param bytes - エンコードするバイト列
+ * @returns パディングを含む標準 Base64 文字列
+ */
 export function toBase64(bytes: Uint8Array): string {
   let result = '';
   for (let index = 0; index < bytes.length; index += 3) {
@@ -21,7 +26,14 @@ export function toBase64(bytes: Uint8Array): string {
   return result;
 }
 
-/** Decodes canonical base64 only; whitespace, URL-safe and malformed encodings are rejected. */
+/**
+ * 正規形式の RFC 4648 Base64 をデコードします。
+ * 空白、URL-safe Base64、不正なパディング、非正規なパディングビットは拒否します。
+ *
+ * @param base64 - デコードする標準 Base64 文字列
+ * @returns デコードしたバイト列
+ * @throws {Error} 正規形式の Base64 ではない場合
+ */
 export function fromBase64(base64: string): Uint8Array {
   if (typeof base64 !== 'string' || !BASE64_PATTERN.test(base64)) {
     throw new Error('Invalid base64');

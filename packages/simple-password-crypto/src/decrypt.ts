@@ -69,8 +69,18 @@ async function deriveKey(password: string, salt: Uint8Array): Promise<Uint8Array
 }
 
 /**
- * Decrypts versioned data, or reads the pre-v1 format for migration only.
- * Callers should re-encrypt successfully decrypted legacy data to obtain metadata authentication.
+ * 暗号化データをパスワードで復号します。
+ *
+ * バージョン付き形式ではメタデータを AAD として検証します。旧 `{ salt, ciphertext }`
+ * 形式も移行目的で読み取れますが、メタデータの認証は行えません。旧形式を復号した後は
+ * `encrypt` で再暗号化してください。
+ *
+ * 失敗理由（パスワード誤り、改ざん、形式不正）は区別せず同じエラーを返します。
+ *
+ * @param data - `encrypt` の戻り値、または移行対象の旧形式データ
+ * @param password - 鍵導出に使用したパスワード
+ * @returns 復号した平文
+ * @throws {Error} 復号できない、または入力が不正な場合。メッセージは常に `Decryption failed`
  */
 export async function decrypt(data: EncryptedData | LegacyEncryptedData, password: string): Promise<Uint8Array> {
   try {
